@@ -51,12 +51,17 @@
   <ItemGroup>
     <Compile Include="AxeBuilder.cs" />
     <Compile Include="ContentDownloader.cs" />
+    <Compile Include="Injector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Reporter.cs" />
+    <Compile Include="AxeReporter\Model\Any.cs" />
+    <Compile Include="AxeReporter\Model\Node.cs" />
+    <Compile Include="AxeReporter\Model\RootObject.cs" />
     <Compile Include="WebDriverExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +76,7 @@
   <ItemGroup>
     <None Include="Resources\axe.min.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
