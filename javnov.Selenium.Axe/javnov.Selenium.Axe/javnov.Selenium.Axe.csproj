@@ -50,8 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AxeBuilder.cs" />
+    <Compile Include="CachedContentDownloader.cs" />
     <Compile Include="ContentDownloader.cs" />
-    <Compile Include="Injector.cs" />
+    <Compile Include="IContentDownloader.cs" />
+    <Compile Include="IncludeExcludeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -63,6 +65,7 @@
     <Compile Include="AxeReporter\Model\Node.cs" />
     <Compile Include="AxeReporter\Model\RootObject.cs" />
     <Compile Include="WebDriverExtensions.cs" />
+    <Compile Include="WebDriverInjectorExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
