@@ -2,7 +2,9 @@
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Linq;
 
 namespace javnov.Selenium.Axe
 {
@@ -15,13 +17,14 @@ namespace javnov.Selenium.Axe
         private readonly IWebDriver _webDriver;
         private readonly IncludeExcludeManager _includeExcludeManager = new IncludeExcludeManager();
 
-        public string Options { get; set; } = "null";
+    	 public string Options { get; set; } = "null";
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
-        public AxeBuilder(IWebDriver webDriver)        {
+        public AxeBuilder(IWebDriver webDriver)
+        {
             if (webDriver == null)
                 throw new ArgumentNullException(nameof(webDriver));
 
@@ -58,7 +61,30 @@ namespace javnov.Selenium.Axe
         }
 
         /// <summary>
-        /// Include selectors
+        /// Execute the script into the target.
+        /// </summary>
+        /// <param name="command">Script to execute.</param>
+        /// <param name="args"></param>
+        private AxeResult Execute(string command, params object[] args)
+        {
+            _webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(30));
+            object response = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
+            var jObject = JObject.FromObject(response);
+
+            if (jObject.SelectToken("violations") == null)
+                throw new InvalidOperationException("The response from browser is not valid.");
+
+            if (jObject.SelectToken("passes") == null)
+                throw new InvalidOperationException("The response from browser is not valid.");
+
+            JToken violationsToken = jObject.SelectToken("violations");
+            JToken passesToken = jObject.SelectToken("passes");
+
+            return new AxeResult(violationsToken, passesToken);   
+        }
+
+        /// <summary>
+        /// Selectors to include in the validation.
         /// </summary>
         /// <param name="selectors">Any valid CSS selectors</param>
         /// <returns></returns>
@@ -70,6 +96,7 @@ namespace javnov.Selenium.Axe
 
         /// <summary>
         /// Exclude selectors
+        /// Selectors to exclude in the validation.
         /// </summary>
         /// <param name="selectors">Any valid CSS selectors</param>
         /// <returns></returns>
@@ -84,8 +111,7 @@ namespace javnov.Selenium.Axe
         /// </summary>
         /// <param name="context"> A WebElement to test</param>
         /// <returns>An aXe results document</returns>
-        /// @author <a href="mailto:jdmesalosada@gmail.com">Julian Mesa</a>
-        public JObject Analyze(IWebElement context)
+        public AxeResult Analyze(IWebElement context)
         {
             string command = string.Format("axe.a11yCheck(arguments[0], {0}, arguments[arguments.length - 1]);", Options);
             return Execute(command, context);
@@ -95,8 +121,7 @@ namespace javnov.Selenium.Axe
         /// Run aXe against the page.
         /// </summary>
         /// <returns>An aXe results document</returns>
-        /// @author <a href="mailto:jdmesalosada@gmail.com">Julian Mesa</a>
-        public JObject Analyze()
+        public AxeResult Analyze()
         {
             string command;
 
@@ -115,13 +140,6 @@ namespace javnov.Selenium.Axe
             }
 
             return Execute(command);
-        }
-
-        private JObject Execute(string command, params object[] args)
-        {
-            _webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(30));
-            object response = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
-            return new JObject(response);
         }
     }
 }
