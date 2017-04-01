@@ -30,7 +30,8 @@ namespace Globant.Selenium.Axe
         public void Include(params string[] selectors)
         {
             ValidateParameters(selectors);
-            InitializeList(_includeList);
+            if (_includeList == null)
+                _includeList = new List<string[]>();
             _includeList.Add(selectors);
         }
 
@@ -41,7 +42,8 @@ namespace Globant.Selenium.Axe
         public void Exclude(params string[] selectors)
         {
             ValidateParameters(selectors);
-            InitializeList(_excludeList);
+            if (_excludeList == null)
+                _excludeList = new List<string[]>();
             _excludeList.Add(selectors);
         }
 
@@ -82,12 +84,6 @@ namespace Globant.Selenium.Axe
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this, jsonSerializerSettings);
-        }
-
-        private void InitializeList(List<string[]> listToInitialize)
-        {
-            if (listToInitialize == null)
-                listToInitialize = new List<string[]>();
         }
 
         private static void ValidateParameters(string[] selectors)

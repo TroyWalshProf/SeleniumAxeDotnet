@@ -1,5 +1,5 @@
 configuration: Release
-
+image: Visual Studio 2015
 #restore NuGet
 before_build:
     - nuget restore Globant.Selenium.Axe\Globant.Selenium.Axe.sln
@@ -10,10 +10,13 @@ build:
     verbosity: normal
     publish_wap: true
 
+artifacts:
+    - path: '**\*.nupkg' # find all NuGet packages recursively
+
 #Push to nuget
 deploy:
     provider: NuGet
     api_key:
-        secure: x/JdMSCp+xijmT0uyFZm4eWjZWlU+aaviayOAK8PwCHioJ/rbKNp59PrTTG6MWwB
+        secure: wO5eiWkOc3xv1qM1mChKx6weYq9h795U6u5NJg6kqwdSgsXZVCXjQJk6G05MuPKC
     skip_symbols: false
     artifact: /.*\.nupkg/
