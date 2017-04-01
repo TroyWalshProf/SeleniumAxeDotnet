@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "javnov.Selenium.Axe", "javnov.Selenium.Axe\javnov.Selenium.Axe.csproj", "{E16C1098-53D9-4BEC-8DA3-10B67C33EC6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Globant.Selenium.Axe", "Globant.Selenium.Axe\Globant.Selenium.Axe.csproj", "{E16C1098-53D9-4BEC-8DA3-10B67C33EC6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AxeCsharpSeleniumTest", "AxeCsharpSeleniumTest\AxeCsharpSeleniumTest.csproj", "{49C6E2A6-1CD6-44FB-942C-131DD96B1B14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Globant.Selenium.Axe.Test", "Globant.Selenium.Axe.Test\Globant.Selenium.Axe.Test.csproj", "{49C6E2A6-1CD6-44FB-942C-131DD96B1B14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

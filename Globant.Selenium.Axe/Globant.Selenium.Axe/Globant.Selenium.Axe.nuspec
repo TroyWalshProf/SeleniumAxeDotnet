@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Globant jdmesalosada javnov</authors>
+    <owners>Globant</owners>
+    <projectUrl>https://github.com/javnov/axe-selenium-csharp</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Tools for using aXe for web accessibility testing with C# and Selenium.</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>Globant selenium axe ada webdriver</tags>
+	<dependencies>
+		<dependency id="Newtonsoft.Json" version="9.0.1" />
+		<dependency id="Selenium.WebDriver" version="2.53.0" />
+    </dependencies>
+  </metadata>
+</package>

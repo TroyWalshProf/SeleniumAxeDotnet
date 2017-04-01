@@ -1,0 +1,16 @@
+configuration: Release
+
+#restore NuGet
+before_build:
+    - nuget restore
+    
+build:
+    verbosity: normal
+    publish_wap: true
+    
+deploy:
+    provider: NuGet
+    api_key:
+        secure: x/JdMSCp+xijmT0uyFZm4eWjZWlU+aaviayOAK8PwCHioJ/rbKNp59PrTTG6MWwB
+    skip_symbols: false
+    artifact: /.*\.nupkg/

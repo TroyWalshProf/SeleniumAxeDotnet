@@ -1,12 +1,9 @@
-﻿using javnov.Selenium.Axe.Properties;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Linq;
 
-namespace javnov.Selenium.Axe
+namespace Globant.Selenium.Axe
 {
     /// <summary>
     /// Fluent style builder for invoking aXe. Instantiate a new Builder and configure testing with the include(),

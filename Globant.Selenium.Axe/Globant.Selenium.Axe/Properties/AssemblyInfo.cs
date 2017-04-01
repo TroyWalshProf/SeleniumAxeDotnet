@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AxeCsharpSeleniumTest")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Globant.Selenium.Axe")]
+[assembly: AssemblyDescription("Tools for using aXe for web accessibility testing with C# and Selenium.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AxeCsharpSeleniumTest")]
+[assembly: AssemblyCompany("Globant")]
+[assembly: AssemblyProduct("Globant.Selenium.Axe")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("49c6e2a6-1cd6-44fb-942c-131dd96b1b14")]
+[assembly: Guid("e16c1098-53d9-4bec-8da3-10b67c33ec6a")]
 
 // Version information for an assembly consists of the following four values:
 //

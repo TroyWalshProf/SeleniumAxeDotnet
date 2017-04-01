@@ -1,15 +1,12 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using javnov.Selenium.Axe;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium;
 using FluentAssertions;
-using RazorEngine;
-using RazorEngine.Templating;
 
-namespace AxeCsharpSeleniumTest
+namespace Globant.Selenium.Axe.Test
 {
     [TestClass]
+    [Ignore]
     public class IntegrationTests
     {
         private IWebDriver _webDriver;

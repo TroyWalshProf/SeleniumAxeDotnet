@@ -6,8 +6,8 @@
     <ProjectGuid>{49C6E2A6-1CD6-44FB-942C-131DD96B1B14}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AxeCsharpSeleniumTest</RootNamespace>
-    <AssemblyName>AxeCsharpSeleniumTest</AssemblyName>
+    <RootNamespace>Globant.Selenium.Axe.Test</RootNamespace>
+    <AssemblyName>Globant.Selenium.Axe.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -47,16 +47,8 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.9.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\packages\RazorEngine.3.9.3\lib\net45\RazorEngine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebDriver, Version=2.53.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -77,13 +69,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="IntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\javnov.Selenium.Axe\javnov.Selenium.Axe.csproj">
+    <ProjectReference Include="..\Globant.Selenium.Axe\Globant.Selenium.Axe.csproj">
       <Project>{e16c1098-53d9-4bec-8da3-10b67c33ec6a}</Project>
-      <Name>javnov.Selenium.Axe</Name>
+      <Name>Globant.Selenium.Axe</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

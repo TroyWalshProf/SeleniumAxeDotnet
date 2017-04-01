@@ -1,12 +1,10 @@
-﻿using javnov.Selenium.Axe.Properties;
+﻿using Globant.Selenium.Axe.Properties;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace javnov.Selenium.Axe
+namespace Globant.Selenium.Axe
 {
     internal static class WebDriverInjectorExtensions
     {

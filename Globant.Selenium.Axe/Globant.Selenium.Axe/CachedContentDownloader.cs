@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 
-namespace javnov.Selenium.Axe
+namespace Globant.Selenium.Axe
 {
     /// <summary>
     /// Cache downloaded extenal resources

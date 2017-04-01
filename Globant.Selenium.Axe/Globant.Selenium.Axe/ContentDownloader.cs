@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace javnov.Selenium.Axe
+namespace Globant.Selenium.Axe
 {
     /// <summary>
     /// Get resources content from URLs

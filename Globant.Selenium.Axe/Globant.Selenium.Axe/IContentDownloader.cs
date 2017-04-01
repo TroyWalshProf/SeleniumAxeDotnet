@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace javnov.Selenium.Axe
+namespace Globant.Selenium.Axe
 {
     internal interface IContentDownloader
     {
