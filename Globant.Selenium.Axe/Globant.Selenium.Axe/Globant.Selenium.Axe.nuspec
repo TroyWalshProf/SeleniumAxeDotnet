@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
+    <id>Globant.Selenium.Axe</id>
     <version>$version$</version>
-    <title>$title$</title>
+    <title>aXe with Selenium</title>
     <authors>Globant jdmesalosada javnov</authors>
     <owners>Globant</owners>
     <projectUrl>https://github.com/javnov/axe-selenium-csharp</projectUrl>
