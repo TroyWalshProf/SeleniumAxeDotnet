@@ -10,8 +10,9 @@ build:
     verbosity: normal
     publish_wap: true
 
-artifacts:
-    - path: '**\*.nupkg' # find all NuGet packages recursively
+after_build:
+    - nuget pack Globant.Selenium.Axe\Globant.Selenium.Axe\Globant.Selenium.Axe.nuspec -Version %appveyor_build_version%
+    - appveyor PushArtifact Globant.Selenium.Axe.%appveyor_build_version%.nupkg
 
 #Push to nuget
 deploy:
