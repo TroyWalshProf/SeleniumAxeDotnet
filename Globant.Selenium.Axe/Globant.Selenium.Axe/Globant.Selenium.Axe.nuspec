@@ -16,5 +16,9 @@
 		<dependency id="Newtonsoft.Json" version="9.0.1" />
 		<dependency id="Selenium.WebDriver" version="2.53.0" />
     </dependencies>
+	
   </metadata>
+  <files>
+	<file src="bin\**\Globant.Selenium.Axe*.dll" target="lib" />
+  </files>
 </package>
