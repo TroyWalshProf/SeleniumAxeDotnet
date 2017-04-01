@@ -2,13 +2,15 @@ configuration: Release
 
 #restore NuGet
 before_build:
-    - nuget restore
-    
+    - nuget restore Globant.Selenium.Axe\Globant.Selenium.Axe.sln
+
+#build solution
 build:
     project: Globant.Selenium.Axe\Globant.Selenium.Axe.sln
     verbosity: normal
     publish_wap: true
-    
+
+#Push to nuget
 deploy:
     provider: NuGet
     api_key:
