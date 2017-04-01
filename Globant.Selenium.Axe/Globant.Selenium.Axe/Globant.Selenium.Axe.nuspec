@@ -4,7 +4,7 @@
     <id>Globant.Selenium.Axe</id>
     <version>$version$</version>
     <title>aXe with Selenium</title>
-    <authors>Globant jdmesalosada javnov</authors>
+    <authors>Globant,jdmesalosada,javnov</authors>
     <owners>Globant</owners>
     <projectUrl>https://github.com/javnov/axe-selenium-csharp</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -19,6 +19,6 @@
 	
   </metadata>
   <files>
-	<file src="bin\**\Globant.Selenium.Axe*.dll" target="lib" />
+	<file src="bin\**\Globant.Selenium.Axe*.dll" target="lib\net45" />
   </files>
 </package>
