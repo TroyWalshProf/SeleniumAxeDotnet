@@ -5,6 +5,7 @@ before_build:
     - nuget restore
     
 build:
+    project: Globant.Selenium.Axe\Globant.Selenium.Axe.sln
     verbosity: normal
     publish_wap: true
     
