@@ -61,7 +61,7 @@ namespace Globant.Selenium.Axe.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*! aXe v2.1.7
+        ///   Looks up a localized string similar to /*! aXe v2.0.5
         /// * Copyright (c) 2016 Deque Systems, Inc.
         /// *
         /// * Your use of this Source Code Form is subject to the terms of the Mozilla Public
@@ -72,7 +72,7 @@ namespace Globant.Selenium.Axe.Properties {
         /// * distribute or in any file that contains substantial portions of this source
         /// * code.
         /// */
-        ///!function a(window){function b(a){&quot;use strict&quot;;var b;return a?(b=axe [rest of string was truncated]&quot;;.
+        ///!function a(window){function b(a){&quot;use strict&quot;;var b=a||{};return b. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string axe_min {
             get {
