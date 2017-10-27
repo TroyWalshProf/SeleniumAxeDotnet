@@ -7,7 +7,6 @@ using System;
 namespace Globant.Selenium.Axe.Test
 {
     [TestClass]
-    //[Ignore]
     public class IntegrationTests
     {
         private IWebDriver _webDriver;
@@ -29,6 +28,7 @@ namespace Globant.Selenium.Axe.Test
         }
 
         [TestMethod]
+        [TestCategory("Integration")]
         public void TestAnalyzeTarget()
         {
             _webDriver.Navigate().GoToUrl(TargetTestUrl);

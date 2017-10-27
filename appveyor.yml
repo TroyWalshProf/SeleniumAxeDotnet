@@ -14,6 +14,13 @@ after_build:
     - nuget pack Globant.Selenium.Axe\Globant.Selenium.Axe\Globant.Selenium.Axe.nuspec -Version %appveyor_build_version%
     - appveyor PushArtifact Globant.Selenium.Axe.%appveyor_build_version%.nupkg
 
+#tests
+test:
+  # all except categories to test
+  categories:
+    except:
+      - Integration
+    
 #Push to nuget
 deploy:
     provider: NuGet
