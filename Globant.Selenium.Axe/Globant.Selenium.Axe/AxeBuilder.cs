@@ -14,47 +14,33 @@ namespace Globant.Selenium.Axe
         private readonly IWebDriver _webDriver;
         private readonly IncludeExcludeManager _includeExcludeManager = new IncludeExcludeManager();
 
+        private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions {ScriptProvider = new EmbeddedResourceAxeProvider()};
+
     	 public string Options { get; set; } = "null";
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
-        public AxeBuilder(IWebDriver webDriver)
+        public AxeBuilder(IWebDriver webDriver): this(webDriver, DefaultOptions)
         {
-            if (webDriver == null)
-                throw new ArgumentNullException(nameof(webDriver));
-
-            _webDriver = webDriver;
-            _webDriver.Inject();
         }
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
-        /// <param name="axeScriptUrl">aXe script URL</param>
-        public AxeBuilder(IWebDriver webDriver, Uri axeScriptUrl) : this(webDriver, axeScriptUrl, new WebClient()) { }
-
-        /// <summary>
-        /// Initialize an instance of <see cref="AxeBuilder"/>
-        /// </summary>
-        /// <param name="webDriver">Selenium driver to use</param>
-        /// <param name="axeScriptUrl">aXe script URL</param>
-        /// <param name="webClient">Webclient to use to get aXe script's content</param>
-        public AxeBuilder(IWebDriver webDriver, Uri axeScriptUrl, WebClient webClient)
+        /// <param name="options">Builder options</param>
+        public AxeBuilder(IWebDriver webDriver, AxeBuilderOptions options)
         {
             if (webDriver == null)
                 throw new ArgumentNullException(nameof(webDriver));
 
-            if (axeScriptUrl == null)
-                throw new ArgumentNullException(nameof(axeScriptUrl));
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
 
-            if (webClient == null)
-                throw new ArgumentNullException(nameof(webClient));
-
-            var contentDownloader = new CachedContentDownloader(webClient);
-            _webDriver.Inject(axeScriptUrl, contentDownloader);
+            _webDriver = webDriver;
+            _webDriver.Inject(options.ScriptProvider);
         }
 
         /// <summary>
@@ -64,7 +50,6 @@ namespace Globant.Selenium.Axe
         /// <param name="args"></param>
         private AxeResult Execute(string command, params object[] args)
         {
-            _webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromSeconds(30));
             object response = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
             var jObject = JObject.FromObject(response);
 

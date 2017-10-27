@@ -2,24 +2,26 @@
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium;
 using FluentAssertions;
+using System;
 
 namespace Globant.Selenium.Axe.Test
 {
     [TestClass]
-    [Ignore]
+    //[Ignore]
     public class IntegrationTests
     {
         private IWebDriver _webDriver;
-        private const string targetTestUrl = "https://www.facebook.com/";
+        private const string TargetTestUrl = "https://www.facebook.com/";
 
         [TestInitialize]
         public void Initialize()
         {
             _webDriver = new FirefoxDriver();
+            _webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromMinutes(3));
             _webDriver.Manage().Window.Maximize();
         }
 
-        [TestCleanup()]
+        [TestCleanup]
         public virtual void TearDown()
         {
             _webDriver.Quit();
@@ -29,9 +31,8 @@ namespace Globant.Selenium.Axe.Test
         [TestMethod]
         public void TestAnalyzeTarget()
         {
-            _webDriver.Navigate().GoToUrl(targetTestUrl);
-            AxeBuilder axeBuilder = new AxeBuilder(_webDriver);
-            var results = axeBuilder.Analyze();
+            _webDriver.Navigate().GoToUrl(TargetTestUrl);
+            AxeResult results = _webDriver.Analyze();
             results.Should().NotBeNull(nameof(results));
         }
 

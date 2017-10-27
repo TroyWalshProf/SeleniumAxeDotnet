@@ -9,36 +9,20 @@ namespace Globant.Selenium.Axe
     internal static class WebDriverInjectorExtensions
     {
         /// <summary>
-        /// Recursively injects aXe into all iframes and the top level document, using the embeded axe script
-        /// </summary>
-        /// <param name="driver">WebDriver instance to inject into</param>
-        internal static void Inject(this IWebDriver driver)
-        {
-            Inject(driver, Resources.axe_min);
-        }
-
-        /// <summary>
-        /// Recursively injects aXe into all iframes and the top level document.
-        /// </summary>
-        /// <param name="driver">WebDriver instance to inject into</param>
-        /// <param name="resourceUrl">Script resource Url.</param>
-        internal static void Inject(this IWebDriver driver, Uri resourceUrl, IContentDownloader contentDownloader)
-        {
-            string script = contentDownloader.GetContent(resourceUrl);
-            Inject(driver, script);
-        }
-
-        /// <summary>
         /// Injects Axe script into frames.
         /// </summary>
         /// <param name="driver">WebDriver instance to inject into</param>
-        /// <param name="script">Script to inject.</param>
-        private static void Inject(IWebDriver driver, string script)
+        /// <param name="scriptProvider">Provider that get the aXe script to inject.</param>
+        internal static void Inject(this IWebDriver driver, IAxeScriptProvider scriptProvider)
         {
+            if (scriptProvider == null)
+                throw new ArgumentNullException(nameof(scriptProvider));
 
+            string script = scriptProvider.GetScript();
             IList<IWebElement> parents = new List<IWebElement>();
-            InjectIntoFrames(driver, script, parents);
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+            InjectIntoFrames(driver, script, parents);
             driver.SwitchTo().DefaultContent();
             js.ExecuteScript(script);
         }

@@ -51,10 +51,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AxeBuilder.cs" />
+    <Compile Include="AxeBuilderOptions.cs" />
     <Compile Include="AxeResult.cs" />
     <Compile Include="AxeResultItem.cs" />
     <Compile Include="CachedContentDownloader.cs" />
     <Compile Include="ContentDownloader.cs" />
+    <Compile Include="EmbeddedResourceAxeProvider.cs" />
+    <Compile Include="ExternalAxeScriptProvider.cs" />
+    <Compile Include="FileAxeScriptProvider.cs" />
+    <Compile Include="IAxeScriptProvider.cs" />
     <Compile Include="IContentDownloader.cs" />
     <Compile Include="IncludeExcludeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
