@@ -23,8 +23,8 @@ IWebDriver webDriver = new FirefoxDriver();
 AxeResult results = webDriver.Analyze();
 ```
 
-##Documentation
+## Documentation
 Work in progress!!
 
-##Thanks
+## Thanks
 Specially thanks to @jdmesalosada to make this happen and to always improve our jobs.
