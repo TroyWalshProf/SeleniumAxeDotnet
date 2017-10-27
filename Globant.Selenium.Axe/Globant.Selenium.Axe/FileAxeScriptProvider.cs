@@ -11,7 +11,7 @@ namespace Globant.Selenium.Axe
     {
         private readonly string _filePath;
 
-        internal FileAxeScriptProvider(string filePath)
+        public FileAxeScriptProvider(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 throw new ArgumentNullException(nameof(filePath));

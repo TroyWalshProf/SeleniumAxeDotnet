@@ -52,17 +52,7 @@ namespace Globant.Selenium.Axe
         {
             object response = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
             var jObject = JObject.FromObject(response);
-
-            if (jObject.SelectToken("violations") == null)
-                throw new InvalidOperationException("The response from browser is not valid.");
-
-            if (jObject.SelectToken("passes") == null)
-                throw new InvalidOperationException("The response from browser is not valid.");
-
-            JToken violationsToken = jObject.SelectToken("violations");
-            JToken passesToken = jObject.SelectToken("passes");
-
-            return new AxeResult(violationsToken, passesToken);   
+            return new AxeResult(jObject);   
         }
 
         /// <summary>

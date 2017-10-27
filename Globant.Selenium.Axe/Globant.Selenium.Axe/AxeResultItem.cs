@@ -9,7 +9,7 @@ namespace Globant.Selenium.Axe
         public string Help { get; set; }
         public string HelpUrl { get; set; }
         public string Impact { get; set; }
-        public List<string> Tags { get; set; }
-        public List<AxeResultNode> Nodes { get; set; }
+        public string[] Tags { get; set; }
+        public AxeResultNode[] Nodes { get; set; }
     }
 }

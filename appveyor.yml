@@ -28,3 +28,7 @@ deploy:
         secure: wO5eiWkOc3xv1qM1mChKx6weYq9h795U6u5NJg6kqwdSgsXZVCXjQJk6G05MuPKC
     skip_symbols: false
     artifact: /.*\.nupkg/
+    
+only_commits:
+  files:
+    - Globant.Selenium.Axe/

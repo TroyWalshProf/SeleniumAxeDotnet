@@ -12,8 +12,7 @@ namespace Globant.Selenium.Axe
     /// </summary>
     public class IncludeExcludeManager
     {
-        private static readonly object syncObject = new object();
-        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
@@ -83,7 +82,7 @@ namespace Globant.Selenium.Axe
         /// <returns>This instance serialized in JSON format</returns>
         public string ToJson()
         {
-            return JsonConvert.SerializeObject(this, jsonSerializerSettings);
+            return JsonConvert.SerializeObject(this, JsonSerializerSettings);
         }
 
         private static void ValidateParameters(string[] selectors)
