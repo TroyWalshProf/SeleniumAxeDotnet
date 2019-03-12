@@ -1,11 +1,10 @@
 configuration: Release
 image: Visual Studio 2017
-version: %appveyor_build_version%
 
 #restore NuGet
 before_build:
     - nuget restore Globant.Selenium.Axe\Globant.Selenium.Axe.sln
-    - appveyor UpdateBuild -Version {version}
+    - appveyor UpdateBuild -Version %appveyor_build_version%
 
 #build solution
 build:
