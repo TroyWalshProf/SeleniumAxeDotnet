@@ -9,9 +9,8 @@ build:
     project: Globant.Selenium.Axe\Globant.Selenium.Axe.sln
     verbosity: normal
     publish_wap: true
-    version: '%appveyor_build_version%'
-    assembly_version: '{version}'
-    assembly_file_version: '{version}'
+    assembly_version: '%appveyor_build_version%'
+    assembly_file_version: '%appveyor_build_version%'
 
 
 
