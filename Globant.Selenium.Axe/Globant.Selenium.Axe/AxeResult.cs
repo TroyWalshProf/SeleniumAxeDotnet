@@ -1,6 +1,5 @@
-﻿using System;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace Globant.Selenium.Axe
 {

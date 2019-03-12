@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
-using System.Net;
 
 namespace Globant.Selenium.Axe
 {

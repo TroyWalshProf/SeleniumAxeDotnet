@@ -98,10 +98,8 @@
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.72.0.3626.69\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.72.0.3626.69\build\Selenium.WebDriver.ChromeDriver.targets'))" />
   </Target>
   <Import Project="..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets')" />
-  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.72.0.3626.69\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.72.0.3626.69\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <PropertyGroup>
     <PostBuildEvent>FOR /F "tokens=*" %25%25m in ('dir /s /b /a "$(SolutionDir)packages\chromedriver.exe"') do copy /Y "%25%25m" "$(TargetDir)"
-FOR /F "tokens=*" %25%25m in ('dir /s /b /a "$(SolutionDir)packages\geckodriver.exe"') do copy /Y "%25%25m" "$(TargetDir)"
-FOR /F "tokens=*" %25%25m in ('dir /s /b /a "$(SolutionDir)packages\MicrosoftWebDriver.exe"') do copy /Y "%25%25m" "$(TargetDir)"</PostBuildEvent>
+FOR /F "tokens=*" %25%25m in ('dir /s /b /a "$(SolutionDir)packages\geckodriver.exe"') do copy /Y "%25%25m" "$(TargetDir)""</PostBuildEvent>
   </PropertyGroup>
 </Project>
