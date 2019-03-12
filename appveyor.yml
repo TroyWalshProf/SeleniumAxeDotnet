@@ -1,18 +1,17 @@
 configuration: Release
 image: Visual Studio 2017
+version: '%appveyor_build_version%'
+
 #restore NuGet
 before_build:
     - nuget restore Globant.Selenium.Axe\Globant.Selenium.Axe.sln
+    - appveyor UpdateBuild -Version {version}
 
 #build solution
 build:
     project: Globant.Selenium.Axe\Globant.Selenium.Axe.sln
     verbosity: normal
     publish_wap: true
-    assembly_version: '%appveyor_build_version%'
-    assembly_file_version: '%appveyor_build_version%'
-
-
 
 after_build:
     - appveyor PushArtifact Globant.Selenium.Axe.%appveyor_build_version%.nupkg
