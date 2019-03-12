@@ -1,7 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium.Firefox;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
-using FluentAssertions;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using System;
 
 namespace Globant.Selenium.Axe.Test
@@ -12,14 +13,6 @@ namespace Globant.Selenium.Axe.Test
         private IWebDriver _webDriver;
         private const string TargetTestUrl = "https://www.facebook.com/";
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            _webDriver = new FirefoxDriver();
-            _webDriver.Manage().Timeouts().SetScriptTimeout(TimeSpan.FromMinutes(3));
-            _webDriver.Manage().Window.Maximize();
-        }
-
         [TestCleanup]
         public virtual void TearDown()
         {
@@ -29,12 +22,35 @@ namespace Globant.Selenium.Axe.Test
 
         [TestMethod]
         [TestCategory("Integration")]
-        public void TestAnalyzeTarget()
+        [DataRow("Chrome")]
+        [DataRow("Firefox")]
+        public void TestAnalyzeTarget(string browser)
         {
+            this.InitDriver(browser);
             _webDriver.Navigate().GoToUrl(TargetTestUrl);
             AxeResult results = _webDriver.Analyze();
             results.Should().NotBeNull(nameof(results));
         }
 
+        private void InitDriver(string browser)
+        {
+            switch (browser.ToUpper())
+            {
+                case "CHROME":
+                    _webDriver = new ChromeDriver();
+                    break;
+
+                case "FIREFOX":
+                    _webDriver = new FirefoxDriver();
+                    break;
+
+                default:
+                    throw new ArgumentException($"Remote browser type '{browser}' is not supported");
+
+            }
+
+            _webDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromMinutes(3);
+            _webDriver.Manage().Window.Maximize();
+        }
     }
 }
