@@ -9,9 +9,13 @@ build:
     project: Globant.Selenium.Axe\Globant.Selenium.Axe.sln
     verbosity: normal
     publish_wap: true
+    version: '%appveyor_build_version%'
+    assembly_version: '{version}'
+    assembly_file_version: '{version}'
+
+
 
 after_build:
-    - nuget pack Globant.Selenium.Axe\Globant.Selenium.Axe\Globant.Selenium.Axe.nuspec -Version %appveyor_build_version%
     - appveyor PushArtifact Globant.Selenium.Axe.%appveyor_build_version%.nupkg
 
 #tests
