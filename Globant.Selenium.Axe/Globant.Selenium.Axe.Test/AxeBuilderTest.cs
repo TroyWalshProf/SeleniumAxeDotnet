@@ -53,12 +53,15 @@ namespace Globant.Selenium.Axe.Test
                 .Setup(js => js.ExecuteAsyncScript(It.IsAny<string>(), It.IsAny<object[]>()))
                 .Returns(new
                 {
-                    violations = new object[] { },
-                    passes = new object[] { },
-                    inapplicable = new object[] { },
-                    incomplete = new object[] { },
-                    timestamp = DateTimeOffset.Now,
-                    url = "www.test.com",
+                    results = new
+                    {
+                        violations = new object[] { },
+                        passes = new object[] { },
+                        inapplicable = new object[] { },
+                        incomplete = new object[] { },
+                        timestamp = DateTimeOffset.Now,
+                        url = "www.test.com",
+                    }
                 });
 
             var builder = new AxeBuilder(driver.Object);
