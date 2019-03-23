@@ -1,7 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+﻿<Project Sdk="Microsoft.NET.Sdk">  <PropertyGroup>    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <Authors>Globant,jdmesalosada,javnov</Authors>
     <Description>Tools for using aXe for web accessibility testing with C# and Selenium</Description>
     <PackageProjectUrl>https://github.com/javnov/axe-selenium-csharp</PackageProjectUrl>

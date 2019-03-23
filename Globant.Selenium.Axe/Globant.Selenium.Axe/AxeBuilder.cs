@@ -15,7 +15,7 @@ namespace Globant.Selenium.Axe
 
         private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions {ScriptProvider = new EmbeddedResourceAxeProvider()};
 
-    	 public string Options { get; set; } = "null";
+    	 public string Options { get; set; } = "{}";
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
@@ -84,7 +84,8 @@ namespace Globant.Selenium.Axe
         /// <returns>An aXe results document</returns>
         public AxeResult Analyze(IWebElement context)
         {
-            string command = string.Format("axe.a11yCheck(arguments[0], {0}, arguments[arguments.length - 1]);", Options);
+            //string command = string.Format("axe.a11yCheck(arguments[0], {0}, arguments[arguments.length - 1]);", Options);
+            string command = getAxeSnippet("arguments[0]");
             return Execute(command, context);
         }
 
@@ -94,23 +95,52 @@ namespace Globant.Selenium.Axe
         /// <returns>An aXe results document</returns>
         public AxeResult Analyze()
         {
-            string command;
+            string axeContext;
 
             if (_includeExcludeManager.HasMoreThanOneSelectorsToIncludeOrSomeToExclude())
             {
-                command = $"axe.a11yCheck({_includeExcludeManager.ToJson()}, {Options}, arguments[arguments.length - 1]);";
+                axeContext = $"{ _includeExcludeManager.ToJson()}";
+                //command =    $"axe.a11yCheck({ _includeExcludeManager.ToJson()}, {Options}, arguments[arguments.length - 1]);";
             }
             else if (_includeExcludeManager.HasOneItemToInclude())
             {
                 string itemToInclude = _includeExcludeManager.GetFirstItemToInclude().Replace("'", "");
-                command = $"axe.a11yCheck('{itemToInclude}', {Options}, arguments[arguments.length - 1]);";
+                axeContext = $"{itemToInclude}";
+                //command = $"axe.a11yCheck('{itemToInclude}', {Options}, arguments[arguments.length - 1]);";
             }
             else
             {
-                command = $"axe.a11yCheck(document, {Options}, arguments[arguments.length - 1]);";
+                axeContext = "document";
+                //command = $"axe.a11yCheck(document, {Options}, arguments[arguments.length - 1]);";
             }
 
+            string command = getAxeSnippet(axeContext);
+
             return Execute(command);
+        }
+
+        ///<summary>
+        /// Create the axe javascript code to be executed
+        ///</summary>
+        ///
+        /// <param name="context"> HTML content to run "document", "included items", "includeExcludeManager"<param/>
+        private String getAxeSnippet(String context)
+        {
+            return String.Format(
+                "var callback = arguments[arguments.length - 1];" +
+                "var context = {0};" +
+                "var options = {1};" +
+                "var result = {{ error: '', results: null }};" +
+                "axe.run(context, options, function (err, res) {{" +
+                "  if (err) {{" +
+                "    result.error = err.message;" +
+                "  }} else {{" +
+                "    result.results = res;" +
+                "  }}" +
+                "  callback(result);" +
+                "}});",
+                context, $"{Options}"
+                );
         }
     }
 }
