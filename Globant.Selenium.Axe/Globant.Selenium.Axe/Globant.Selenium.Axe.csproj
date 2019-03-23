@@ -1,15 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">  <PropertyGroup>    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <Authors>Globant,jdmesalosada,javnov</Authors>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
+    <Authors>Globant,jdmesalosada,javnov,TroyWalshProf</Authors>
     <Description>Tools for using aXe for web accessibility testing with C# and Selenium</Description>
-    <PackageProjectUrl>https://github.com/javnov/axe-selenium-csharp</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/javnov/axe-selenium-csharp</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright 2019</Copyright>
     <Company>Globant</Company>
-    <PackageTags>Globant selenium axe ada webdriver</PackageTags>
+    <PackageTags>selenium axe ada webdriver</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <AssemblyVersion>0.0.0.1</AssemblyVersion>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Version>$(AssemblyVersion)</Version>
   </PropertyGroup>
 

@@ -13,7 +13,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-
+  buidNumber: 0.1.0$(Rev:.r)
+  
 steps:
 - task: NuGetToolInstaller@0
 
@@ -26,6 +27,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    msbuildArgs: '/p:AssemblyVersion='$(buidNumber)'
 
 - task: VSTest@2
   inputs:
