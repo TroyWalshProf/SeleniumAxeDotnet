@@ -18,8 +18,8 @@ namespace Globant.Selenium.Axe.Test
         [TestCleanup]
         public virtual void TearDown()
         {
-            _webDriver.Quit();
-            _webDriver.Dispose();
+            _webDriver?.Quit();
+            _webDriver?.Dispose();
         }
 
         [TestMethod]
