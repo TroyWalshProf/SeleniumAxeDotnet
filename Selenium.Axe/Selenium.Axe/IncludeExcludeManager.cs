@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     /// <summary>
     /// Handle all initialization, serialization and validations for includeExclude aXe object.

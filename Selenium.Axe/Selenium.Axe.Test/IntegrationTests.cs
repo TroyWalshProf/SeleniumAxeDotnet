@@ -6,7 +6,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using System;
 
-namespace Globant.Selenium.Axe.Test
+namespace Selenium.Axe.Test
 {
     [TestClass]
     public class IntegrationTests

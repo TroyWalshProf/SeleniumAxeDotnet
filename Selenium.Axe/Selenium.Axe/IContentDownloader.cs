@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     internal interface IContentDownloader
     {

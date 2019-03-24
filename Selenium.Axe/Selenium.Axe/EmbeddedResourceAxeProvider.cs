@@ -1,6 +1,6 @@
-﻿using Globant.Selenium.Axe.Properties;
+﻿using Selenium.Axe.Properties;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     internal class EmbeddedResourceAxeProvider : IAxeScriptProvider
     {

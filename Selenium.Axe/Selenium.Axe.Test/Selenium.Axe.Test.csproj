@@ -8,8 +8,8 @@
     <ProjectGuid>{7D5DB0A8-263E-40D4-90C8-B86BA672C783}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Globant.Selenium.Axe.Test</RootNamespace>
-    <AssemblyName>Globant.Selenium.Axe.Test</AssemblyName>
+    <RootNamespace>Selenium.Axe.Test</RootNamespace>
+    <AssemblyName>Selenium.Axe.Test</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -82,9 +82,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Globant.Selenium.Axe\Globant.Selenium.Axe.csproj">
-      <Project>{e4f6bb08-3fe5-45d2-a699-fec071cadde5}</Project>
-      <Name>Globant.Selenium.Axe</Name>
+    <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj">
+      <Project>{e4f6bb08-3fe5-45d2-a699-fec071cadde6}</Project>
+      <Name>Selenium.Axe</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

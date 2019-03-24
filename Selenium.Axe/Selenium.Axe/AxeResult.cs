@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     public class AxeResult
     {

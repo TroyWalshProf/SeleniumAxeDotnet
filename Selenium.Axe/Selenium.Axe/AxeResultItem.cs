@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     public class AxeResultItem
     {

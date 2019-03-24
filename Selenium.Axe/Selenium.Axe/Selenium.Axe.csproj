@@ -7,7 +7,6 @@
     <RepositoryUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright 2019</Copyright>
-    <Company>Globant</Company>
     <PackageTags>selenium axe ada webdriver</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>

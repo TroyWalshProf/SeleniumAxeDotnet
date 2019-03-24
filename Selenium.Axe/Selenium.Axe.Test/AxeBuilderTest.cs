@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Globant.Selenium.Axe.Test
+namespace Selenium.Axe.Test
 {
     [TestClass]
     public class AxeBuilderTest

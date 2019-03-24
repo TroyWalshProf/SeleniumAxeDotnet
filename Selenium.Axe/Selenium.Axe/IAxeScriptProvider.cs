@@ -1,4 +1,4 @@
-﻿namespace Globant.Selenium.Axe
+﻿namespace Selenium.Axe
 {
     public interface IAxeScriptProvider
     {

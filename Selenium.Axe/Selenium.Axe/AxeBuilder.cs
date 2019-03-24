@@ -2,7 +2,7 @@
 using OpenQA.Selenium;
 using System;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     /// <summary>
     /// Fluent style builder for invoking aXe. Instantiate a new Builder and configure testing with the include(),

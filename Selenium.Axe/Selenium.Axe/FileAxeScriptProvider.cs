@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Globant.Selenium.Axe
+namespace Selenium.Axe
 {
     public class FileAxeScriptProvider : IAxeScriptProvider
     {
