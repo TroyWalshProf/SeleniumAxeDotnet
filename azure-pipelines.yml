@@ -13,7 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  buidNumber: '0.1.0$(Rev:.r)'
+  buidNumber: '1.0.0.0'
   
 steps:
 - task: NuGetToolInstaller@0
