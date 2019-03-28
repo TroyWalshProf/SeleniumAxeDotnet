@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_apis/build/status/TroyWalshProf.axe-selenium-csharp?branchName=master)](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_build/latest?definitionId=1&branchName=master)
+
 # axe-selenium-csharp
 Tools for using aXe for web accessibility testing with C# and Selenium. 
 Inspired on [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java)
@@ -24,4 +26,5 @@ AxeResult results = webDriver.Analyze();
 ```
 
 ## Documentation
+*Current build only offically supports Chrome  
 Work in progress!!
