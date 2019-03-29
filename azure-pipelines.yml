@@ -7,13 +7,17 @@ trigger:
 - master
 
 pool:
-  vmImage: 'VS2017-Win2016'
+  name: Hosted Windows 2019 with VS2019
+  demands:
+  - msbuild
+  - visualstudio
+  - vstest
 
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  buidNumber: '1.0.0.0'
+  buidNumber: '1.0.1.0'
   
 steps:
 - task: NuGetToolInstaller@0
