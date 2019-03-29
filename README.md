@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_apis/build/status/TroyWalshProf.axe-selenium-csharp?branchName=master)](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_apis/build/status/SeleniumAxeDotnet?branchName=master)](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_build/latest?definitionId=4&branchName=master)
 
 # axe-selenium-csharp
 Tools for using aXe for web accessibility testing with C# and Selenium. 
