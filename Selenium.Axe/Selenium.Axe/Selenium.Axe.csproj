@@ -25,5 +25,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\axe.min.js" />
+    <EmbeddedResource Include="Resources\scan.js" />
   </ItemGroup>
 </Project>

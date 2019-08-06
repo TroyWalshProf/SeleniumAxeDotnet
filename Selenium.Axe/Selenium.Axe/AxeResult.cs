@@ -14,6 +14,8 @@ namespace Selenium.Axe
 
         public string Error { get; private set; }
 
+        public AxeRunOptions ToolOptions { get; private set; }
+
         public AxeResult(JObject result)
         {
             JToken results = result.SelectToken("results");
@@ -23,6 +25,7 @@ namespace Selenium.Axe
             JToken incompleteToken = results.SelectToken("incomplete");
             JToken timestampToken = results.SelectToken("timestamp");
             JToken urlToken = results.SelectToken("url");
+            JToken toolOptions = results.SelectToken("toolOptions");
             JToken error = result.SelectToken("error");
 
             Violations = violationsToken?.ToObject<AxeResultItem[]>();
@@ -32,6 +35,7 @@ namespace Selenium.Axe
             Timestamp = timestampToken?.ToObject<DateTimeOffset>();
             Url = urlToken?.ToObject<string>();
             Error = error?.ToObject<string>();
+            ToolOptions = toolOptions?.ToObject<AxeRunOptions>();
         }
     }
 }
