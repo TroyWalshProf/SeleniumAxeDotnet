@@ -1,4 +1,4 @@
-name: ci_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:_r)
+name: ci-$(Date:yyyyMMdd)$(Rev:-r)
 
 pool:
   vmImage: windows-2019
@@ -7,7 +7,6 @@ variables:
   versionSuffix: $(Build.BuildNumber)
   buildConfiguration: 'Release'
   solutionDirectory: '$(System.DefaultWorkingDirectory)/Selenium.Axe'
-  
   outputDirectory: '$(solutionDirectory)/Selenium.Axe/bin/$(buildConfiguration)'
 
 steps:
