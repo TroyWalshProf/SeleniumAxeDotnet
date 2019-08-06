@@ -47,18 +47,17 @@ namespace Selenium.Axe.Test
 
             jsExecutor
                 .Setup(js => js.ExecuteAsyncScript(It.IsAny<string>(), It.IsAny<object[]>()))
-                .Returns(new
+                .Returns(@"
                 {
-                    results = new
-                    {
-                        violations = new object[] { },
-                        passes = new object[] { },
-                        inapplicable = new object[] { },
-                        incomplete = new object[] { },
-                        timestamp = DateTimeOffset.Now,
-                        url = "www.test.com",
+                    results: {
+                        violations: [],
+                        passes: [],
+                        inapplicable: [],
+                        incomplete: [],
+                        timestamp: ""2019-04-11T00:59:07.749Z"",
+                        url: ""https://www.test.com""
                     }
-                });
+                }");
 
             var builder = new AxeBuilder(driver.Object);
             var result = builder.Analyze();

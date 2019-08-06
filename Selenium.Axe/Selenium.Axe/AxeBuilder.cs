@@ -15,7 +15,7 @@ namespace Selenium.Axe
 
         private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions {ScriptProvider = new EmbeddedResourceAxeProvider()};
 
-    	 public string Options { get; set; } = "{}";
+        public string Options { get; set; } = "{}";
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
@@ -49,8 +49,8 @@ namespace Selenium.Axe
         /// <param name="args"></param>
         private AxeResult Execute(string command, params object[] args)
         {
-            object response = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
-            var jObject = JObject.FromObject(response);
+            string stringifiedResult = (string) ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
+            var jObject = JObject.Parse(stringifiedResult);
             return new AxeResult(jObject);   
         }
 
@@ -124,23 +124,18 @@ namespace Selenium.Axe
         ///</summary>
         ///
         /// <param name="context"> HTML content to run "document", "included items", "includeExcludeManager"<param/>
-        private String getAxeSnippet(String context)
-        {
-            return String.Format(
-                "var callback = arguments[arguments.length - 1];" +
-                "var context = {0};" +
-                "var options = {1};" +
-                "var result = {{ error: '', results: null }};" +
-                "axe.run(context, options, function (err, res) {{" +
-                "  if (err) {{" +
-                "    result.error = err.message;" +
-                "  }} else {{" +
-                "    result.results = res;" +
-                "  }}" +
-                "  callback(result);" +
-                "}});",
-                context, $"{Options}"
-                );
-        }
+        private String getAxeSnippet(String context) => $@"
+            var callback = arguments[arguments.length - 1];
+            var context = {context};
+            var options = {Options};
+            var result = {{ error: '', results: null }};
+            axe.run(context, options, function (err, res) {{
+                if (err) {{
+                    result.error = err.message;
+                }} else {{
+                    result.results = res;
+                }}
+                callback(JSON.stringify(result));
+            }});";
     }
 }
