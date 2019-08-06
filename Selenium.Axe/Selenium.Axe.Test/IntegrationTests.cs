@@ -45,6 +45,7 @@ namespace Selenium.Axe.Test
             switch (browser.ToUpper())
             {
                 case "CHROME":
+                    var chromeDriverDirectory = Environment.GetEnvironmentVariable("ChromeWebDriver") ?? Environment.CurrentDirectory;
                     ChromeOptions options = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
@@ -53,14 +54,15 @@ namespace Selenium.Axe.Test
                     options.AddArgument("--log-level=3");
                     options.AddArgument("--silent");
 
-                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(Environment.CurrentDirectory);
+                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
                     service.SuppressInitialDiagnosticInformation = true;
-                    _webDriver = new ChromeDriver(Environment.CurrentDirectory, options);
+                    _webDriver = new ChromeDriver(chromeDriverDirectory, options);
                     
                     break;
 
                 case "FIREFOX":
-                    _webDriver = new FirefoxDriver(Environment.CurrentDirectory);
+                    var geckoDriverDirectory = Environment.GetEnvironmentVariable("GeckoWebDriver") ?? Environment.CurrentDirectory;
+                    _webDriver = new FirefoxDriver(geckoDriverDirectory);
                     break;
 
                 default:
