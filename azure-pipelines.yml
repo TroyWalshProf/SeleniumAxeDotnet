@@ -1,60 +1,35 @@
-# .NET Desktop
-# Build and run tests for .NET Desktop or Windows classic desktop solutions.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
-
-trigger:
-- master
+name: ci_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:_r)
 
 pool:
-  name: Hosted Windows 2019 with VS2019
-  demands:
-  - msbuild
-  - visualstudio
-  - vstest
+  vmImage: windows-2019
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
+  versionSuffix: ${{ $(Build.BuildNumber) }}
   buildConfiguration: 'Release'
-  buidNumber: '1.0.1.0'
+  solutionDirectory: '$(System.DefaultWorkingDirectory)/Selenium.Axe'
   
+  outputDirectory: '$(solutionDirectory)/Selenium.Axe/bin/$(buildConfiguration)'
+
 steps:
-- task: NuGetToolInstaller@0
+- script: dotnet restore
+  displayName: dotnet restore
+  workingDirectory: $(solutionDirectory)
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+- script: dotnet build --no-restore -c $(buildConfiguration) --version-suffix $(versionSuffix)
+  displayName: dotnet build
+  workingDirectory: $(solutionDirectory)
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:AssemblyVersion=$(buidNumber)'
+- script: dotnet test --no-restore
+  displayName: dotnet test
+  workingDirectory: $(solutionDirectory)
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    
 - task: PublishSymbols@2
-  displayName: 'Publish symbols path'
+  displayName: 'publish symbols'
   inputs:
-    SearchPattern: '**\bin\**\*.pdb'
+    SearchPattern: '$(outputDirectory)/**/*.pdb'
     PublishSymbols: false
   continueOnError: true
 
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)'
-    Contents: '**\bin\$(BuildConfiguration)\**'
-    TargetFolder: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
+- publish: $(outputDirectory)
+  name: drop
+  displayName: publish drop
