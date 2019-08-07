@@ -2,7 +2,7 @@
 
 # Selenium.Axe
 
-Automate web accessibility testing with .NET, C#, and Selenium. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework. wrapper Tools for using aXe for web accessibility testing with C# and Selenium.
+Automated web accessibility testing with .NET, C#, and Selenium. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
 Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) and [axe-webdriverjs](https://github.com/dequelabs/axe-webdriverjs).
 Forked from [Globant.Selenium.Axe](https://github.com/javnov/axe-selenium-csharp).
