@@ -22,14 +22,15 @@ steps:
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
-- script: dotnet test --no-restore -l:trx;LogFileName=$(System.DefaultWorkingDirectory)/dotnet-test-results.xml
+- script: dotnet test --no-restore --logger:trx
   displayName: dotnet test
   workingDirectory: $(solutionDirectory)
 
 - task: PublishTestResults@2
   displayName: publish test results
   inputs:
-      testResultsFiles: $(System.DefaultWorkingDirectory)/dotnet-test-results.xml
+      testResultsFiles: '**/TestResults/*.trx'
+      searchFolder: $(solutionDirectory)
       testRunTitle: dotnet test
   condition: succeededOrFailed()
 
