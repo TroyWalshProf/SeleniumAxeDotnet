@@ -30,6 +30,7 @@ steps:
   displayName: publish test results
   inputs:
       testResultsFiles: '**/TestResults/*.trx'
+      testResultsFormat: VSTest
       searchFolder: $(solutionDirectory)
       testRunTitle: dotnet test
   condition: succeededOrFailed()
