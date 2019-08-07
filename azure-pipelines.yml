@@ -10,6 +10,10 @@ variables:
   outputDirectory: '$(solutionDirectory)/Selenium.Axe/bin/$(buildConfiguration)'
 
 steps:
+- task: DotNetCoreInstaller@1
+  inputs:
+    version: '2.2.401'
+
 - script: dotnet restore
   displayName: dotnet restore
   workingDirectory: $(solutionDirectory)
@@ -18,17 +22,17 @@ steps:
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
-- script: dotnet test --no-restore
+- script: dotnet test --no-restore -l:trx;LogFileName=$(System.DefaultWorkingDirectory)/dotnet-test-results.xml
   displayName: dotnet test
   workingDirectory: $(solutionDirectory)
 
-- task: PublishSymbols@2
-  displayName: 'publish symbols'
+- task: PublishTestResults@2
+  displayName: publish test results
   inputs:
-    SearchPattern: '$(outputDirectory)/**/*.pdb'
-    PublishSymbols: false
-  continueOnError: true
+      testResultsFiles: $(System.DefaultWorkingDirectory)/dotnet-test-results.xml
+      testRunTitle: dotnet test
+  condition: succeededOrFailed()
 
 - publish: $(outputDirectory)
-  name: drop
   displayName: publish drop
+  name: drop
