@@ -10,10 +10,12 @@
     <PackageTags>selenium axe ada webdriver</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <VersionPrefix>1.1.0.0</VersionPrefix>
-    <VersionSuffix>development</VersionSuffix>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- override this in official/release build/pack/publish commands with -p:Version=x.y.z -->
+    <VersionPrefix>0.0.0</VersionPrefix>
+    <VersionSuffix>development</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

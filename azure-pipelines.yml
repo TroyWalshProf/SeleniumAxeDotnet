@@ -4,7 +4,7 @@ pool:
   vmImage: windows-2019
 
 variables:
-  versionSuffix: $(Build.BuildNumber)
+  version: '1.1.0'
   buildConfiguration: 'Release'
   solutionDirectory: '$(System.DefaultWorkingDirectory)/Selenium.Axe'
   outputDirectory: '$(solutionDirectory)/Selenium.Axe/bin/$(buildConfiguration)'
@@ -18,7 +18,7 @@ steps:
   displayName: dotnet restore
   workingDirectory: $(solutionDirectory)
 
-- script: dotnet build --no-restore -c $(buildConfiguration) --version-suffix $(versionSuffix)
+- script: dotnet build --no-restore -c $(buildConfiguration) -p:Version=$(version)
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
