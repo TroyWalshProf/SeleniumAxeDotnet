@@ -5,15 +5,20 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.IO;
 
 namespace Selenium.Axe.Test
 {
     [TestClass]
+    [DeploymentItem("integration-test-target.html")]
+    [DeploymentItem("chromedriver.exe")]
+    [DeploymentItem("geckodriver.exe")]
     public class IntegrationTests
     {
         private IWebDriver _webDriver;
         private WebDriverWait _wait;
-        private const string TargetTestUrl = "https://www.google.ca/";
+        private static readonly string IntegrationTestTargetFile = Path.GetFullPath(@"integration-test-target.html");
+        private static readonly string IntegrationTestTargetUrl = new Uri(IntegrationTestTargetFile).AbsoluteUri;
 
         [TestCleanup]
         public virtual void TearDown()
@@ -25,15 +30,14 @@ namespace Selenium.Axe.Test
         [TestMethod]
         [TestCategory("Integration")]
         [DataRow("Chrome")]
-        //[DataRow("Firefox")]
+        [DataRow("Firefox")]
         public void TestAnalyzeTarget(string browser)
         {
             this.InitDriver(browser);
-            _webDriver.Navigate().GoToUrl(TargetTestUrl);
-            // wait for email input box is found
-            _wait.Until(drv => drv.FindElement(By.XPath("//input[@title='Search']")));
-            AxeResult results = _webDriver.Analyze();
-            results.Should().NotBeNull(nameof(results));
+            _webDriver.Navigate().GoToUrl(IntegrationTestTargetUrl);
+            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName("main")));
+            AxeResult results = _webDriver.Analyze(mainElement);
+            results.Violations.Should().HaveCount(3);
         }
 
         private void InitDriver(string browser)
@@ -41,6 +45,7 @@ namespace Selenium.Axe.Test
             switch (browser.ToUpper())
             {
                 case "CHROME":
+                    var chromeDriverDirectory = Environment.GetEnvironmentVariable("ChromeWebDriver") ?? Environment.CurrentDirectory;
                     ChromeOptions options = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
@@ -49,14 +54,15 @@ namespace Selenium.Axe.Test
                     options.AddArgument("--log-level=3");
                     options.AddArgument("--silent");
 
-                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(Environment.CurrentDirectory);
+                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
                     service.SuppressInitialDiagnosticInformation = true;
-                    _webDriver = new ChromeDriver(Environment.CurrentDirectory, options);
+                    _webDriver = new ChromeDriver(chromeDriverDirectory, options);
                     
                     break;
 
                 case "FIREFOX":
-                    _webDriver = new FirefoxDriver();
+                    var geckoDriverDirectory = Environment.GetEnvironmentVariable("GeckoWebDriver") ?? Environment.CurrentDirectory;
+                    _webDriver = new FirefoxDriver(geckoDriverDirectory);
                     break;
 
                 default:
@@ -64,8 +70,8 @@ namespace Selenium.Axe.Test
 
             }
 
-            _wait = new WebDriverWait(_webDriver, TimeSpan.FromMinutes(4));
-            _webDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromMinutes(3);
+            _wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(20));
+            _webDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
             _webDriver.Manage().Window.Maximize();
         }
     }

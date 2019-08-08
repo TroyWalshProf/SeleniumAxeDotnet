@@ -1,9 +1,7 @@
-﻿using Selenium.Axe.Properties;
-
-namespace Selenium.Axe
+﻿namespace Selenium.Axe
 {
     internal class EmbeddedResourceAxeProvider : IAxeScriptProvider
     {
-        public string GetScript() => Resources.axe_min;
+        public string GetScript() => EmbeddedResourceProvider.ReadEmbeddedFile("axe.min.js");
     }
 }
