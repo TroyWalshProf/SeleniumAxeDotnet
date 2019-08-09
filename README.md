@@ -19,12 +19,66 @@ Import this namespace:
 using Selenium.Axe;
 ```
 
-and call the extension method ```Analyze``` from your WebDriver object
+To run axe scan with default configuration, call the extension method ```Analyze``` from your WebDriver object
 ```csharp
 IWebDriver webDriver = new ChromeDriver();
 AxeResult results = webDriver.Analyze();
 ```
 
+To configure scanning, use the AxeBuilder class chainable apis.
+-   AxeBuilder.Include - To scope the scanning to dom elements identified by the given selectors. Note that the selectors array uniquely identifies one element in the page. This cannot be used with AxeBuilder.Analyze(element) api.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .Include("#parent-iframe1", "#element-inside-iframe") // to select #element-inside-iframe under #parent-iframe1
+                    .Include("#element-inside-main-frame1") // to select #element-inside-main-frame1 under the main frame 
+                    .Analyze();
+    ``` 
+-   AxeBuilder.Exclude - To exclude dom elements identified by the given selectors from scanning. Note that the selectors array uniquely identifies one element in the page. This cannot be used with AxeBuilder.Analyze(element) api.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .Exclude("#parent-iframe1", "#element-inside-iframe") // to exclude #element-inside-iframe under #parent-iframe1
+                    .Exclude("#element-inside-main-frame1") // to exclude #element-inside-main-frame1 under the main frame 
+                    .Analyze();
+    ``` 
+- AxeBuilder.Analyze(element) - To run scan on the specified dom element. This cannot be used with Include/Exclude apis.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .Analyze(webDriver.FindElement(By.Id("nav-bar"))); // Runs scan on the dom element that has id nav-bar.
+    ``` 
+
+-   AxeBuilder.WithTags - To limit analysis to rules that have the mentioned tags. Refer https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter to get the complete list of available tags. This api cannot be used with  WithRules / Options api
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .WithTags("wcag2aa", "best-practice")
+                    .Analyse();
+    ``` 
+-   AxeBuilder.WithRules - To limit analysis to specified rules. Refer https://www.deque.com/axe/axe-for-web/documentation/api-documentation/#api-name-axegetrules to get the complete list of available rule IDs. This api cannot be used with  WithTags / Options apis.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .WithRules("color-contrast", "duplicate-id")
+                    .Analyze();
+    ``` 
+-   AxeBuilder.DisableRules - To exclude rules from scanning. Refer https://www.deque.com/axe/axe-for-web/documentation/api-documentation/#api-name-axegetrules to get the complete list of available rule IDs. This api cannot be used with Options api.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .DisableRules("color-contrast")
+                    .Analyze();
+    ``` 
+-   AxeBuilder.Options - Run options that is to be passed to axe scan api. This should be a json string of format - https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter. This cannot be used with WithRules /WithTags /DisableRules apis.
+    ```csharp
+    var axeBuilder = new AxeBuilder(webDriver);
+    axeBuilder.Options = "{\"runOnly\": {\"type\": \"tag\", \"values\": [\"wcag2a\"]}, \"restoreScroll\": true}"
+    var results = axeBuilder.Analyze();
+    ``` 
+- AxeBuilder.AxeBuilder(webDriver, axeBuilderOptions) - This api allows you to run scanning on axe version that is not packaged with this library.
+    ```csharp
+    var axeBuilderOptions = new AxeBuilderOptions
+    {
+        ScriptProvider = new FileAxeScriptProvider(".\\axe.min.js")
+    };
+    var results = new AxeBuilder(webDriver, axeBuilderOptions)
+                        .Analyze();
+    ``` 
 ## Contributing
 
 This project builds against a combination of .NET Standard, .NET Core, and .NET Framework targets.
