@@ -22,8 +22,20 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
   </ItemGroup>
+  
+  <!-- Running this using BeforeTagets="Restore" doesn't work if we run "dotnet restore" from solution folder. 
+       Running it before CollectPackageReferences, will work in both vs & command line. But, this task will be executed in both build & restore multiple times on multi-target project.
+       So, skipping this task if the copied package-lock.json file is same as the source file, to support incremental builds.
+  -->
+  <Target Name="DownloadAxe" Inputs="package-lock.json" Outputs="node_modules\package-lock.json" BeforeTargets="CollectPackageReferences">
+    <Exec Command="npm ci" />
+    <!-- Copying this file to support incremental builds -->
+    <Copy SourceFiles="package-lock.json" DestinationFolder="node_modules" />
+  </Target>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\axe.min.js" />
+    <EmbeddedResource Include="node_modules\axe-core\axe.min.js">
+        <Link>Resources\axe.min.js</Link>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -32,6 +32,7 @@ This project builds against a combination of .NET Standard, .NET Core, and .NET 
 Prerequisites to build:
 
 * Install the [.NET Core SDK](https://dotnet.microsoft.com/download)
+* Install [Node.js](https://nodejs.org/en/)
 * Install either Visual Studio 2017+ *OR* the [.NET Framework Dev Pack](https://dotnet.microsoft.com/download)
 
 Prerequisites to run integration tests:
