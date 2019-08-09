@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Selenium.Axe
 {
@@ -11,18 +14,91 @@ namespace Selenium.Axe
     public class AxeBuilder
     {
         private readonly IWebDriver _webDriver;
-        private readonly IncludeExcludeManager _includeExcludeManager = new IncludeExcludeManager();
 
-        private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions {ScriptProvider = new EmbeddedResourceAxeProvider()};
+        private readonly AxeRunContext runContext = new AxeRunContext();
+        private readonly AxeRunOptions runOptions = new AxeRunOptions();
+        private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() };
 
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+        {
+            Formatting = Formatting.None,
+            NullValueHandling = NullValueHandling.Include
+        };
+
+        /// <summary>
+        /// The run options to be passed to axe. Refer https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
+        /// Cannot not be used with <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
+        /// </summary>
         public string Options { get; set; } = "{}";
 
         /// <summary>
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
-        public AxeBuilder(IWebDriver webDriver): this(webDriver, DefaultOptions)
+        public AxeBuilder(IWebDriver webDriver) : this(webDriver, DefaultOptions)
         {
+        }
+
+        /// <summary>
+        /// Limit analysis to only the specified tags.
+        /// Refer https://www.deque.com/axe/axe-for-web/documentation/api-documentation/#api-name-axegetrules to get the list of supported tag names
+        /// Cannot be used with <see cref="WithRules(string[])"/> & <see cref="Options"/>
+        /// </summary>
+        /// <param name="tags">tags to be used for scanning</param>
+        public AxeBuilder WithTags(params string[] tags)
+        {
+            ValidateParameters(tags, nameof(tags));
+
+            Options = null;
+            runOptions.RunOnly = new RunOnlyOptions
+            {
+                Type = "tag",
+                Values = tags.ToList()
+            };
+            return this;
+        }
+
+        /// <summary>
+        /// Limit analysis to only the specified rules.
+        /// Refer https://dequeuniversity.com/rules/axe/ to get the complete listing of available rule IDs.
+        /// Cannot be used with <see cref="WithTags(string[])"/> & <see cref="Options"/>
+        /// </summary>
+        /// <param name="rules">rule IDs to be used for scanning</param>
+        public AxeBuilder WithRules(params string[] rules)
+        {
+            ValidateParameters(rules, nameof(rules));
+
+            Options = null;
+            runOptions.RunOnly = new RunOnlyOptions
+            {
+                Type = "rule",
+                Values = rules.ToList()
+            };
+
+            return this;
+        }
+
+        /// <summary>
+        ///  Set the list of rules to skip when running an analysis
+        ///  Refer https://dequeuniversity.com/rules/axe/ to get the complete listing of available rule IDs.
+        ///  Cannot be used with <see cref="Options"/>
+        /// </summary>
+        /// <param name="rules">rule IDs to be skipped from analysis</param>
+        public AxeBuilder DisableRules(params string[] rules)
+        {
+            ValidateParameters(rules, nameof(rules));
+
+            Options = null;
+            var rulesMap = new Dictionary<string, RuleOptions>();
+            foreach (var rule in rules)
+            {
+                rulesMap[rule] = new RuleOptions
+                {
+                    Enabled = false
+                };
+            }
+            runOptions.Rules = rulesMap;
+            return this;
         }
 
         /// <summary>
@@ -43,37 +119,37 @@ namespace Selenium.Axe
         }
 
         /// <summary>
-        /// Execute the script into the target.
-        /// </summary>
-        /// <param name="command">Script to execute.</param>
-        /// <param name="args"></param>
-        private AxeResult Execute(string command, params object[] args)
-        {
-            string stringifiedResult = (string) ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(command, args);
-            var jObject = JObject.Parse(stringifiedResult);
-            return new AxeResult(jObject);   
-        }
-
-        /// <summary>
-        /// Selectors to include in the validation.
+        /// Selectors to include in the validation. 
+        /// Note that the selectors array uniquely identifies one element in the page,
+        /// Valid usage: 
+        ///     axeBuilder.Include("#parent-iframe1", "#element-inside-iframe"); => to select #element-inside-iframe under #parent-iframe1
+        ///     axeBuilder.Include("#element-inside-main-frame1");
+        ///     
+        /// Invalid usage:
+        ///      axeBuilder.Include("#element-inside-main-frame1", "#element-inside-main-frame2");
         /// </summary>
         /// <param name="selectors">Any valid CSS selectors</param>
-        /// <returns></returns>
         public AxeBuilder Include(params string[] selectors)
         {
-            _includeExcludeManager.Include(selectors);
+            ValidateParameters(selectors, nameof(selectors));
+
+            runContext.Include = runContext.Include ?? new List<string[]>();
+            runContext.Include.Add(selectors);
             return this;
         }
 
         /// <summary>
-        /// Exclude selectors
         /// Selectors to exclude in the validation.
+        /// Note that the selectors array uniquely identifies one element in the page. Refer <see cref="Include(string[]) for more information on the usage"/>
         /// </summary>
         /// <param name="selectors">Any valid CSS selectors</param>
         /// <returns></returns>
         public AxeBuilder Exclude(params string[] selectors)
         {
-            _includeExcludeManager.Exclude(selectors);
+            ValidateParameters(selectors, nameof(selectors));
+
+            runContext.Exclude = runContext.Exclude ?? new List<string[]>();
+            runContext.Exclude.Add(selectors);
             return this;
         }
 
@@ -85,8 +161,7 @@ namespace Selenium.Axe
         public AxeResult Analyze(IWebElement context)
         {
             //string command = string.Format("axe.a11yCheck(arguments[0], {0}, arguments[arguments.length - 1]);", Options);
-            string command = getAxeSnippet("arguments[0]");
-            return Execute(command, context);
+            return Execute(context, JsonConvert.SerializeObject(runOptions, JsonSerializerSettings));
         }
 
         /// <summary>
@@ -95,47 +170,36 @@ namespace Selenium.Axe
         /// <returns>An aXe results document</returns>
         public AxeResult Analyze()
         {
-            string axeContext;
+            bool runContextHasData = runContext.Include?.Any() == true || runContext.Exclude?.Any() == true;
 
-            if (_includeExcludeManager.HasMoreThanOneSelectorsToIncludeOrSomeToExclude())
-            {
-                axeContext = $"{ _includeExcludeManager.ToJson()}";
-                //command =    $"axe.a11yCheck({ _includeExcludeManager.ToJson()}, {Options}, arguments[arguments.length - 1]);";
-            }
-            else if (_includeExcludeManager.HasOneItemToInclude())
-            {
-                string itemToInclude = _includeExcludeManager.GetFirstItemToInclude().Replace("'", "");
-                axeContext = $"{itemToInclude}";
-                //command = $"axe.a11yCheck('{itemToInclude}', {Options}, arguments[arguments.length - 1]);";
-            }
-            else
-            {
-                axeContext = "document";
-                //command = $"axe.a11yCheck(document, {Options}, arguments[arguments.length - 1]);";
-            }
+            string contextToBeSent = runContextHasData ? JsonConvert.SerializeObject(runContext, JsonSerializerSettings) : null;
+            string runOptionsToBeSent = string.IsNullOrWhiteSpace(Options) ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
 
-            string command = getAxeSnippet(axeContext);
-
-            return Execute(command);
+            return Execute(contextToBeSent, runOptionsToBeSent);
         }
 
-        ///<summary>
-        /// Create the axe javascript code to be executed
-        ///</summary>
-        ///
-        /// <param name="context"> HTML content to run "document", "included items", "includeExcludeManager"<param/>
-        private String getAxeSnippet(String context) => $@"
-            var callback = arguments[arguments.length - 1];
-            var context = {context};
-            var options = {Options};
-            var result = {{ error: '', results: null }};
-            axe.run(context, options, function (err, res) {{
-                if (err) {{
-                    result.error = err.message;
-                }} else {{
-                    result.results = res;
-                }}
-                callback(JSON.stringify(result));
-            }});";
+        /// <summary>
+        /// Execute the script into the target.
+        /// </summary>
+        /// <param name="args">args to be passed to scan function (context, options)</param>
+        private AxeResult Execute(params object[] args)
+        {
+            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"), args);
+            var jObject = JObject.Parse(stringifiedResult);
+            return new AxeResult(jObject);
+        }
+
+        private static void ValidateParameters(string[] parameterValue, string parameterName)
+        {
+            if (parameterValue == null)
+            {
+                throw new ArgumentNullException(parameterName);
+            }
+
+            if (parameterValue.Any(string.IsNullOrEmpty))
+            {
+                throw new ArgumentException("There is some items null or empty", parameterName);
+            }
+        }
     }
 }
