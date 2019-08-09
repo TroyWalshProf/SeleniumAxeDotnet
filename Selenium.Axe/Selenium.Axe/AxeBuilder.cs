@@ -25,6 +25,10 @@ namespace Selenium.Axe
             NullValueHandling = NullValueHandling.Include
         };
 
+        /// <summary>
+        /// The run options to be passed to axe. Refer https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
+        /// Cannot not be used with <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
+        /// </summary>
         public string Options { get; set; } = "{}";
 
         /// <summary>
@@ -36,7 +40,9 @@ namespace Selenium.Axe
         }
 
         /// <summary>
-        /// Limit analysis to only the specified tags. Cannot be used with <see cref="WithRules(string[])"/>
+        /// Limit analysis to only the specified tags.
+        /// Refer https://www.deque.com/axe/axe-for-web/documentation/api-documentation/#api-name-axegetrules to get the list of supported tag names
+        /// Cannot be used with <see cref="WithRules(string[])"/> & <see cref="Options"/>
         /// </summary>
         /// <param name="tags">tags to be used for scanning</param>
         public AxeBuilder WithTags(params string[] tags)
@@ -53,9 +59,11 @@ namespace Selenium.Axe
         }
 
         /// <summary>
-        /// Limit analysis to only the specified rules. Cannot be used with <see cref="WithTags(string[])"/>
+        /// Limit analysis to only the specified rules.
+        /// Refer https://dequeuniversity.com/rules/axe/ to get the complete listing of available rule IDs.
+        /// Cannot be used with <see cref="WithTags(string[])"/> & <see cref="Options"/>
         /// </summary>
-        /// <param name="rules">rules to be used for scanning</param>
+        /// <param name="rules">rule IDs to be used for scanning</param>
         public AxeBuilder WithRules(params string[] rules)
         {
             ValidateParameters(rules, nameof(rules));
@@ -72,8 +80,10 @@ namespace Selenium.Axe
 
         /// <summary>
         ///  Set the list of rules to skip when running an analysis
+        ///  Refer https://dequeuniversity.com/rules/axe/ to get the complete listing of available rule IDs.
+        ///  Cannot be used with <see cref="Options"/>
         /// </summary>
-        /// <param name="rules">rules to be skipped from analysis</param>
+        /// <param name="rules">rule IDs to be skipped from analysis</param>
         public AxeBuilder DisableRules(params string[] rules)
         {
             ValidateParameters(rules, nameof(rules));

@@ -7,6 +7,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Selenium.Axe.Test
@@ -38,27 +39,15 @@ namespace Selenium.Axe.Test
         [DataRow("Firefox")]
         public void RunScanOnPage(string browser)
         {
-            var expectedToolOptions = new AxeRunOptions()
-            {
-                Rules = new Dictionary<string, RuleOptions>()
-                {
-                    {"color-contrast", new RuleOptions{ Enabled = false} }
-                },
-                RunOnly = new RunOnlyOptions
-                {
-                    Type = "tag",
-                    Values = new List<string>() { "wcag2a" }
-                }
-            };
-
             this.InitDriver(browser);
             LoadTestPage();
 
-            var builder = new AxeBuilder(_webDriver).WithTags("wcag2a").DisableRules("color-contrast");
+            var builder = new AxeBuilder(_webDriver).WithTags("wcag2a", "wcag2aa").DisableRules("color-contrast");
 
             var results = builder.Analyze();
+            results.Violations.FirstOrDefault(v => v.Id == "color-contrast").Should().BeNull();
+            results.Violations.FirstOrDefault(v => !v.Tags.Contains("wcag2a") && !v.Tags.Contains("wcag2aa")).Should().BeNull();
             results.Violations.Should().HaveCount(2);
-            results.ToolOptions.Should().BeEquivalentTo(expectedToolOptions);
         }
 
         [TestMethod]
