@@ -28,7 +28,7 @@
        So, skipping this task if the copied package-lock.json file is same as the source file, to support incremental builds.
   -->
   <Target Name="DownloadAxe" Inputs="package-lock.json" Outputs="node_modules\package-lock.json" BeforeTargets="CollectPackageReferences">
-    <Exec Command="npm install" />
+    <Exec Command="npm ci" />
     <!-- Copying this file to support incremental builds -->
     <Copy SourceFiles="package-lock.json" DestinationFolder="node_modules" />
   </Target>
