@@ -22,9 +22,7 @@ using Selenium.Axe;
 To run axe scan with default configuration, call the extension method ```Analyze``` from your WebDriver object
 ```csharp
 IWebDriver webDriver = new ChromeDriver();
-
 AxeResult results = webDriver.Analyze();
-
 ```
 
 To configure scanning, use the AxeBuilder class chainable apis.
