@@ -50,7 +50,7 @@ To configure scanning, use the AxeBuilder class chainable apis.
     ```csharp
     var results = new AxeBuilder(webDriver)
                     .WithTags("wcag2aa", "best-practice")
-                    .Analyse();
+                    .Analyze();
     ``` 
 -   AxeBuilder.WithRules - To limit analysis to specified rules. Refer https://www.deque.com/axe/axe-for-web/documentation/api-documentation/#api-name-axegetrules to get the complete list of available rule IDs. This api cannot be used with  WithTags / Options apis.
     ```csharp
@@ -79,6 +79,26 @@ To configure scanning, use the AxeBuilder class chainable apis.
     var results = new AxeBuilder(webDriver, axeBuilderOptions)
                         .Analyze();
     ``` 
+
+Validating scan results:
+-   If you start with no accessibility issues in your page, you can stay clean by validating that the Violations list is empty.
+```csharp
+IWebDriver webDriver = new ChromeDriver();
+
+AxeResult results = webDriver.Analyze();
+
+results.Violations.Should().BeEmpty();
+```
+- If you already have some accessibility issues & you want to make sure that you do not introduce any more new issues till you get to a clean state, you can do snapshot testing / validate by issues count.
+```csharp
+IWebDriver webDriver = new ChromeDriver();
+
+AxeResult results = webDriver.Analyze();
+
+results.Violations.Should().HaveCount(2);
+```
+
+
 ## Contributing
 
 This project builds against a combination of .NET Standard, .NET Core, and .NET Framework targets.
