@@ -14,11 +14,10 @@ namespace Selenium.Axe
     public class AxeBuilder
     {
         private readonly IWebDriver _webDriver;
-
         private readonly AxeRunContext runContext = new AxeRunContext();
-        private readonly AxeRunOptions runOptions = new AxeRunOptions();
-        private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() };
+        private AxeRunOptions runOptions = new AxeRunOptions();
 
+        private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() };
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
@@ -29,6 +28,7 @@ namespace Selenium.Axe
         /// The run options to be passed to axe. Refer https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
         /// Cannot not be used with <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
         /// </summary>
+        [Obsolete("Use WithOptions / WithTags / WithRules / DisableRules apis")]
         public string Options { get; set; } = "{}";
 
         /// <summary>
@@ -37,6 +37,20 @@ namespace Selenium.Axe
         /// <param name="webDriver">Selenium driver to use</param>
         public AxeBuilder(IWebDriver webDriver) : this(webDriver, DefaultOptions)
         {
+        }
+
+        /// <summary>
+        ///  Run configuration data that is passed to axe for scanning the web page.
+        ///  This will override the value set by <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
+        /// </summary>
+        /// <param name="runOptions">run options to be used for scanning. </param>
+        public AxeBuilder WithOptions(AxeRunOptions runOptions)
+        {
+            ValidateNotNullParameter(runOptions, nameof(runOptions));
+
+            this.runOptions = runOptions;
+
+            return this;
         }
 
         /// <summary>
@@ -49,7 +63,10 @@ namespace Selenium.Axe
         {
             ValidateParameters(tags, nameof(tags));
 
+#pragma warning disable CS0618
             Options = null;
+#pragma warning restore CS0618
+
             runOptions.RunOnly = new RunOnlyOptions
             {
                 Type = "tag",
@@ -68,7 +85,10 @@ namespace Selenium.Axe
         {
             ValidateParameters(rules, nameof(rules));
 
+#pragma warning disable CS0618
             Options = null;
+#pragma warning restore CS0618
+
             runOptions.RunOnly = new RunOnlyOptions
             {
                 Type = "rule",
@@ -88,7 +108,10 @@ namespace Selenium.Axe
         {
             ValidateParameters(rules, nameof(rules));
 
+#pragma warning disable CS0618
             Options = null;
+#pragma warning restore CS0618
+
             var rulesMap = new Dictionary<string, RuleOptions>();
             foreach (var rule in rules)
             {
@@ -108,11 +131,8 @@ namespace Selenium.Axe
         /// <param name="options">Builder options</param>
         public AxeBuilder(IWebDriver webDriver, AxeBuilderOptions options)
         {
-            if (webDriver == null)
-                throw new ArgumentNullException(nameof(webDriver));
-
-            if (options == null)
-                throw new ArgumentNullException(nameof(options));
+            ValidateNotNullParameter(webDriver, nameof(webDriver));
+            ValidateNotNullParameter(options, nameof(options));
 
             _webDriver = webDriver;
             _webDriver.Inject(options.ScriptProvider);
@@ -173,7 +193,11 @@ namespace Selenium.Axe
             bool runContextHasData = runContext.Include?.Any() == true || runContext.Exclude?.Any() == true;
 
             string contextToBeSent = runContextHasData ? JsonConvert.SerializeObject(runContext, JsonSerializerSettings) : null;
+
+#pragma warning disable CS0618
             string runOptionsToBeSent = string.IsNullOrWhiteSpace(Options) ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
+#pragma warning restore CS0618
+
 
             return Execute(contextToBeSent, runOptionsToBeSent);
         }
@@ -191,14 +215,19 @@ namespace Selenium.Axe
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)
         {
-            if (parameterValue == null)
-            {
-                throw new ArgumentNullException(parameterName);
-            }
+            ValidateNotNullParameter(parameterValue, parameterName);
 
             if (parameterValue.Any(string.IsNullOrEmpty))
             {
                 throw new ArgumentException("There is some items null or empty", parameterName);
+            }
+        }
+
+        private static void ValidateNotNullParameter<T>(T parameterValue, string parameterName)
+        {
+            if (parameterValue == null)
+            {
+                throw new ArgumentNullException(parameterName);
             }
         }
     }

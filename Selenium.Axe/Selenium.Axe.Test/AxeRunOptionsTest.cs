@@ -27,7 +27,9 @@ namespace Selenium.Axe.Test
 
             var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
             var expectedObject = "{\"runOnly\":{\"type\":\"tag\",\"values\":[\"tag1\",\"tag2\"]}}";
+
             serializedObject.Should().Be(expectedObject);
+            JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
         }
 
         [TestMethod]
@@ -42,11 +44,49 @@ namespace Selenium.Axe.Test
                     {"rule3WithoutOptionsData", new RuleOptions(){ } },
                 }
             };
+            var expectedObject = "{\"rules\":{\"enabledRule\":{\"enabled\":true},\"disabledRule\":{\"enabled\":false},\"rule3WithoutOptionsData\":{}}}";
 
             var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
 
-            var expectedObject = "{\"rules\":{\"enabledRule\":{\"enabled\":true},\"disabledRule\":{\"enabled\":false},\"rule3WithoutOptionsData\":{}}}";
+
             serializedObject.Should().Be(expectedObject);
+            JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
+        }
+
+        [TestMethod]
+        public void ShouldSerializeLiteralTypes()
+        {
+            var options = new AxeRunOptions()
+            {
+                AbsolutePaths = true,
+                FrameWaitTimeInMilliSec = 10,
+                Iframes = true,
+                RestoreScroll = true,
+            };
+            var expectedObject = "{\"absolutePaths\":true,\"iframes\":true,\"restoreScroll\":true,\"frameWaitTime\":10}";
+
+            var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
+
+
+            serializedObject.Should().Be(expectedObject);
+            JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
+
+        }
+
+        [TestMethod]
+        public void ShouldSerializeResultTypes()
+        {
+            var options = new AxeRunOptions()
+            {
+                ResultTypes = new HashSet<ResultType>() { ResultType.Inapplicable, ResultType.Incomplete, ResultType.Passes, ResultType.Violations }
+            };
+
+            var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
+
+            var expectedObject = "{\"resultTypes\":[\"inapplicable\",\"incomplete\",\"passes\",\"violations\"]}";
+
+            serializedObject.Should().Be(expectedObject);
+            JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
         }
     }
 }

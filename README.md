@@ -64,11 +64,28 @@ To configure scanning, use the AxeBuilder class chainable apis.
                     .DisableRules("color-contrast")
                     .Analyze();
     ``` 
--   AxeBuilder.Options - Run options that is to be passed to axe scan api. This should be a json string of format - https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter. This cannot be used with WithRules /WithTags /DisableRules apis.
+-   AxeBuilder.Options - This method is deprecated. Use WithOptions / WithRules / WithTags / DisableRules apis instead. 
+    
+    Run options that is to be passed to axe scan api. This should be a json string of format - https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter. This cannot be used with WithRules /WithTags /DisableRules apis.
     ```csharp
     var axeBuilder = new AxeBuilder(webDriver);
     axeBuilder.Options = "{\"runOnly\": {\"type\": \"tag\", \"values\": [\"wcag2a\"]}, \"restoreScroll\": true}"
     var results = axeBuilder.Analyze();
+    ``` 
+- AxeBuilder.WithOptions - Run options that is to be passed to axe scan api. This will override the value set by WithRules, WithTags & DisableRules apis.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .WithOptions(new AxeRunOptions()
+                    {
+                        RunOnly = new RunOnlyOptions
+                        {
+                            Type = "rule",
+                            Values = new List<string> { "duplicate-id", "color-contrast" }
+                        },
+                        
+                        RestoreScroll = true
+                    })
+                    .Analyze();
     ``` 
 - AxeBuilder.AxeBuilder(webDriver, axeBuilderOptions) - This api allows you to run scanning on axe version that is not packaged with this library.
     ```csharp
