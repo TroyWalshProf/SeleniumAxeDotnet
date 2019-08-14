@@ -48,6 +48,10 @@ namespace Selenium.Axe
         {
             ValidateNotNullParameter(runOptions, nameof(runOptions));
 
+#pragma warning disable CS0618
+            Options = null;
+#pragma warning restore CS0618
+
             this.runOptions = runOptions;
 
             return this;

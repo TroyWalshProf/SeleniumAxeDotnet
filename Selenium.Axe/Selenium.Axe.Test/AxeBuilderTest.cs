@@ -240,23 +240,19 @@ namespace Selenium.Axe.Test
         [TestMethod]
         public void ShouldPassRunOptions()
         {
-            var initialRunOptions = new AxeRunOptions()
-            {
-                Iframes = true,
-            };
-
-            var expectedRunOptions = SerializeObject(new AxeRunOptions()
+            var runOptions = new AxeRunOptions()
             {
                 Iframes = true,
                 Rules = new Dictionary<string, RuleOptions>() { { "rule1", new RuleOptions() { Enabled = false } } }
-            });
+            };
+
+            var expectedRunOptions = SerializeObject(runOptions);
 
             SetupVerifiableAxeInjectionCall();
             SetupVerifiableScanCall(null, expectedRunOptions);
 
             var builder = new AxeBuilder(webDriverMock.Object)
-                .WithOptions(initialRunOptions)
-                .DisableRules("rule1");
+                .WithOptions(runOptions);
 
             var result = builder.Analyze();
 
