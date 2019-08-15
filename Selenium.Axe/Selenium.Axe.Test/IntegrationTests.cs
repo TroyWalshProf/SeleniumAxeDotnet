@@ -33,7 +33,6 @@ namespace Selenium.Axe.Test
             _webDriver?.Dispose();
         }
 
-
         [TestMethod]
         [DataRow("Chrome")]
         [DataRow("Firefox")]
@@ -67,7 +66,6 @@ namespace Selenium.Axe.Test
             AxeResult results = _webDriver.Analyze(mainElement);
             results.Violations.Should().HaveCount(3);
         }
-
 
         private void LoadTestPage()
         {
