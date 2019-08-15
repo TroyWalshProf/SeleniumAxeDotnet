@@ -48,9 +48,7 @@ namespace Selenium.Axe
         {
             ValidateNotNullParameter(runOptions, nameof(runOptions));
 
-#pragma warning disable CS0618
-            Options = null;
-#pragma warning restore CS0618
+            ThrowIfDeprecatedOptionsSet();
 
             this.runOptions = runOptions;
 
@@ -67,9 +65,7 @@ namespace Selenium.Axe
         {
             ValidateParameters(tags, nameof(tags));
 
-#pragma warning disable CS0618
-            Options = null;
-#pragma warning restore CS0618
+            ThrowIfDeprecatedOptionsSet();
 
             runOptions.RunOnly = new RunOnlyOptions
             {
@@ -89,9 +85,7 @@ namespace Selenium.Axe
         {
             ValidateParameters(rules, nameof(rules));
 
-#pragma warning disable CS0618
-            Options = null;
-#pragma warning restore CS0618
+            ThrowIfDeprecatedOptionsSet();
 
             runOptions.RunOnly = new RunOnlyOptions
             {
@@ -112,9 +106,7 @@ namespace Selenium.Axe
         {
             ValidateParameters(rules, nameof(rules));
 
-#pragma warning disable CS0618
-            Options = null;
-#pragma warning restore CS0618
+            ThrowIfDeprecatedOptionsSet();
 
             var rulesMap = new Dictionary<string, RuleOptions>();
             foreach (var rule in rules)
@@ -199,7 +191,7 @@ namespace Selenium.Axe
             string contextToBeSent = runContextHasData ? JsonConvert.SerializeObject(runContext, JsonSerializerSettings) : null;
 
 #pragma warning disable CS0618
-            string runOptionsToBeSent = string.IsNullOrWhiteSpace(Options) ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
+            string runOptionsToBeSent = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
 #pragma warning restore CS0618
 
 
@@ -232,6 +224,14 @@ namespace Selenium.Axe
             if (parameterValue == null)
             {
                 throw new ArgumentNullException(parameterName);
+            }
+        }
+
+        private void ThrowIfDeprecatedOptionsSet()
+        {
+            if (Options != "{}")
+            {
+                throw new InvalidOperationException("Deprecated Options api shouldn't be used with the new apis - WithOptions/WithRules/WithTags or DisableRules");
             }
         }
     }

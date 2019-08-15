@@ -297,6 +297,25 @@ namespace Selenium.Axe.Test
             VerifyExceptionThrown<ArgumentException>(() => builder.Exclude(values));
         }
 
+        [TestMethod]
+        public void ShouldThrowIfDeprecatedOptionsIsUsedWithNewOptionsApis()
+        {
+            SetupVerifiableAxeInjectionCall();
+
+            var builder = new AxeBuilder(webDriverMock.Object);
+#pragma warning disable CS0618
+            builder.Options = "{xpath:true}";
+#pragma warning restore CS0618
+
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithRules("rule-1"));
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.DisableRules("rule-1"));
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithTags("tag1"));
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithOptions(new AxeRunOptions() { Iframes = true }));
+
+
+        }
+
+
         private void VerifyExceptionThrown<T>(Action action) where T : Exception
         {
             action.Should().Throw<T>();
