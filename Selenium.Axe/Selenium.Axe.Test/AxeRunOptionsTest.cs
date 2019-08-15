@@ -48,7 +48,6 @@ namespace Selenium.Axe.Test
 
             var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
 
-
             serializedObject.Should().Be(expectedObject);
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
         }
@@ -59,14 +58,13 @@ namespace Selenium.Axe.Test
             var options = new AxeRunOptions()
             {
                 AbsolutePaths = true,
-                FrameWaitTimeInMilliSec = 10,
+                FrameWaitTimeInMilliseconds = 10,
                 Iframes = true,
                 RestoreScroll = true,
             };
             var expectedObject = "{\"absolutePaths\":true,\"iframes\":true,\"restoreScroll\":true,\"frameWaitTime\":10}";
 
             var serializedObject = JsonConvert.SerializeObject(options, serializerSettings);
-
 
             serializedObject.Should().Be(expectedObject);
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);

@@ -42,12 +42,16 @@ namespace Selenium.Axe.Test
             this.InitDriver(browser);
             LoadTestPage();
 
-            var builder = new AxeBuilder(_webDriver).WithTags("wcag2a", "wcag2aa").DisableRules("color-contrast");
+            var builder = new AxeBuilder(_webDriver)
+                .WithOptions(new AxeRunOptions() { XPath = true })
+                .WithTags("wcag2a", "wcag2aa")
+                .DisableRules("color-contrast");
 
             var results = builder.Analyze();
             results.Violations.FirstOrDefault(v => v.Id == "color-contrast").Should().BeNull();
             results.Violations.FirstOrDefault(v => !v.Tags.Contains("wcag2a") && !v.Tags.Contains("wcag2aa")).Should().BeNull();
             results.Violations.Should().HaveCount(2);
+            results.Violations.First().Nodes.First().XPath.Should().NotBeNullOrEmpty();
         }
 
         [TestMethod]

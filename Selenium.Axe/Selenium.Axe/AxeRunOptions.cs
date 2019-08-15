@@ -107,6 +107,6 @@ namespace Selenium.Axe
         /// How long (in milliseconds) axe waits for a response from embedded frames before timing out
         /// </summary>
         [JsonProperty("frameWaitTime")]
-        public int? FrameWaitTimeInMilliSec { get; set; }
+        public int? FrameWaitTimeInMilliseconds { get; set; }
     }
 }
