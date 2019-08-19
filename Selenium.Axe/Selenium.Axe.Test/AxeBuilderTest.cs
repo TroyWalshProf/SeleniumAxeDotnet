@@ -88,7 +88,7 @@ namespace Selenium.Axe.Test
             });
 
             SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(expectedContext.ToString(), "{}");
+            SetupVerifiableScanCall(expectedContext, "{}");
 
             var builder = new AxeBuilder(webDriverMock.Object).Include("#div1");
 
@@ -113,7 +113,7 @@ namespace Selenium.Axe.Test
             });
 
             SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(expectedContext.ToString(), "{}");
+            SetupVerifiableScanCall(expectedContext, "{}");
 
             var builder = new AxeBuilder(webDriverMock.Object).Include(includeSelector).Exclude(excludeSelector);
 
@@ -136,7 +136,7 @@ namespace Selenium.Axe.Test
             });
 
             SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(expectedContext.ToString(), "{}");
+            SetupVerifiableScanCall(expectedContext, "{}");
 
             var builder = new AxeBuilder(webDriverMock.Object).Exclude("#div1");
 
@@ -156,10 +156,12 @@ namespace Selenium.Axe.Test
             var expectedOptions = "deprecated run options";
 
             SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(null, expectedOptions.ToString());
+            SetupVerifiableScanCall(null, expectedOptions);
 
             var builder = new AxeBuilder(webDriverMock.Object);
+#pragma warning disable CS0618
             builder.Options = expectedOptions;
+#pragma warning restore CS0618
 
             var result = builder.Analyze();
 
@@ -191,7 +193,7 @@ namespace Selenium.Axe.Test
             });
 
             SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(null, expectedOptions.ToString());
+            SetupVerifiableScanCall(null, expectedOptions);
 
             var builder = new AxeBuilder(webDriverMock.Object)
                 .DisableRules("excludeRule1", "excludeRule2")
@@ -221,10 +223,36 @@ namespace Selenium.Axe.Test
             });
 
             SetupVerifiableAxeInjectionCall();
-            SetupVerifiableScanCall(null, expectedOptions.ToString());
+            SetupVerifiableScanCall(null, expectedOptions);
 
             var builder = new AxeBuilder(webDriverMock.Object)
                 .WithTags("tag1", "tag2");
+
+            var result = builder.Analyze();
+
+            VerifyAxeResult(result);
+
+            webDriverMock.VerifyAll();
+            targetLocatorMock.VerifyAll();
+            jsExecutorMock.VerifyAll();
+        }
+
+        [TestMethod]
+        public void ShouldPassRunOptions()
+        {
+            var runOptions = new AxeRunOptions()
+            {
+                Iframes = true,
+                Rules = new Dictionary<string, RuleOptions>() { { "rule1", new RuleOptions() { Enabled = false } } }
+            };
+
+            var expectedRunOptions = SerializeObject(runOptions);
+
+            SetupVerifiableAxeInjectionCall();
+            SetupVerifiableScanCall(null, expectedRunOptions);
+
+            var builder = new AxeBuilder(webDriverMock.Object)
+                .WithOptions(runOptions);
 
             var result = builder.Analyze();
 
@@ -250,6 +278,7 @@ namespace Selenium.Axe.Test
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithTags(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.Include(null));
             VerifyExceptionThrown<ArgumentNullException>(() => builder.Exclude(null));
+            VerifyExceptionThrown<ArgumentNullException>(() => builder.WithOptions(null));
         }
 
         [TestMethod]
@@ -268,7 +297,27 @@ namespace Selenium.Axe.Test
             VerifyExceptionThrown<ArgumentException>(() => builder.Exclude(values));
         }
 
-        private void VerifyExceptionThrown<T>(Action action) where T : Exception {
+        [TestMethod]
+        public void ShouldThrowIfDeprecatedOptionsIsUsedWithNewOptionsApis()
+        {
+            SetupVerifiableAxeInjectionCall();
+
+            var builder = new AxeBuilder(webDriverMock.Object);
+#pragma warning disable CS0618
+            builder.Options = "{xpath:true}";
+#pragma warning restore CS0618
+
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithRules("rule-1"));
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.DisableRules("rule-1"));
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithTags("tag1"));
+            VerifyExceptionThrown<InvalidOperationException>(() => builder.WithOptions(new AxeRunOptions() { Iframes = true }));
+
+
+        }
+
+
+        private void VerifyExceptionThrown<T>(Action action) where T : Exception
+        {
             action.Should().Throw<T>();
         }
 
