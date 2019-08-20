@@ -35,7 +35,7 @@ steps:
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
-- script: dotnet test --no-restore --logger:trx
+- script: dotnet test --no-restore --logger:trx /p:CollectCoverage=true
   displayName: dotnet test
   workingDirectory: $(solutionDirectory)
 
