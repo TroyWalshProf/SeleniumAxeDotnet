@@ -57,5 +57,3 @@ steps:
 - publish: $(outputDirectory)
   displayName: publish drop
   name: drop
-
-- task: SonarCloudQualityGateCheck@1
