@@ -48,6 +48,15 @@ steps:
       testRunTitle: dotnet test
   condition: succeededOrFailed()
 
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Common.TestResultsDirectory)'
+  inputs:
+    SourceFolder: '$(Agent.TempDirectory)'
+    Contents: |
+     **/*.coverage
+     *.trx
+    TargetFolder: '$(Common.TestResultsDirectory)'
+
 - task: SonarCloudAnalyze@1
 
 - task: SonarCloudPublish@1
