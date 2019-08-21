@@ -35,9 +35,15 @@ steps:
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
-- script: dotnet test --no-restore --logger:trx /p:CollectCoverage=true
-  displayName: dotnet test
-  workingDirectory: $(solutionDirectory)
+# - script: dotnet test --no-restore --logger:trx /p:CollectCoverage=true
+#   displayName: dotnet test
+#  workingDirectory: $(solutionDirectory)
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**\Selenium.Axe.Test.csproj'
+    arguments: '/p:CollectCoverage=true'
 
 - task: PublishTestResults@2
   displayName: publish test results
