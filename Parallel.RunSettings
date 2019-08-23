@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <DisableAppDomain>True</DisableAppDomain>
+    <MaxCpuCount>4</MaxCpuCount>
+  </RunConfiguration>
+  <MSTest>
+    <Parallelize>
+      <Workers>7</Workers>
+      <Scope>MethodLevel</Scope>
+    </Parallelize>
+  </MSTest>
+  </RunSettings>
