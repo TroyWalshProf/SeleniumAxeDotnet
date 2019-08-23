@@ -44,11 +44,11 @@ steps:
     arguments: '/p:CollectCoverage=true'
 #  workingDirectory: $(solutionDirectory)
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '**\Selenium.Axe.Test.csproj'
-    arguments: '/p:CollectCoverage=true'
+#- task: DotNetCoreCLI@2
+#  inputs:
+#    command: 'test'
+#    projects: '**\Selenium.Axe.Test.csproj'
+#    arguments: '/p:CollectCoverage=true'
 
 - task: PublishTestResults@2
   displayName: publish test results
