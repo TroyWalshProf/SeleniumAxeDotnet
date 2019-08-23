@@ -35,20 +35,15 @@ steps:
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
-# - script: dotnet test --no-restore --logger:trx /p:CollectCoverage=true
-#   displayName: dotnet test
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
-    arguments: '--collect:"Code Coverage"'
-#  workingDirectory: $(solutionDirectory)
+- script: dotnet test --no-restore --logger:trx --collect:"Code Coverage"
+  displayName: dotnet test
+  workingDirectory: $(solutionDirectory)
 
 #- task: DotNetCoreCLI@2
 #  inputs:
 #    command: 'test'
-#    projects: '**\Selenium.Axe.Test.csproj'
-#    arguments: '/p:CollectCoverage=true'
+#    projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
+#    arguments: '--collect:"Code Coverage"'
 
 - task: SonarCloudAnalyze@1
 
@@ -56,23 +51,14 @@ steps:
   inputs:
     pollingTimeoutSec: '300'
 
-- task: PublishTestResults@2
-  displayName: publish test results
-  inputs:
-      testResultsFiles: '**/TestResults/*.trx'
-      testResultsFormat: VSTest
-      searchFolder: $(solutionDirectory)
-      testRunTitle: dotnet test
-  condition: succeededOrFailed()
-
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(Common.TestResultsDirectory)'
-  inputs:
-    SourceFolder: '$(Agent.TempDirectory)'
-    Contents: |
-     **/*.coverage
-     *.trx
-    TargetFolder: '$(Common.TestResultsDirectory)'
+#- task: PublishTestResults@2
+#  displayName: publish test results
+#  inputs:
+#      testResultsFiles: '**/TestResults/*.trx'
+#      testResultsFormat: VSTest
+#      searchFolder: $(solutionDirectory)
+#      testRunTitle: dotnet test
+#  condition: succeededOrFailed()
 
 - publish: $(outputDirectory)
   displayName: publish drop
