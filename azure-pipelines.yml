@@ -41,7 +41,7 @@ steps:
   inputs:
     command: 'test'
     projects: '**\Selenium.Axe.sln'
-    arguments: '/p:CollectCoverage=true'
+    arguments: '--collect:"Code Coverage"'
 #  workingDirectory: $(solutionDirectory)
 
 #- task: DotNetCoreCLI@2
@@ -49,6 +49,12 @@ steps:
 #    command: 'test'
 #    projects: '**\Selenium.Axe.Test.csproj'
 #    arguments: '/p:CollectCoverage=true'
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
 
 - task: PublishTestResults@2
   displayName: publish test results
@@ -67,12 +73,6 @@ steps:
      **/*.coverage
      *.trx
     TargetFolder: '$(Common.TestResultsDirectory)'
-
-- task: SonarCloudAnalyze@1
-
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '300'
 
 - publish: $(outputDirectory)
   displayName: publish drop
