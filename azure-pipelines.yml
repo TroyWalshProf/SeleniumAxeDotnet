@@ -37,6 +37,11 @@ steps:
 
 # - script: dotnet test --no-restore --logger:trx /p:CollectCoverage=true
 #   displayName: dotnet test
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**\Selenium.Axe.sln'
+    arguments: '/p:CollectCoverage=true'
 #  workingDirectory: $(solutionDirectory)
 
 - task: DotNetCoreCLI@2
