@@ -41,7 +41,7 @@ steps:
   inputs:
     command: 'test'
     projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
-    arguments: '--collect:"Code Coverage" --settings:"$(System.DefaultWorkingDirectory)/Selenium.Axe/Parallel.RunSettings"'
+    arguments: '--collect:"Code Coverage"
 #  workingDirectory: $(solutionDirectory)
 
 #- task: DotNetCoreCLI@2
