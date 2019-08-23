@@ -35,30 +35,17 @@ steps:
   displayName: dotnet build
   workingDirectory: $(solutionDirectory)
 
-- script: dotnet test --no-restore --logger:trx --collect:"Code Coverage"
-  displayName: dotnet test
-  workingDirectory: $(solutionDirectory)
-
-#- task: DotNetCoreCLI@2
-#  inputs:
-#    command: 'test'
-#    projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
-#    arguments: '--collect:"Code Coverage"'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
+    arguments: '--collect:"Code Coverage"'
 
 - task: SonarCloudAnalyze@1
 
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
-
-#- task: PublishTestResults@2
-#  displayName: publish test results
-#  inputs:
-#      testResultsFiles: '**/TestResults/*.trx'
-#      testResultsFormat: VSTest
-#      searchFolder: $(solutionDirectory)
-#      testRunTitle: dotnet test
-#  condition: succeededOrFailed()
 
 - publish: $(outputDirectory)
   displayName: publish drop
