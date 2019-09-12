@@ -220,14 +220,16 @@ namespace Selenium.Axe
         private AxeResult Execute(params object[] args)
         {
             string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"), args);
+            JObject jObject = JObject.Parse(stringifiedResult);
 
-            if (outputFilePath != null) {
-                File.WriteAllText(outputFilePath, stringifiedResult, Encoding.UTF8);
+            if (outputFilePath != null && jObject["results"].Type == JTokenType.Object) {
+                Encoding utf8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+                using (var outputFileWriter = new StreamWriter(outputFilePath, append: false, encoding: utf8NoBOM)) {
+                    jObject["results"].WriteTo(new JsonTextWriter(outputFileWriter));
+                }
             }
 
-            var jObject = JObject.Parse(stringifiedResult);
             return new AxeResult(jObject);
-
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)
