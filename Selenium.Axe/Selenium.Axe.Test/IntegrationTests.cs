@@ -41,16 +41,21 @@ namespace Selenium.Axe.Test
             this.InitDriver(browser);
             LoadTestPage();
 
+            var timeBeforeScan = DateTime.Now;
+
             var builder = new AxeBuilder(_webDriver)
                 .WithOptions(new AxeRunOptions() { XPath = true })
                 .WithTags("wcag2a", "wcag2aa")
-                .DisableRules("color-contrast");
+                .DisableRules("color-contrast")
+                .WithOutputFile(@"./raw-axe-results.json");
 
             var results = builder.Analyze();
             results.Violations.FirstOrDefault(v => v.Id == "color-contrast").Should().BeNull();
             results.Violations.FirstOrDefault(v => !v.Tags.Contains("wcag2a") && !v.Tags.Contains("wcag2aa")).Should().BeNull();
             results.Violations.Should().HaveCount(2);
             results.Violations.First().Nodes.First().XPath.Should().NotBeNullOrEmpty();
+
+            File.GetLastWriteTime(@"./raw-axe-results.json").Should().BeOnOrAfter(timeBeforeScan);
         }
 
         [TestMethod]
@@ -80,23 +85,26 @@ namespace Selenium.Axe.Test
             {
                 case "CHROME":
                     var chromeDriverDirectory = Environment.GetEnvironmentVariable("ChromeWebDriver") ?? Environment.CurrentDirectory;
-                    ChromeOptions options = new ChromeOptions
+                    ChromeOptions chromeOptions = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
                     };
-                    options.AddArgument("no-sandbox");
-                    options.AddArgument("--log-level=3");
-                    options.AddArgument("--silent");
+                    chromeOptions.AddArgument("no-sandbox");
+                    chromeOptions.AddArgument("--log-level=3");
+                    chromeOptions.AddArgument("--silent");
+                    chromeOptions.AddArgument("--headless");
 
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
                     service.SuppressInitialDiagnosticInformation = true;
-                    _webDriver = new ChromeDriver(chromeDriverDirectory, options);
+                    _webDriver = new ChromeDriver(chromeDriverDirectory, chromeOptions);
 
                     break;
 
                 case "FIREFOX":
                     var geckoDriverDirectory = Environment.GetEnvironmentVariable("GeckoWebDriver") ?? Environment.CurrentDirectory;
-                    _webDriver = new FirefoxDriver(geckoDriverDirectory);
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    firefoxOptions.AddArgument("--headless");
+                    _webDriver = new FirefoxDriver(geckoDriverDirectory, firefoxOptions);
                     break;
 
                 default:
