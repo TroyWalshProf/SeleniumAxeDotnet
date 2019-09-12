@@ -19,6 +19,7 @@ namespace Selenium.Axe
         private readonly AxeRunContext runContext = new AxeRunContext();
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
+
         private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() };
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
