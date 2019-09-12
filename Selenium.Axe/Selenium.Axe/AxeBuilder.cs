@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Selenium.Axe
 {
@@ -16,7 +18,7 @@ namespace Selenium.Axe
         private readonly IWebDriver _webDriver;
         private readonly AxeRunContext runContext = new AxeRunContext();
         private AxeRunOptions runOptions = new AxeRunOptions();
-
+        private string outputFilePath = null;
         private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() };
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
@@ -170,6 +172,19 @@ namespace Selenium.Axe
         }
 
         /// <summary>
+        /// Causes <see cref="Analyze()"/> to write the axe results as a JSON file, in addition to returning it in object format as usual.
+        /// File will be overwritten if already exists.
+        /// </summary>
+        /// <param name="path">Path to the output file. Will be passed as-is to the System.IO APIs.</param>
+        public AxeBuilder WithOutputFile(string path)
+        {
+            ValidateNotNullParameter(path, nameof(path));
+
+            outputFilePath = path;
+            return this;
+        }
+
+        /// <summary>
         /// Run aXe against a specific WebElement.
         /// </summary>
         /// <param name="context"> A WebElement to test</param>
@@ -204,9 +219,9 @@ namespace Selenium.Axe
         /// <param name="args">args to be passed to scan function (context, options)</param>
         private AxeResult Execute(params object[] args)
         {
-            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"), args);
-            var jObject = JObject.Parse(stringifiedResult);
-            return new AxeResult(jObject);
+            if (outputFilePath != null) {
+                File.WriteAllText(outputFilePath, rawAxeResult, Encoding.UTF8);
+            }
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)
