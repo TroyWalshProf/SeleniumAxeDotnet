@@ -85,26 +85,23 @@ namespace Selenium.Axe.Test
             {
                 case "CHROME":
                     var chromeDriverDirectory = Environment.GetEnvironmentVariable("ChromeWebDriver") ?? Environment.CurrentDirectory;
-                    ChromeOptions chromeOptions = new ChromeOptions
+                    ChromeOptions options = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
                     };
-                    chromeOptions.AddArgument("no-sandbox");
-                    chromeOptions.AddArgument("--log-level=3");
-                    chromeOptions.AddArgument("--silent");
-                    chromeOptions.AddArgument("--headless");
+                    options.AddArgument("no-sandbox");
+                    options.AddArgument("--log-level=3");
+                    options.AddArgument("--silent");
 
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
                     service.SuppressInitialDiagnosticInformation = true;
-                    _webDriver = new ChromeDriver(chromeDriverDirectory, chromeOptions);
+                    _webDriver = new ChromeDriver(chromeDriverDirectory, options);
 
                     break;
 
                 case "FIREFOX":
                     var geckoDriverDirectory = Environment.GetEnvironmentVariable("GeckoWebDriver") ?? Environment.CurrentDirectory;
-                    FirefoxOptions firefoxOptions = new FirefoxOptions();
-                    firefoxOptions.AddArgument("--headless");
-                    _webDriver = new FirefoxDriver(geckoDriverDirectory, firefoxOptions);
+                    _webDriver = new FirefoxDriver(geckoDriverDirectory);
                     break;
 
                 default:
