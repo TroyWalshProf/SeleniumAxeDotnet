@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
@@ -219,9 +219,15 @@ namespace Selenium.Axe
         /// <param name="args">args to be passed to scan function (context, options)</param>
         private AxeResult Execute(params object[] args)
         {
+            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"), args);
+
             if (outputFilePath != null) {
-                File.WriteAllText(outputFilePath, rawAxeResult, Encoding.UTF8);
+                File.WriteAllText(outputFilePath, stringifiedResult, Encoding.UTF8);
             }
+
+            var jObject = JObject.Parse(stringifiedResult);
+            return new AxeResult(jObject);
+
         }
 
         private static void ValidateParameters(string[] parameterValue, string parameterName)
