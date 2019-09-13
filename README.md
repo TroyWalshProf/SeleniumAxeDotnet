@@ -88,6 +88,12 @@ To configure scanning, use the AxeBuilder class chainable apis.
                     })
                     .Analyze();
     ``` 
+- AxeBuilder.WithOutputFile - Causes Analyze() to export its results a JSON file, in addition to being returned as an AxeResult object as usual.
+    ```csharp
+    var results = new AxeBuilder(webDriver)
+                    .WithOutputFile(@"./path/to/axe-results.json")
+                    .Analyze();
+    ```
 - AxeBuilder.AxeBuilder(webDriver, axeBuilderOptions) - This api allows you to run scanning on axe version that is not packaged with this library.
     ```csharp
     var axeBuilderOptions = new AxeBuilderOptions
