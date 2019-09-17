@@ -299,7 +299,7 @@ If you start with no accessibility issues in your page, you can stay clean by va
 
 ```csharp
 IWebDriver webDriver = new ChromeDriver();
-AxeResult results = webDriver.Analyze();
+AxeResult results = new AxeBuilder(webDriver).Analyze();
 
 results.Violations.Should().BeEmpty();
 ```
