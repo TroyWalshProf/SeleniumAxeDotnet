@@ -10,10 +10,10 @@ Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) 
 
 ## Table of Contents
 
-* [Getting Started](#Getting_Started)
-* [`AxeBuilder` Reference](#AxeBuilder_Reference)
-* [Working with `AxeResult` objects](#Working_with_AxeResult_objects)
-* [Contributing](#Contributing)
+* [Getting Started](#getting-started)
+* [`AxeBuilder` Reference](#axebuilder-reference)
+* [Working with `AxeResult` objects](#working-with-axeresult-objects)
+* [Contributing](#contributing)
 
 ## Getting Started
 
@@ -46,7 +46,7 @@ using FluentAssertions;
 axeResult.Violations.Should().BeEmpty();
 ```
 
-To configure different scan options, use the chainable methods of the `AxeBuilder` ([reference docs](#AxeBuilder_Reference)):
+To configure different scan options, use the chainable methods of the `AxeBuilder` ([reference docs](#axebuilder-reference)):
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
