@@ -8,6 +8,8 @@ Compatible with .NET Standard 2.0+, .NET Framework 4.5+, and .NET Core 2.0+.
 
 Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) and [axe-webdriverjs](https://github.com/dequelabs/axe-webdriverjs). Forked from [Globant.Selenium.Axe](https://github.com/javnov/axe-selenium-csharp).
 
+## Table of Contents
+
 * [Getting Started](#Getting_Started)
 * [`AxeBuilder` Reference](#AxeBuilder_Reference)
 * [Working with `AxeResult` objects](#Working_with_AxeResult_objects)
@@ -44,7 +46,7 @@ using FluentAssertions;
 axeResult.Violations.Should().BeEmpty();
 ```
 
-To configure different scan options, use the chainable methods of the `AxeBuilder` ([reference docs](#AxeBuilder_Options)):
+To configure different scan options, use the chainable methods of the `AxeBuilder` ([reference docs](#AxeBuilder_Reference)):
 
 ```csharp
 AxeResult axeResult = new AxeBuilder(webDriver)
@@ -55,7 +57,7 @@ AxeResult axeResult = new AxeBuilder(webDriver)
 
 For a complete working sample project that uses this library, see [the C# sample in microsoft/axe-pipelines-samples](https://github.com/microsoft/axe-pipelines-samples/tree/master/csharp-selenium-webdriver-sample).
 
-## AxeBuilder reference
+## AxeBuilder Reference
 
 ### `AxeBuilder.Analyze()`
 
