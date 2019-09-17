@@ -173,6 +173,29 @@ namespace Selenium.Axe.Test
         }
 
         [TestMethod]
+        public void ShouldPassRunOptionsIfDeprecatedOptionsSetWithContextElement()
+        {
+            var expectedOptions = "deprecated run options";
+            var expectedContext = new Mock<IWebElement>();
+
+            SetupVerifiableAxeInjectionCall();
+            SetupVerifiableScanElementCall(expectedContext.Object, expectedOptions);
+
+            var builder = new AxeBuilder(webDriverMock.Object);
+#pragma warning disable CS0618
+            builder.Options = expectedOptions;
+#pragma warning restore CS0618
+
+            var result = builder.Analyze(expectedContext.Object);
+
+            VerifyAxeResult(result);
+
+            webDriverMock.VerifyAll();
+            targetLocatorMock.VerifyAll();
+            jsExecutorMock.VerifyAll();
+        }
+
+        [TestMethod]
         public void ShouldPassRuleConfig()
         {
             var expectedRules = new List<string> { "rule1", "rule2" };
@@ -186,8 +209,8 @@ namespace Selenium.Axe.Test
                 },
                 Rules = new Dictionary<string, RuleOptions>()
                 {
-                   { "excludeRule1", new RuleOptions(){ Enabled = false} },
-                   { "excludeRule2", new RuleOptions(){ Enabled = false } }
+                    { "excludeRule1", new RuleOptions(){ Enabled = false} },
+                    { "excludeRule2", new RuleOptions(){ Enabled = false } }
                 }
 
             });
@@ -311,10 +334,7 @@ namespace Selenium.Axe.Test
             VerifyExceptionThrown<InvalidOperationException>(() => builder.DisableRules("rule-1"));
             VerifyExceptionThrown<InvalidOperationException>(() => builder.WithTags("tag1"));
             VerifyExceptionThrown<InvalidOperationException>(() => builder.WithOptions(new AxeRunOptions() { Iframes = true }));
-
-
         }
-
 
         private void VerifyExceptionThrown<T>(Action action) where T : Exception
         {
@@ -337,14 +357,13 @@ namespace Selenium.Axe.Test
         private void SetupVerifiableAxeInjectionCall()
         {
             webDriverMock
-          .Setup(d => d.FindElements(It.IsAny<By>()))
-          .Returns(new ReadOnlyCollection<IWebElement>(new List<IWebElement>(0)));
+                .Setup(d => d.FindElements(It.IsAny<By>()))
+                .Returns(new ReadOnlyCollection<IWebElement>(new List<IWebElement>(0)));
 
             webDriverMock.Setup(d => d.SwitchTo()).Returns(targetLocatorMock.Object);
 
             jsExecutorMock
                 .Setup(js => js.ExecuteScript(EmbeddedResourceProvider.ReadEmbeddedFile("axe.min.js"))).Verifiable();
-
         }
 
         private void SetupVerifiableScanCall(string serializedContext, string serialzedOptions)
@@ -352,6 +371,14 @@ namespace Selenium.Axe.Test
             jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
                 EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"),
                 It.Is<string>(context => context == serializedContext),
+                It.Is<string>(options => options == serialzedOptions))).Returns(testAxeResult).Verifiable();
+        }
+
+        private void SetupVerifiableScanElementCall(IWebElement elementContext, string serialzedOptions)
+        {
+            jsExecutorMock.Setup(js => js.ExecuteAsyncScript(
+                EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"),
+                elementContext,
                 It.Is<string>(options => options == serialzedOptions))).Returns(testAxeResult).Verifiable();
         }
 
