@@ -186,41 +186,43 @@ namespace Selenium.Axe
         }
 
         /// <summary>
-        /// Run aXe against a specific WebElement.
+        /// Run axe against a specific WebElement (including its descendants).
         /// </summary>
-        /// <param name="context"> A WebElement to test</param>
-        /// <returns>An aXe results document</returns>
+        /// <param name="context">A WebElement to test</param>
+        /// <returns>An axe results document</returns>
         public AxeResult Analyze(IWebElement context)
         {
-            //string command = string.Format("axe.a11yCheck(arguments[0], {0}, arguments[arguments.length - 1]);", Options);
-            return Execute(context, JsonConvert.SerializeObject(runOptions, JsonSerializerSettings));
+            return AnalyzeRawContext(context);
         }
 
         /// <summary>
-        /// Run aXe against the page.
+        /// Run axe against the entire page.
         /// </summary>
-        /// <returns>An aXe results document</returns>
+        /// <returns>An axe results document</returns>
         public AxeResult Analyze()
         {
             bool runContextHasData = runContext.Include?.Any() == true || runContext.Exclude?.Any() == true;
 
-            string contextToBeSent = runContextHasData ? JsonConvert.SerializeObject(runContext, JsonSerializerSettings) : null;
+            string rawContext = runContextHasData ? JsonConvert.SerializeObject(runContext, JsonSerializerSettings) : null;
 
-#pragma warning disable CS0618
-            string runOptionsToBeSent = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
-#pragma warning restore CS0618
-
-
-            return Execute(contextToBeSent, runOptionsToBeSent);
+            return AnalyzeRawContext(rawContext);
         }
 
         /// <summary>
-        /// Execute the script into the target.
+        /// Runs axe via scan.js at a specific context, which will be passed as-is to Selenium for scan.js to interpret, and
+        /// parses/handles the scan.js output per the current builder options.
         /// </summary>
-        /// <param name="args">args to be passed to scan function (context, options)</param>
-        private AxeResult Execute(params object[] args)
+        /// <param name="rawContextArg">The value to pass as-is to scan.js to use as the axe.run "context" argument</param>
+        private AxeResult AnalyzeRawContext(object rawContextArg)
         {
-            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(EmbeddedResourceProvider.ReadEmbeddedFile("scan.js"), args);
+            #pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
+            string rawOptionsArg = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
+            #pragma warning restore CS0618
+
+            string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("scan.js");
+            object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
+            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
+
             JObject jObject = JObject.Parse(stringifiedResult);
 
             if (outputFilePath != null && jObject["results"].Type == JTokenType.Object) {
@@ -253,7 +255,9 @@ namespace Selenium.Axe
 
         private void ThrowIfDeprecatedOptionsSet()
         {
+            #pragma warning disable CS0618 // Intentionally checking publicly deprecated property for backcompat
             if (Options != "{}")
+            #pragma warning restore CS0618
             {
                 throw new InvalidOperationException("Deprecated Options api shouldn't be used with the new apis - WithOptions/WithRules/WithTags or DisableRules");
             }
