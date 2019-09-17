@@ -70,7 +70,7 @@ Runs an axe accessibility scan of the entire page using all previously chained o
 ### `AxeBuilder.Analyze(IWebElement element)`
 
 ```csharp
-var elementToTest = webDriver.FindElement(By.Id("nav-bar"));
+IWebElement elementToTest = webDriver.FindElement(By.Id("nav-bar"));
 AxeResult axeResult = new AxeBuilder(webDriver)
     .Analyze(elementToTest);
 ```
@@ -82,7 +82,7 @@ Not compatible with `AxeBuilder.Include` or `AxeBuilder.Exclude`; the element pa
 ### `AxeBuilder.Include(params string[] cssSelectorPath)`
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Include(".class-of-element-under-test")
     .Analyze();
 ```
@@ -94,7 +94,7 @@ Scopes future `Analyze()` calls to include *only* the element(s) matching the gi
 `Include` may be combined with `Exclude` to scan a tree of elements but omit some children of that tree. For example:
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Include("#element-under-test")
     .Exclude("#element-under-test div.child-class-with-known-issues")
     .Analyze();
@@ -106,17 +106,17 @@ If you pass multiple CSS selectors to a single invocation of `Include`, this wil
 
 ```csharp
 // This is correct
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Include("#id-of-iframe", "#id-of-child-element-inside-iframe")
     .Analyze();
 
 // This is wrong!
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Include("#first-element", "#second-element")
     .Analyze();
 
 // If you want to include multiple elements, use multiple .Include() calls instead
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Include("#first-element")
     .Include("#second-element")
     .Analyze();
@@ -125,7 +125,7 @@ var results = new AxeBuilder(webDriver)
 ### `AxeBuilder.Exclude(params string[] cssSelectorPath)`
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Exclude(".class-of-element-with-known-issues")
     .Analyze();
 ```
@@ -137,7 +137,7 @@ Scopes future `Analyze()` calls to exclude the element(s) matching the given CSS
 `Exclude` may be combined with `Include` to scan a tree of elements but omit some children of that tree. For example:
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Include("#element-under-test")
     .Exclude("#element-under-test div.child-class-with-known-issues")
     .Analyze();
@@ -149,17 +149,17 @@ If you pass multiple CSS selectors to a single invocation of `Exclude`, this wil
 
 ```csharp
 // This is correct
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Exclude("#id-of-iframe", "#id-of-child-element-inside-iframe")
     .Analyze();
 
 // This is wrong!
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Exclude("#first-element", "#second-element")
     .Analyze();
 
 // If you want to exclude multiple elements, use multiple .Exclude() calls instead
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .Exclude("#first-element")
     .Exclude("#second-element")
     .Analyze();
@@ -168,7 +168,7 @@ var results = new AxeBuilder(webDriver)
 ### `AxeBuilder.WithRules(params string[] axeRuleIds)`
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .WithRules("color-contrast", "duplicate-id")
     .Analyze();
 ```
@@ -184,7 +184,7 @@ For a list of the available axe rules, see https://dequeuniversity.com/rules/axe
 ### `AxeBuilder.DisableRules(params string[] axeRuleIds)`
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .DisableRules("color-contrast", "duplicate-id")
     .Analyze();
 ```
@@ -196,7 +196,7 @@ For a list of the available axe rules, see https://dequeuniversity.com/rules/axe
 `DisableRules` is compatible with `WithTags`; you can use this to run all-but-some of the rules for a given set of tags. For example, to run all WCAG 2.0 A rules except for `color-contrast`:
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .WithTags("wcag2a")
     .DisableRules("color-contrast")
     .Analyze();
@@ -215,7 +215,7 @@ A "tag" is a string that may be associated with a given axe rule. See the [axe-c
 `WithTags` is compatible with `DisableRules`; you can use this to run all-but-some of the rules for a given set of tags. For example, to run all WCAG 2.0 A rules except for `color-contrast`:
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .WithTags("wcag2a")
     .DisableRules("color-contrast")
     .Analyze();
@@ -230,7 +230,7 @@ var results = new AxeBuilder(webDriver)
 *Note: in most cases, the simpler `WithRules`, `WithTags`, and `DisableRules` can be used instead.*
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .WithOptions(new AxeRunOptions()
     {
         RunOnly = new RunOnlyOptions
@@ -252,7 +252,7 @@ Causes future calls to `Analyze` to use the specified options when calling `axe.
 ### `AxeBuilder.WithOutputFile(string filePath)`
 
 ```csharp
-var results = new AxeBuilder(webDriver)
+AxeResult axeResult = new AxeBuilder(webDriver)
     .WithOutputFile(@"./path/to/axe-results.json")
     .Analyze();
 ```
@@ -266,11 +266,11 @@ The output format is exactly the same as axe-core would have produced natively, 
 This constructor overload enables certain advanced options not required by most `Selenium.Axe` users. Currently, its only use is to allow you to use a custom `axe-core` implementation, rather than the one that is packaged with this library.
 
 ```csharp
-var axeBuilderOptions = new AxeBuilderOptions
+AxeBuilderOptions axeBuilderOptions = new AxeBuilderOptions
 {
     ScriptProvider = new FileAxeScriptProvider(".\\axe.min.js")
 };
-var results = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
+AxeResult axeResult = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 ```
 
 ### *Deprecated*: `AxeBuilder.Options`
@@ -278,9 +278,9 @@ var results = new AxeBuilder(webDriver, axeBuilderOptions).Analyze();
 *This property is deprecated; instead, use `WithOptions`, `WithRules`, `WithTags`, and `DisableRules`*
 
 ```csharp
-var axeBuilder = new AxeBuilder(webDriver);
+AxeBuilder axeBuilder = new AxeBuilder(webDriver);
 axeBuilder.Options = "{\"runOnly\": {\"type\": \"tag\", \"values\": [\"wcag2a\"]}, \"restoreScroll\": true}"
-var results = axeBuilder.Analyze();
+AxeResult axeResult = axeBuilder.Analyze();
 ```
 
 Sets a JSON string that will be passed as-is to the axe.run `options` parameter.
