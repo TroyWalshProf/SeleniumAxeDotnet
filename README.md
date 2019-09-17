@@ -289,7 +289,6 @@ See the [axe-core API documentation](https://github.com/dequelabs/axe-core/blob/
 
 `Options` is not compatible with `WithRules`, `WithTags`, `DisableRules`, or `WithOptions`
 
-
 ## Working with AxeResult objects
 
 In most cases, you would run an axe scan from within a test method in a suite of end to end tests, and you would want to use a test assertion to verify that there are no unexpected accessibility violations in a page or component.
