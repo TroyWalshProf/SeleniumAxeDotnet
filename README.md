@@ -1,5 +1,7 @@
 [![Build Status](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_apis/build/status/SeleniumAxeDotnet?branchName=master)](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_build/latest?definitionId=4&branchName=master)  
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TroyWalshProf_SeleniumAxeDotnet&metric=alert_status)](https://sonarcloud.io/dashboard?id=TroyWalshProf_SeleniumAxeDotnet)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TroyWalshProf_SeleniumAxeDotnet&metric=alert_status)](https://sonarcloud.io/dashboard?id=TroyWalshProf_SeleniumAxeDotnet)  
+[![Nuget](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe/)  
+[![Nuget](https://img.shields.io/nuget/dt/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe/)  
 
 # Selenium.Axe
 
