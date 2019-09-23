@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -8,7 +7,6 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace Selenium.Axe.Test
 {
@@ -56,6 +54,29 @@ namespace Selenium.Axe.Test
             results.Violations.First().Nodes.First().XPath.Should().NotBeNullOrEmpty();
 
             File.GetLastWriteTime(@"./raw-axe-results.json").Should().BeOnOrAfter(timeBeforeScan);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("Firefox")]
+        public void RunResultToolOptions(string browser)
+        {
+            this.InitDriver(browser);
+            LoadTestPage();
+
+            var builder = new AxeBuilder(_webDriver)
+                .WithOptions(new AxeRunOptions() { XPath = true })
+                .WithTags("wcag2a", "wcag2aa")
+                .DisableRules("color-contrast");
+
+            var results = builder.Analyze();
+            results.ToolOptions.XPath.Should().Be(true);
+            results.ToolOptions.Rules.Should().HaveCount(1);
+            results.ToolOptions.Rules.FirstOrDefault(v => v.Key.Equals("color-contrast")).Value.Enabled.Should().Be(false);
+            results.ToolOptions.RunOnly.Values.Should().HaveCount(2);
+            results.ToolOptions.RunOnly.Type.Should().Be("tag");
+            results.ToolOptions.RunOnly.Values.FirstOrDefault(v => v.Equals("wcag2a")).Should().NotBeNull();
+            results.ToolOptions.RunOnly.Values.FirstOrDefault(v => v.Equals("wcag2aa")).Should().NotBeNull();
         }
 
         [TestMethod]
