@@ -59,29 +59,6 @@ namespace Selenium.Axe.Test
         [TestMethod]
         [DataRow("Chrome")]
         [DataRow("Firefox")]
-        public void RunResultToolOptions(string browser)
-        {
-            this.InitDriver(browser);
-            LoadTestPage();
-
-            var builder = new AxeBuilder(_webDriver)
-                .WithOptions(new AxeRunOptions() { XPath = true })
-                .WithTags("wcag2a", "wcag2aa")
-                .DisableRules("color-contrast");
-
-            var results = builder.Analyze();
-            results.ToolOptions.XPath.Should().Be(true);
-            results.ToolOptions.Rules.Should().HaveCount(1);
-            results.ToolOptions.Rules.FirstOrDefault(v => v.Key.Equals("color-contrast")).Value.Enabled.Should().Be(false);
-            results.ToolOptions.RunOnly.Values.Should().HaveCount(2);
-            results.ToolOptions.RunOnly.Type.Should().Be("tag");
-            results.ToolOptions.RunOnly.Values.FirstOrDefault(v => v.Equals("wcag2a")).Should().NotBeNull();
-            results.ToolOptions.RunOnly.Values.FirstOrDefault(v => v.Equals("wcag2aa")).Should().NotBeNull();
-        }
-
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
         public void RunScanOnGivenElement(string browser)
         {
             this.InitDriver(browser);

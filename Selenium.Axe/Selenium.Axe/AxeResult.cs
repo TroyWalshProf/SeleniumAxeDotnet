@@ -10,7 +10,6 @@ namespace Selenium.Axe
         public AxeResultItem[] Inapplicable { get; }
         public AxeResultItem[] Incomplete { get; }
         public DateTimeOffset? Timestamp { get; private set; }
-        public AxeRunOptions ToolOptions { get; }
         public string Url { get; private set; }
 
         public string Error { get; private set; }
@@ -32,7 +31,6 @@ namespace Selenium.Axe
             Inapplicable = inapplicableToken?.ToObject<AxeResultItem[]>();
             Incomplete = incompleteToken?.ToObject<AxeResultItem[]>();
             Timestamp = timestampToken?.ToObject<DateTimeOffset>();
-            ToolOptions = toolOptions?.ToObject<AxeRunOptions>();
 
             //AxeRunOptions
             Url = urlToken?.ToObject<string>();
