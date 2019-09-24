@@ -1,19 +1,8 @@
 # Selenium.Axe for .NET
 
-[![Selenium.Axe NuGet package](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe) [![NuGet package download counter](https://img.shields.io/nuget/dt/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe/)  [![Build Status](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_apis/build/status/SeleniumAxeDotnet?branchName=master)](https://dev.azure.com/AxeDotNet/Axe-Selenium-DotNet/_build/latest?definitionId=4&branchName=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TroyWalshProf_SeleniumAxeDotnet&metric=alert_status)](https://sonarcloud.io/dashboard?id=TroyWalshProf_SeleniumAxeDotnet)
-
 Automated web accessibility testing with .NET, C#, and Selenium. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
 Compatible with .NET Standard 2.0+, .NET Framework 4.5+, and .NET Core 2.0+.
-
-Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) and [axe-webdriverjs](https://github.com/dequelabs/axe-webdriverjs). Forked from [Globant.Selenium.Axe](https://github.com/javnov/axe-selenium-csharp).
-
-## Table of Contents
-
-* [Getting Started](#getting-started)
-* [`AxeBuilder` Reference](#axebuilder-reference)
-* [Working with `AxeResult` objects](#working-with-axeresult-objects)
-* [Contributing](#contributing)
 
 ## Getting Started
 
@@ -325,7 +314,7 @@ new AxeBuilder(webDriver)
 
 ## Contributing
 
-*Please note that this project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.*
+*Please note that this project is released with a [Contributor Code of Conduct](https://github.com/TroyWalshProf/SeleniumAxeDotnet/blob/master/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.*
 
 This project builds against a combination of .NET Standard, .NET Core, and .NET Framework targets.
 
