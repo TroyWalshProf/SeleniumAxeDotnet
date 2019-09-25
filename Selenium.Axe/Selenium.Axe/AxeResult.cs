@@ -23,7 +23,6 @@ namespace Selenium.Axe
             JToken incompleteToken = results.SelectToken("incomplete");
             JToken timestampToken = results.SelectToken("timestamp");
             JToken urlToken = results.SelectToken("url");
-            JToken toolOptions = results.SelectToken("toolOptions");
             JToken error = result.SelectToken("error");
 
             Violations = violationsToken?.ToObject<AxeResultItem[]>();
@@ -31,6 +30,7 @@ namespace Selenium.Axe
             Inapplicable = inapplicableToken?.ToObject<AxeResultItem[]>();
             Incomplete = incompleteToken?.ToObject<AxeResultItem[]>();
             Timestamp = timestampToken?.ToObject<DateTimeOffset>();
+
             Url = urlToken?.ToObject<string>();
             Error = error?.ToObject<string>();
         }
