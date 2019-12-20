@@ -4,7 +4,7 @@
 
 Automated web accessibility testing with .NET, C#, and Selenium. Wraps the [axe-core](https://github.com/dequelabs/axe-core) accessibility scanning engine and the [Selenium.WebDriver](https://www.seleniumhq.org/) browser automation framework.
 
-Compatible with .NET Standard 2.0+, .NET Framework 4.5+, and .NET Core 3.1+.
+Compatible with .NET Standard 2.0+, .NET Framework 4.5+, and .NET Core 2.0+.
 
 Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) and [axe-webdriverjs](https://github.com/dequelabs/axe-webdriverjs). Forked from [Globant.Selenium.Axe](https://github.com/javnov/axe-selenium-csharp).
 
