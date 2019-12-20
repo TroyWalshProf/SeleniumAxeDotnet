@@ -19,7 +19,7 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="76.0.3809.68" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.24.0" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.26.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.2" />
