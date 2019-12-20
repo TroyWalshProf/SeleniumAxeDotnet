@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45;net471;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net471;netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <Authors>Globant,jdmesalosada,javnov,TroyWalshProf</Authors>
     <Description>Tools for using aXe for web accessibility testing with C# and Selenium</Description>
     <PackageProjectUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</PackageProjectUrl>
@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
   </ItemGroup>
   
