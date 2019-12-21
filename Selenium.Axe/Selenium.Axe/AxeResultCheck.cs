@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-
-
-namespace Selenium.Axe
+﻿namespace Selenium.Axe
 {
     public class AxeResultCheck
     {

@@ -48,6 +48,7 @@ namespace Selenium.Axe.Test
         {
             //arrange / act /assert
             var axeBuilder = new AxeBuilder(null);
+            axeBuilder.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -59,6 +60,7 @@ namespace Selenium.Axe.Test
 
             // act / assert
             var axeBuilder = new AxeBuilder(driver.Object, null);
+            axeBuilder.Should().NotBeNull();
         }
 
         [TestMethod]
