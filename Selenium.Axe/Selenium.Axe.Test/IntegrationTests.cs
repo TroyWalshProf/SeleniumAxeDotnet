@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using HtmlAgilityPack;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -68,6 +69,84 @@ namespace Selenium.Axe.Test
 
             AxeResult results = _webDriver.Analyze(mainElement);
             results.Violations.Should().HaveCount(3);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("Firefox")]
+        public void ReportFullPage(string browser)
+        {
+            string path = CreateReportPath();
+            this.InitDriver(browser);
+            LoadTestPage();
+
+            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName("main")));
+            _webDriver.CreateReport(path);
+
+            ValidateReport(path, 4, 23);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("Firefox")]
+        public void ReportOffElement(string browser)
+        {
+            string path = CreateReportPath();
+            this.InitDriver(browser);
+            LoadTestPage();
+
+            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+            _webDriver.CreateReport(mainElement, path);
+
+            ValidateReport(path, 3, 15);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("Firefox")]
+        public void ReportRespectRules(string browser)
+        {
+            string path = CreateReportPath();
+            this.InitDriver(browser);
+            LoadTestPage();
+            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+
+            var builder = new AxeBuilder(_webDriver).DisableRules("color-contrast");
+            _webDriver.CreateReport(builder.Analyze(), path);
+
+            ValidateReport(path, 3, 18);
+        }
+
+        private string CreateReportPath()
+        {
+            string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
+        }
+
+        private void ValidateReport(string path, int violationCount, int passCount)
+        {
+            string text = File.ReadAllText(path);
+            var doc = new HtmlDocument();
+            doc.LoadHtml(text);
+
+            // Check violations 
+            string xpath = ".//*[@id=\"ViolationsSection\"]//*[contains(concat(\" \",normalize-space(@class),\" \"),\"htmlTable\")]";
+            HtmlNodeCollection liNodes = doc.DocumentNode.SelectNodes(xpath);
+            Assert.AreEqual(violationCount, liNodes.Count, $"Expected {violationCount} violations");
+
+            // Check passes
+            xpath = ".//*[@id=\"PassesSection\"]//*[contains(concat(\" \",normalize-space(@class),\" \"),\"htmlTable\")]";
+            liNodes = doc.DocumentNode.SelectNodes(xpath);
+            Assert.AreEqual(passCount, liNodes.Count, $"Expected {passCount} passess");
+
+            // Check header data
+            Assert.IsTrue(text.Contains("Using: axe-core"), "Expected to find 'Using: axe-core'");
+            Assert.IsTrue(text.Contains($"Violation: {violationCount}"), $"Expected to find 'Violation: {violationCount}'");
+            Assert.IsTrue(text.Contains("Incomplete: 0"), "Expected to find 'Incomplete: 0'");
+            Assert.IsTrue(text.Contains($"Pass: {passCount}"), $"Expected to find 'Pass: {passCount}'");
+            Assert.IsTrue(text.Contains("Inapplicable: 0"), "Expected to find 'Inapplicable: 0'");
         }
 
         private void LoadTestPage()
