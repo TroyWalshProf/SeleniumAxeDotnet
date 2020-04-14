@@ -89,7 +89,7 @@ namespace Selenium.Axe.Test
         [TestMethod]
         [DataRow("Chrome")]
         [DataRow("Firefox")]
-        public void ReportOffElement(string browser)
+        public void ReportOnElement(string browser)
         {
             string path = CreateReportPath();
             this.InitDriver(browser);

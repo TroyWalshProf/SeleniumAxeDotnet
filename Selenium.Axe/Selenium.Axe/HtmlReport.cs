@@ -68,6 +68,7 @@ p {}
             content = new StringBuilder();
             content.AppendLine($"Url: {results.Url}<br>");
             content.AppendLine($"Orientation: {results.TestEnvironment.OrientationType}<br>");
+            content.AppendLine($"Size: {results.TestEnvironment.WindowWidth}X{results.TestEnvironment.WindowHeight}<br>");
             content.AppendLine($"Time: {results.Timestamp}<br>");
             content.AppendLine($"User agent: {results.TestEnvironment.UserAgent}<br>");
             content.AppendLine($"Using: {results.TestEngine}");
