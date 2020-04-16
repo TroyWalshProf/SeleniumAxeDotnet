@@ -148,7 +148,7 @@ namespace Selenium.Axe.Test
             Assert.IsTrue(reportContext.Contains("Size: 1200 x 646"));
             Assert.IsTrue(reportContext.Contains("Time: 4/14/2020 1:33:59 AM +00:00"));
             Assert.IsTrue(reportContext.Contains("User agent: AutoAgent"));
-            Assert.IsTrue(reportContext.Contains("Using: axe-core (3.4.2)"));
+            Assert.IsTrue(reportContext.Contains("Using: axe-core (3.4.1)"));
         }
 
         private string CreateReportPath()
