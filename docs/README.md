@@ -312,6 +312,43 @@ new AxeBuilder(webDriver)
     .Violations.Should().BeEmpty();
 ```
 
+## Creating a HTML report
+
+Axe results can be published as a standalone HTML file.  The file contain fail, pass, incomplete and inapplicable test results.  It also contains a screenshot and scan meta data.
+
+Run full report:
+
+```csharp
+IWebDriver webDriver = new ChromeDriver();
+// Navigate to page
+AxeResult results = new AxeBuilder(webDriver).Analyze();
+string path = Path.Combine(GetDestFolder(), "AxeReport.html");
+
+webDriver.CreateAxeHtmlReport(results, path);
+```
+
+Report on an element and all its children:
+
+```csharp
+IWebDriver webDriver = new ChromeDriver();
+// Navigate to page
+var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+string path = Path.Combine(GetDestFolder(), "AxeReport.html");
+
+webDriver.CreateAxeHtmlReport(mainElement, path);
+```
+
+Report with custom rules:
+
+```csharp
+IWebDriver webDriver = new ChromeDriver();
+// Navigate to page
+string path = Path.Combine(GetDestFolder(), "AxeReport.html");
+var builder = new AxeBuilder(webDriver).DisableRules("color-contrast");
+
+webDriver.CreateAxeHtmlReport(builder.Analyze(), path);
+```
+
 ## Contributing
 
 *Please note that this project is released with a [Contributor Code of Conduct](https://github.com/TroyWalshProf/SeleniumAxeDotnet/blob/master/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.*
