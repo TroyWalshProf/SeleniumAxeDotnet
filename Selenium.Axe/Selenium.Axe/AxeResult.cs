@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 
 namespace Selenium.Axe
 {
@@ -16,7 +17,9 @@ namespace Selenium.Axe
 
         public string Error { get; private set; }
 
-        public string TestEngine { get; private set; }
+        public string TestEngineName { get; private set; }
+
+        public string TestEngineVersion { get; private set; }
 
         public AxeResult(JObject result)
         {
@@ -39,10 +42,10 @@ namespace Selenium.Axe
             Incomplete = incompleteToken?.ToObject<AxeResultItem[]>();
             Timestamp = timestampToken?.ToObject<DateTimeOffset>();
             TestEnvironment = testEnvironment?.ToObject<AxeTestEnvironment>();
-
             Url = urlToken?.ToObject<string>();
             Error = error?.ToObject<string>();
-            TestEngine = $"{testEngineName?.ToObject<string>()} ({testEngineVersion?.ToObject<string>()})" ;
+            TestEngineName = testEngineName?.ToObject<string>();
+            TestEngineVersion = testEngineVersion?.ToObject<string>();
         }
     }
 }

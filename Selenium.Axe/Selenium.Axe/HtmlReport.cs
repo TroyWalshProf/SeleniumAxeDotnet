@@ -9,18 +9,18 @@ namespace Selenium.Axe
 {
     public static class HtmlReport
     {
-        public static void CreateReport(this IWebDriver webDriver, string destination)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination)
         {
             AxeBuilder axeBuilder = new AxeBuilder(webDriver);
-            webDriver.CreateReport(axeBuilder.Analyze(), destination);
+            webDriver.CreateAxeHtmlReport(axeBuilder.Analyze(), destination);
         }
 
-        public static void CreateReport(this IWebDriver webDriver, IWebElement context, string destination)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination)
         {
             AxeBuilder axeBuilder = new AxeBuilder(webDriver);
-            context.CreateReport(axeBuilder.Analyze(context), destination);
+            context.CreateAxeHtmlReport(axeBuilder.Analyze(context), destination);
         }
-        public static void CreateReport(this ISearchContext context, AxeResult results, string destination)
+        public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination)
         {
              HashSet<string> selectors = new HashSet<string>();
             int violationCount = GetCount(results.Violations, ref selectors);
@@ -43,16 +43,16 @@ namespace Selenium.Axe
             content.AppendLine(@"}
 .fullImage:hover {transform:scale(2.75);transform-origin: top left;}
 p {}
-.wrap .wrapTwo .wrapThree{overflow-wrap: anywhere;margin: 2px;}
-.wrapOne {margin-left:1em;}
-.wrapTwo {margin-left:2em;}
-.wrapThree {margin-left:3em;}
-.emOne {margin-left:1em;}
-.emTwo {margin-left:2em;}
-.emThree {margin-left:3em;}
+.wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
+.wrapOne {margin-left:1em;overflow-wrap:anywhere;}
+.wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
+.wrapThree {margin-left:3em;overflow-wrap:anywhere;}
+.emOne {margin-left:1em;overflow-wrap:anywhere;}
+.emTwo {margin-left:2em;overflow-wrap:anywhere;}
+.emThree {margin-left:3em;overflow-wrap:anywhere;}
 .majorSection{border: 1px solid black;}
 .findings{border-top:1px solid black;}
-.htmlTable{border-color:lightgray;border-style:solid;width:100%;display:table;}");
+.htmlTable{border-top:double lightgray;width:100%;display:table;}");
 
             HtmlNode body = doc.DocumentNode.SelectSingleNode("//body");
             doc.DocumentNode.SelectSingleNode("//style").InnerHtml = content.ToString();
@@ -68,13 +68,14 @@ p {}
             content = new StringBuilder();
             content.AppendLine($"Url: {results.Url}<br>");
             content.AppendLine($"Orientation: {results.TestEnvironment.OrientationType}<br>");
-            content.AppendLine($"Size: {results.TestEnvironment.WindowWidth}X{results.TestEnvironment.WindowHeight}<br>");
+            content.AppendLine($"Size: {results.TestEnvironment.WindowWidth} x {results.TestEnvironment.WindowHeight}<br>");
             content.AppendLine($"Time: {results.Timestamp}<br>");
             content.AppendLine($"User agent: {results.TestEnvironment.UserAgent}<br>");
-            content.AppendLine($"Using: {results.TestEngine}");
+            content.AppendLine($"Using: {results.TestEngineName} ({results.TestEngineVersion})");
 
             element = doc.CreateElement("div");
             element.SetAttributeValue("class", "emOne");
+            element.SetAttributeValue("id", "reportContext");
             element.InnerHtml = content.ToString();
             body.AppendChild(element);
 
@@ -107,7 +108,11 @@ p {}
                 element = doc.CreateElement("h2");
                 element.InnerHtml = "SCAN ERRORS:";
                 body.AppendChild(element);
-                body.AppendChild(doc.CreateTextNode(results.Error));
+
+                var error = doc.CreateElement("div");
+                error.SetAttributeValue("id", "ErrorMessage");
+                error.InnerHtml = HttpUtility.HtmlEncode(results.Error);
+                body.AppendChild(error);
             }
 
             element = doc.CreateElement("br");
@@ -128,7 +133,7 @@ p {}
             if (incompleteCount > 0)
             {
                 area.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Inapplicable, "Incomplete", doc, area);
+                GetReadableAxeResults(results.Incomplete, "Incomplete", doc, area);
             }
 
             if (passCount > 0)
@@ -158,6 +163,12 @@ p {}
                         count++;
                         uniqueList.Add(target);
                     }
+                }
+
+                // Still add one if no targets are included
+                if (item.Nodes.Length == 0)
+                {
+                    count++;
                 }
             }
             return count;
