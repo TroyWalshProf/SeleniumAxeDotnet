@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.IO;
 
 namespace Selenium.Axe
 {
