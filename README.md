@@ -13,6 +13,7 @@ Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) 
 * [Getting Started](https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=getting-started)
 * [`AxeBuilder` Reference](https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=axebuilder-reference)
 * [Working with `AxeResult` objects](https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=working-with-axeresult-objects)
+* [Creating a HTML report(https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=creating-a-html-report)
 * [Contributing](https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=contributing)
 
 
