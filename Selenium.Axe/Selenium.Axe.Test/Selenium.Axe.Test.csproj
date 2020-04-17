@@ -8,7 +8,13 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="SampleResults.json" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="integration-test-target.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleResults.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -25,9 +31,6 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />

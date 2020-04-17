@@ -68,7 +68,6 @@ namespace Selenium.Axe.Test
 
             serializedObject.Should().Be(expectedObject);
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
-
         }
 
         [TestMethod]

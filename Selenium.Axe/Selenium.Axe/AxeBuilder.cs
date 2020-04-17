@@ -43,6 +43,20 @@ namespace Selenium.Axe
         }
 
         /// <summary>
+        /// Initialize an instance of <see cref="AxeBuilder"/>
+        /// </summary>
+        /// <param name="webDriver">Selenium driver to use</param>
+        /// <param name="options">Builder options</param>
+        public AxeBuilder(IWebDriver webDriver, AxeBuilderOptions options)
+        {
+            ValidateNotNullParameter(webDriver, nameof(webDriver));
+            ValidateNotNullParameter(options, nameof(options));
+
+            _webDriver = webDriver;
+            _webDriver.Inject(options.ScriptProvider);
+        }
+
+        /// <summary>
         ///  Run configuration data that is passed to axe for scanning the web page.
         ///  This will override the value set by <see cref="WithRules(string[])"/>, <see cref="WithTags(string[])"/> & <see cref="DisableRules(string[])"/>
         /// </summary>
@@ -121,20 +135,6 @@ namespace Selenium.Axe
             }
             runOptions.Rules = rulesMap;
             return this;
-        }
-
-        /// <summary>
-        /// Initialize an instance of <see cref="AxeBuilder"/>
-        /// </summary>
-        /// <param name="webDriver">Selenium driver to use</param>
-        /// <param name="options">Builder options</param>
-        public AxeBuilder(IWebDriver webDriver, AxeBuilderOptions options)
-        {
-            ValidateNotNullParameter(webDriver, nameof(webDriver));
-            ValidateNotNullParameter(options, nameof(options));
-
-            _webDriver = webDriver;
-            _webDriver.Inject(options.ScriptProvider);
         }
 
         /// <summary>
