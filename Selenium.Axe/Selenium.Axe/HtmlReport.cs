@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Internal;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +23,10 @@ namespace Selenium.Axe
         }
         public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination)
         {
-             HashSet<string> selectors = new HashSet<string>();
+            // Get the unwrapped element if we are using a wrapped element
+            context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
+            
+            HashSet<string> selectors = new HashSet<string>();
             int violationCount = GetCount(results.Violations, ref selectors);
             int incompleteCount = GetCount(results.Incomplete, ref selectors);
             int passCount = GetCount(results.Passes, ref selectors);

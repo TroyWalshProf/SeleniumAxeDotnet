@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
@@ -97,6 +98,24 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             this.InitDriver(browser);
             LoadTestPage();
+
+            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+            _webDriver.CreateAxeHtmlReport(mainElement, path);
+
+            ValidateReport(path, 3, 16, 0, 61);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("Firefox")]
+        public void ReportOnElementEventFiring(string browser)
+        {
+            string path = CreateReportPath();
+            this.InitDriver(browser);
+            LoadTestPage();
+            
+            _webDriver = new EventFiringWebDriver(_webDriver);
+            _wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(20));
 
             var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
             _webDriver.CreateAxeHtmlReport(mainElement, path);

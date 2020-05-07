@@ -4,7 +4,7 @@ pool:
   vmImage: windows-latest
 
 variables:
-  version: '1.5.0'
+  version: '1.5.1'
   buildConfiguration: 'Release'
   solutionDirectory: '$(System.DefaultWorkingDirectory)/Selenium.Axe'
   outputDirectory: '$(solutionDirectory)/Selenium.Axe/bin/$(buildConfiguration)'
