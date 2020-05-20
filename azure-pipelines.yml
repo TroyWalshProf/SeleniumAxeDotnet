@@ -39,7 +39,7 @@ steps:
   inputs:
     command: 'test'
     projects: '$(solutionDirectory)\Selenium.Axe.Test\Selenium.Axe.Test.csproj'
-    arguments: '--collect:"Code Coverage"'
+    arguments: '--no-build -c $(buildConfiguration) --collect:"Code Coverage"'
 
 - task: SonarCloudAnalyze@1
 
