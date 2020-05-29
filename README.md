@@ -16,7 +16,8 @@ Inspired by [axe-selenium-java](https://github.com/dequelabs/axe-selenium-java) 
 * [Creating a HTML report](https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=creating-a-html-report)
 * [Contributing](https://troywalshprof.github.io/SeleniumAxeDotnet/#/?id=contributing)
 
+Patron
+------
+This project would not exist in its current form without the generous support of
 
-
-
-
+[![Magenic](docs/magenic-logo.png)](https://magenic.com)
