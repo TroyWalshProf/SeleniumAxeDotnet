@@ -30,7 +30,7 @@ jobs:
       run: dotnet build Selenium.Axe/Selenium.Axe.sln --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test Selenium.Axe/Selenium.Axe.sln --no-restore --verbosity normal /logger:"trx;LogFileName=${{github.workspace}}/artifactTests/logs/results.trx"
+      run: dotnet test Selenium.Axe/Selenium.Axe.sln --no-restore --verbosity normal --logger "trx" --results-directory ${{github.workspace}}/artifactTests
     
     - name: Upload test results
       if: failure()
