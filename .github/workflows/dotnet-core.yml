@@ -20,8 +20,8 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore Selenium.Axe/Selenium.Axe.sln
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build Selenium.Axe/Selenium.Axe.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test Selenium.Axe/Selenium.Axe.sln --no-restore --verbosity normal
