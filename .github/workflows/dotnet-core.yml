@@ -17,14 +17,7 @@ jobs:
     - run: mkdir -p artifactApp
     - run: mkdir -p artifactTests
       
-    - name: Update Chrome
-      run: choco upgrade googlechrome
-    
-    - name: Update Firefox
-      run: choco upgrade firefox
-      
     - uses: actions/checkout@v2
-      
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -35,6 +28,12 @@ jobs:
    
     - name: Build
       run: dotnet build Selenium.Axe/Selenium.Axe.sln --configuration Release --no-restore
+    
+    - name: Update Chrome
+      run: choco upgrade googlechrome
+    
+    - name: Update Firefox
+      run: choco upgrade firefox
     
     - name: Test
       run: dotnet test Selenium.Axe/Selenium.Axe.sln --no-restore --verbosity normal --logger "trx" --results-directory ${{github.workspace}}/artifactTests
