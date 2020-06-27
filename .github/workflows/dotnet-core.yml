@@ -12,24 +12,23 @@ jobs:
   build:
 
     runs-on: windows-latest
-
+    
     steps:
     - run: mkdir -p artifactApp
     - run: mkdir -p artifactTests
+      
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
       
     - name: Update Chrome
       run: choco upgrade googlechrome
     
     - name: Update Firefox
       run: choco upgrade firefox
-      
-    - uses: actions/checkout@v2
-      
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
-   
+
     - name: Install dependencies
       run: dotnet restore Selenium.Axe/Selenium.Axe.sln
    
