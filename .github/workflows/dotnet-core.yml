@@ -16,14 +16,12 @@ jobs:
     steps:
     - run: mkdir -p artifactApp
     - run: mkdir -p artifactTests
+      
+    - name: Update Chrome
+      run: choco upgrade googlechrome
     
-    - name: Azure PowerShell Action
-      uses: Azure/powershell@v1
-      with:
-        # Specify the Az PowerShell script here.
-        inlineScript: |
-          choco upgrade googlechrome
-          choco upgrade firefox
+    - name: Update Firefox
+      run: choco upgrade firefox
       
     - uses: actions/checkout@v2
       
