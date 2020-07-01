@@ -1,0 +1,36 @@
+name: Draft Release
+
+on:
+  push:
+    branches:
+      - master
+      - 'feature/**'
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: linux-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Get Latest Release
+      id: latest_version
+      uses: abatilo/release-info-action@v1.1.0
+      with:
+        owner: abatilo
+        repo: release-info-action
+		
+    - name: Display updated tag
+      env:
+        LATEST: ${{ steps.latest_version.outputs.latest_tag }}
+        LATEST_DATE: ${{ steps.latest_version.outputs.latest_tag_published_at }}
+      run: |
+        echo "Version $LATEST was released at $LATEST_DATE"
+
+    #- uses: actions/checkout@v2
+  
+    - uses: release-drafter/release-drafter@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
