@@ -14,25 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@master
-
-    - name: Get Latest Release
-      id: latest_version
-      uses: abatilo/release-info-action@v1.1.0
-      with:
-        owner: abatilo
-        repo: release-info-action
-    - name: Example of consumption of the output
-      env:
-        LATEST: ${{ steps.latest_version.outputs.latest_tag }}
-        LATEST_DATE: ${{ steps.latest_version.outputs.latest_tag_published_at }}
-      run: |
-        echo "Version $LATEST was released at $LATEST_DATE"
-
-
-
-    #- uses: actions/checkout@v2
-  
-    - uses: release-drafter/release-drafter@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Drafts your next Release notes as Pull Requests are merged into "master"
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
