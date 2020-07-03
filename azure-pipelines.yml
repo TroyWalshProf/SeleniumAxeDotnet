@@ -26,6 +26,15 @@ steps:
   inputs:
     versionSpec: '10.16.2'
   displayName: use node 10.16.2
+  
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Update Chrome
+      choco upgrade googlechrome
+      
+      echo Update Firefox
+      choco upgrade firefox
 
 - script: dotnet restore
   displayName: dotnet restore
