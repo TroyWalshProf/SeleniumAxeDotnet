@@ -24,5 +24,5 @@ jobs:
         $test = "${{github.ref}}".trim().substring(11)
         dotnet build --no-restore --configuration Release  -p:Version=$test
         
-     - name: Deploy
+    - name: Deploy to nuget
       run: dotnet nuget push **/*nupkg --api-key ${{ secrets.NUGET_DEPLOY_KEY }} --source https://api.nuget.org/v3/index.json
