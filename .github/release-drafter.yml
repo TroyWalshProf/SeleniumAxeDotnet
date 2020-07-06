@@ -15,6 +15,8 @@ categories:
       - 'bug'
   - title: 'Dependencies'
     label: 'dependencies'
+  - title: 'Pipeline'
+    label: 'pipeline'
 
 version-resolver:
   major:
