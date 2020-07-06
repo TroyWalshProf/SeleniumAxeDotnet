@@ -36,9 +36,11 @@ steps:
       echo Update Firefox
       choco upgrade firefox
 
-- script: dotnet restore
-  displayName: dotnet restore
-  workingDirectory: $(solutionDirectory)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
 
 - script: dotnet build --no-restore -c $(buildConfiguration) -p:Version=$(version)
   displayName: dotnet build
