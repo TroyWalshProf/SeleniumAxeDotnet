@@ -26,10 +26,21 @@ steps:
   inputs:
     versionSpec: '10.16.2'
   displayName: use node 10.16.2
+  
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo Update Chrome
+      choco upgrade googlechrome
+      
+      echo Update Firefox
+      choco upgrade firefox
 
-- script: dotnet restore
-  displayName: dotnet restore
-  workingDirectory: $(solutionDirectory)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
 
 - script: dotnet build --no-restore -c $(buildConfiguration) -p:Version=$(version)
   displayName: dotnet build
