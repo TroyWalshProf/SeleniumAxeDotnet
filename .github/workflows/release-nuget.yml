@@ -25,7 +25,7 @@ jobs:
         if ("${{github.ref}}".trim() -notmatch '^refs/tags/v(\d+\.\d+\.\d+)$') {
           exit 1
         }
-        $version = matches[1]
+        $version = $matches[1]
         dotnet build Selenium.Axe/Selenium.Axe.sln --no-restore --configuration Release -p:Version=$version
         
     - name: Deploy to nuget
