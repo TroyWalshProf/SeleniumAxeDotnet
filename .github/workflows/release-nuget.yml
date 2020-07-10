@@ -29,4 +29,4 @@ jobs:
         dotnet build Selenium.Axe/Selenium.Axe.sln --no-restore --configuration Release -p:Version=$version
         
     - name: Deploy to nuget
-      run: dotnet nuget push **/*nupkg --api-key ${{ secrets.NUGET_DEPLOY_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_DEPLOY_KEY }} --source https://api.nuget.org/v3/index.json
