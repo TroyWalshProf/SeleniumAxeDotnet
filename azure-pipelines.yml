@@ -26,7 +26,12 @@ steps:
   inputs:
     versionSpec: '10.16.2'
   displayName: use node 10.16.2
-  
+
+- task: VisualStudioTestPlatformInstaller@1
+  inputs:
+    packageFeedSelector: 'nugetOrg'
+    versionSelector: 'latestStable'
+
 - task: CmdLine@2
   inputs:
     script: |
