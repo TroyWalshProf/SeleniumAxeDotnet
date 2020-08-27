@@ -1,7 +1,7 @@
 version: 2
 updates:
 - package-ecosystem: nuget
-  directory: "/"
+  directory: "/Selenium.Axe"
   schedule:
     interval: daily
     time: "11:00"
@@ -11,7 +11,7 @@ updates:
   commit-message:
     prefix: chore
 - package-ecosystem: npm
-  directory: "/"
+  directory: "/Selenium.Axe"
   schedule:
     interval: daily
     time: "11:00"
