@@ -162,12 +162,12 @@ namespace Selenium.Axe.Test
             Assert.AreEqual("AutomationError", errorMessage);
 
             var reportContext = doc.DocumentNode.SelectSingleNode(".//*[@id=\"reportContext\"]").InnerText;
-            Assert.IsTrue(reportContext.Contains("Url: https://www.google.com/"));
-            Assert.IsTrue(reportContext.Contains("Orientation: landscape-primary"));
-            Assert.IsTrue(reportContext.Contains("Size: 1200 x 646"));
-            Assert.IsTrue(reportContext.Contains("Time: 4/14/2020 1:33:59 AM +00:00"));
-            Assert.IsTrue(reportContext.Contains("User agent: AutoAgent"));
-            Assert.IsTrue(reportContext.Contains("Using: axe-core (3.4.1)"));
+            Assert.IsTrue(reportContext.Contains($"Url: {results.Url}"));
+            Assert.IsTrue(reportContext.Contains($"Orientation: {results.TestEnvironment.OrientationType}"));
+            Assert.IsTrue(reportContext.Contains($"Size: {results.TestEnvironment.WindowWidth} x {results.TestEnvironment.WindowHeight}"));
+            Assert.IsTrue(reportContext.Contains($"Time: {results.Timestamp}"));
+            Assert.IsTrue(reportContext.Contains($"User agent: {results.TestEnvironment.UserAgent}"));
+            Assert.IsTrue(reportContext.Contains($"Using: {results.TestEngineName} ({results.TestEngineVersion}"));
         }
 
         private string CreateReportPath()
