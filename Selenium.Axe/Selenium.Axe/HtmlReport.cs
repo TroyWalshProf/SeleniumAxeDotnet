@@ -34,7 +34,7 @@ namespace Selenium.Axe
 
             var doc = new HtmlDocument();
 
-            var node = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>Accessiblity Check</title><style></style></head><body></body></html>");
+            var node = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>Accessibility Check</title><style></style></head><body></body></html>");
             doc.DocumentNode.AppendChild(node);
 
             HtmlCommentNode hcn = doc.CreateComment("<!DOCTYPE html>\r\n");
@@ -162,10 +162,10 @@ p {}
             {
                 foreach (AxeResultNode node in item.Nodes)
                 {
-                    foreach (string target in node.Target)
+                    foreach (var target in node.Target)
                     {
                         count++;
-                        uniqueList.Add(target);
+                        uniqueList.Add(target.ToString());
                     }
                 }
 
@@ -245,7 +245,7 @@ p {}
                     htmlAndSelector = doc.CreateElement("p");
                     htmlAndSelector.SetAttributeValue("class", "wrapTwo");
 
-                    foreach (string target in item.Target)
+                    foreach (var target in item.Target)
                     {
                         content.AppendLine($"{HttpUtility.HtmlEncode(target)}");
                     }
@@ -259,7 +259,7 @@ p {}
         private static string GetDataImageString(ISearchContext context)
         {
             ITakesScreenshot newScreen = (ITakesScreenshot)context;
-            return string.Format("data:image/png;base64,{0}');", Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray));
+            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
         }
     }
 }
