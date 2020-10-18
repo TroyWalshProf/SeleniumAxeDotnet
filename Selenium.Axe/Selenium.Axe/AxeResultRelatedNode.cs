@@ -7,7 +7,7 @@ namespace Selenium.Axe
     {
         public string Html { get; set; }
         
-        [JsonProperty("target", ItemConverterType = typeof(AxeResultTargetConverter))]
+        [JsonProperty("target", ItemConverterType = typeof(AxeResultTargetConverter), NullValueHandling = NullValueHandling.Ignore)]
         public List<AxeResultTarget> Target { get; set; }
     }
 }

@@ -8,16 +8,6 @@ namespace Selenium.Axe.Test
     public class AxeResultTargetConverterTest
     {
         [TestMethod]
-        public void ShouldReadNull()
-        {
-            const string json = @"{{""target"":null}}";
-
-            var axeResultNode = DeserializeAxeNode(json);
-            
-            Assert.AreEqual(axeResultNode?.Target, null);
-        }
-        
-        [TestMethod]
         public void ShouldReadSingleSelector()
         {
             var testObject = new AxeResultTarget

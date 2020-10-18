@@ -10,7 +10,6 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
 using System.Linq;
-using Castle.Core.Internal;
 
 namespace Selenium.Axe.Test
 {
@@ -190,7 +189,7 @@ namespace Selenium.Axe.Test
             Assert.IsNotNull(colorContrast);
             var complexTargetNode = colorContrast
                 .Nodes
-                .Where(x => x.Target.Any(node => !node.Selectors.IsNullOrEmpty()))
+                .Where(x => x.Target.Any(node => node.Selectors.Any()))
                 .Select(x => x.Target.Last())
                 .First();
             Assert.IsNotNull(complexTargetNode);
