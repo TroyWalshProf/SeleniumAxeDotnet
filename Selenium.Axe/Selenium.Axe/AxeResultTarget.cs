@@ -3,6 +3,10 @@ using System.Text;
 
 namespace Selenium.Axe
 {
+    /// <summary>
+    /// With AxeResultTarget,  we will have either a <see cref="Selector"/> or <see cref="Selectors"/> for each target.
+    /// An example of where <see cref="Selectors"/> is set, is when the issue is found inside of a ShadowRoot.
+    /// </summary>
     public class AxeResultTarget
     {
         public string Selector { get; set; }
