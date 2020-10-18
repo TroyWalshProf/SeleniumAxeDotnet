@@ -6,8 +6,8 @@ namespace Selenium.Axe
 {
     class AxeResultTargetConverter : JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(AxeResultTarget);
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        public override bool CanConvert(Type objectType) => objectType == typeof(AxeResultTarget);
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             switch (reader.TokenType)
             {
@@ -24,25 +24,25 @@ namespace Selenium.Axe
                     };
             }
             
-            throw new Exception("Cannot unmarshal type Target");
+            throw new ArgumentException("Cannot unmarshal type Target");
         }
         
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var value = (AxeResultTarget)untypedValue;
-            if (value.Selector != null)
+            var val = (AxeResultTarget)value;
+            if (val.Selector != null)
             {
-                serializer.Serialize(writer, value.Selector);
+                serializer.Serialize(writer, val.Selector);
                 return;
             }
 
-            if (value.Selectors != null)
+            if (val.Selectors != null)
             {
-                serializer.Serialize(writer, value.Selectors);
+                serializer.Serialize(writer, val.Selectors);
                 return;
             }
             
-            throw new Exception("Cannot marshal type Target");
+            throw new ArgumentException("Cannot marshal type Target");
         }
     }
 }

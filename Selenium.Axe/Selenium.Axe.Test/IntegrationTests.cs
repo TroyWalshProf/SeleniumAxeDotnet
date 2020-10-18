@@ -10,6 +10,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
 using System.Linq;
+using Castle.Core.Internal;
 
 namespace Selenium.Axe.Test
 {
@@ -178,9 +179,22 @@ namespace Selenium.Axe.Test
             var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsolutePath;
             InitDriver(browser);
             _webDriver.Navigate().GoToUrl(filename);
-            new AxeBuilder(_webDriver)
+            var axeResult = new AxeBuilder(_webDriver)
                 .WithOutputFile(@".\raw-axe-results.json")
                 .Analyze();
+            
+            var colorContrast = axeResult
+                .Violations
+                .FirstOrDefault(x => x.Id == "color-contrast");
+            
+            Assert.IsNotNull(colorContrast);
+            var complexTargetNode = colorContrast
+                .Nodes
+                .Where(x => x.Target.Any(node => !node.Selectors.IsNullOrEmpty()))
+                .Select(x => x.Target.Last())
+                .First();
+            Assert.IsNotNull(complexTargetNode);
+            Assert.IsTrue(complexTargetNode.Selectors.Count() == 2);
         }
 
         private string CreateReportPath()
