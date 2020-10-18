@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
@@ -7,6 +9,14 @@ namespace Selenium.Axe.Test
     [TestClass]
     public class AxeResultTargetConverterTest
     {
+        [TestMethod]
+        public void CanConvertPassedAxeResultTarget()
+        {
+            var instance = new AxeResultTargetConverter();
+            var result = instance.CanConvert(typeof(AxeResultTarget));
+            Assert.IsTrue(result);
+        }
+        
         [TestMethod]
         public void ShouldReadSingleSelector()
         {
@@ -34,6 +44,27 @@ namespace Selenium.Axe.Test
             
             Assert.AreEqual(axeResultTarget?.Selectors.First(), testObject.Selectors.First());
             Assert.AreEqual(axeResultTarget?.Selectors.Last(), testObject.Selectors.Last());
+        }
+
+        [TestMethod]
+        public void Write()
+        {
+            var expectedResult = "\"test\"";
+            var value = new AxeResultTarget
+            {
+                Selector = "test"
+            };
+            using (var writer = new StringWriter())
+            {
+                var jsonWriter = new JsonTextWriter(writer);
+                var instance = new AxeResultTargetConverter();
+            
+                instance.WriteJson(jsonWriter, value, new JsonSerializer{ Converters = { instance }});
+
+                var result = writer.ToString();
+                
+                Assert.IsTrue(expectedResult.Equals(result));
+            }
         }
 
         private static AxeResultTarget DeserializeJsonAndReturnFirstTarget(string json)
