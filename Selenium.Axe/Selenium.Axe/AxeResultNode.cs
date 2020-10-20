@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-
+using Newtonsoft.Json;
 
 namespace Selenium.Axe
 {
     public class AxeResultNode
     {
-        public List<string> Target { get; set; }
+        [JsonProperty("target", ItemConverterType = typeof(AxeResultTargetConverter), NullValueHandling = NullValueHandling.Ignore)]
+        public List<AxeResultTarget> Target { get; set; }
         public List<string> XPath { get; set; }
         public string Html { get; set; }
         public string Impact { get; set; }

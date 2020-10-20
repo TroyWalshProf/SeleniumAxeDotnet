@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Failure generates complex target</title>
+</head>
+<body>
+<main role="main">
+    <h1>Example of a shadow root iframe</h1>
+    <div id="container"></div>
+</main>
+<script>
+    let container = document.getElementById('container');
+    if (window.top === window.self) {
+        let iframe = document.createElement('iframe');
+        iframe.title = "wrapper iframe";
+        iframe.src = window.location.href;
+        container.appendChild(iframe);
+    } else {
+        let shadowRoot = container.attachShadow({mode: 'open'});
+        shadowRoot.innerHTML = '<p style="color: #aaaaaa">low-contrast</p>';
+    }
+</script>
+</body>
+</html>
