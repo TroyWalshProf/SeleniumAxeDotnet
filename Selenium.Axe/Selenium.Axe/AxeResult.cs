@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 
 namespace Selenium.Axe
@@ -35,6 +35,12 @@ namespace Selenium.Axe
             JToken testEngineName = testEngine?.SelectToken("name");
             JToken testEngineVersion = testEngine?.SelectToken("version");
 
+            // Address result format error - See bug #102
+            violationsToken = StringToToken(violationsToken);
+            passesToken = StringToToken(passesToken);
+            incompleteToken = StringToToken(incompleteToken);
+            inapplicableToken = StringToToken(inapplicableToken);
+
             Violations = violationsToken?.ToObject<AxeResultItem[]>();
             Passes = passesToken?.ToObject<AxeResultItem[]>();
             Inapplicable = inapplicableToken?.ToObject<AxeResultItem[]>();
@@ -45,6 +51,15 @@ namespace Selenium.Axe
             Error = error?.ToObject<string>();
             TestEngineName = testEngineName?.ToObject<string>();
             TestEngineVersion = testEngineVersion?.ToObject<string>();
+        }
+
+        private JToken StringToToken(JToken token)
+        {
+            if (token.Type == JTokenType.String)
+            {
+                return JToken.Parse(token.ToString());
+            }
+            return token;
         }
     }
 }
