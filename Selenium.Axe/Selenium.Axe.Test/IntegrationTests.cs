@@ -88,7 +88,7 @@ namespace Selenium.Axe.Test
             var mainElement = _wait.Until(drv => drv.FindElement(By.TagName("main")));
             _webDriver.CreateAxeHtmlReport(path);
 
-            ValidateReport(path, 4, 28, 0, 55);
+            ValidateReport(path, 4, 28, 0, 63);
         }
 
         [TestMethod]
@@ -103,7 +103,7 @@ namespace Selenium.Axe.Test
             var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
             _webDriver.CreateAxeHtmlReport(mainElement, path);
 
-            ValidateReport(path, 3, 16, 0, 61);
+            ValidateReport(path, 3, 16, 0, 69);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace Selenium.Axe.Test
             var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
             _webDriver.CreateAxeHtmlReport(mainElement, path);
 
-            ValidateReport(path, 3, 16, 0, 61);
+            ValidateReport(path, 3, 16, 0, 69);
         }
 
         [TestMethod]
@@ -137,7 +137,7 @@ namespace Selenium.Axe.Test
             var builder = new AxeBuilder(_webDriver).DisableRules("color-contrast");
             _webDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
-            ValidateReport(path, 3, 23, 0, 55);
+            ValidateReport(path, 3, 23, 0, 63);
         }
 
         [TestMethod]
