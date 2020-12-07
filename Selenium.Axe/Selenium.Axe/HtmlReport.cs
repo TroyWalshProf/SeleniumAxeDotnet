@@ -39,7 +39,7 @@ namespace Selenium.Axe
             var htmlStructure = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>Accessibility Check</title><style></style></head><body><content></content><script></script></body></html>");
             doc.DocumentNode.AppendChild(htmlStructure);
 
-            doc.DocumentNode.SelectSingleNode("//style").InnerHtml = GetCss();
+            doc.DocumentNode.SelectSingleNode("//style").InnerHtml = GetCss(context);
 
             var contentArea = doc.DocumentNode.SelectSingleNode("//content");
 
@@ -72,7 +72,6 @@ namespace Selenium.Axe
             var imageContent = doc.CreateElement("img");
             imageContent.SetAttributeValue("class", "thumbnail");
             imageContent.SetAttributeValue("id", "screenshotThumbnail");
-            imageContent.SetAttributeValue("src", $"data:image/png;base64, {GetDataImageString(context)}");
             imageContent.SetAttributeValue("alt", "A Screenshot of the page");
             imageContent.SetAttributeValue("width", "33%");
             imageContent.SetAttributeValue("height", "auto");
@@ -179,6 +178,7 @@ namespace Selenium.Axe
                               }
   
                               var thumbnail = document.getElementById(""screenshotThumbnail"");
+                              var thumbnailStyle = getComputedStyle(thumbnail);      
                               var modal = document.getElementById(""modal"");
                               var modalimg = modal.getElementsByTagName(""img"")[0]
                               
@@ -190,7 +190,7 @@ namespace Selenium.Axe
                               
                               thumbnail.addEventListener('click',function(){
                                  modal.style.display = ""block"";
-                                 modalimg.src = thumbnail.src;
+                                 modalimg.style.content = thumbnailStyle.content;
                                  modalimg.alt = thumbnail.alt;
                                })";
         }
@@ -198,13 +198,15 @@ namespace Selenium.Axe
         private static string GetDataImageString(ISearchContext context)
         {
             ITakesScreenshot newScreen = (ITakesScreenshot)context;
-            return $"{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}";
+            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
         }
 
-        private static string GetCss()
+        private static string GetCss(ISearchContext context)
         {
-            return @"
-                .thumbnail{border: 1px solid black;margin-left:1em;max-width:300px;}
+            var css = new StringBuilder();
+            css.AppendLine(@".thumbnail{");
+            css.AppendLine($"content: url('{GetDataImageString(context)}; border: 1px solid black;margin-left:1em;max-width:300px;");
+            css.AppendLine(@"}
                 .thumbnail:hover{border:2px solid black;}
                 .wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
                 .wrapOne {margin-left:1em;overflow-wrap:anywhere;}
@@ -229,7 +231,8 @@ namespace Selenium.Axe
                 #context {width: 50%; height: 200px; float: left;}
                 #image {width: 50%; height: 200px; float: right;}
                 #counts {clear: both;}
-                ";
+                ");
+            return css.ToString();
         }
 
         private static string GetContextContent(AxeResult results)
