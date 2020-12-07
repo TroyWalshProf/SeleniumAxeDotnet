@@ -12,147 +12,237 @@ namespace Selenium.Axe
     {
         public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination)
         {
-            AxeBuilder axeBuilder = new AxeBuilder(webDriver);
+            var axeBuilder = new AxeBuilder(webDriver);
             webDriver.CreateAxeHtmlReport(axeBuilder.Analyze(), destination);
         }
 
         public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination)
         {
-            AxeBuilder axeBuilder = new AxeBuilder(webDriver);
+            var axeBuilder = new AxeBuilder(webDriver);
             context.CreateAxeHtmlReport(axeBuilder.Analyze(context), destination);
         }
         public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination)
         {
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
-            
-            HashSet<string> selectors = new HashSet<string>();
-            int violationCount = GetCount(results.Violations, ref selectors);
-            int incompleteCount = GetCount(results.Incomplete, ref selectors);
-            int passCount = GetCount(results.Passes, ref selectors);
-            int inapplicableCount = GetCount(results.Inapplicable, ref selectors);
+
+            var selectors = new HashSet<string>();
+            var violationCount = GetCount(results.Violations, ref selectors);
+            var incompleteCount = GetCount(results.Incomplete, ref selectors);
+            var passCount = GetCount(results.Passes, ref selectors);
+            var inapplicableCount = GetCount(results.Inapplicable, ref selectors);
 
             var doc = new HtmlDocument();
 
-            var node = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>Accessibility Check</title><style></style></head><body></body></html>");
-            doc.DocumentNode.AppendChild(node);
+            doc.CreateComment("<!DOCTYPE html>\r\n");
 
-            HtmlCommentNode hcn = doc.CreateComment("<!DOCTYPE html>\r\n");
-            HtmlNode htmlNode = doc.DocumentNode.SelectSingleNode("/html");
-            doc.DocumentNode.InsertBefore(hcn, htmlNode);
+            var htmlStructure = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>Accessibility Check</title><style></style></head><body><content></content><script></script></body></html>");
+            doc.DocumentNode.AppendChild(htmlStructure);
 
-            StringBuilder content = new StringBuilder();
-            content.AppendLine(@".fullImage{");
-            content.AppendLine($"content: url('{GetDataImageString(context)};border: 1px solid black;margin-left:1em;");
-            content.AppendLine(@"}
-.fullImage:hover {transform:scale(2.75);transform-origin: top left;}
-p {}
-.wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
-.wrapOne {margin-left:1em;overflow-wrap:anywhere;}
-.wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
-.wrapThree {margin-left:3em;overflow-wrap:anywhere;}
-.emOne {margin-left:1em;overflow-wrap:anywhere;}
-.emTwo {margin-left:2em;overflow-wrap:anywhere;}
-.emThree {margin-left:3em;overflow-wrap:anywhere;}
-.majorSection{border: 1px solid black;}
-.findings{border-top:1px solid black;}
-.htmlTable{border-top:double lightgray;width:100%;display:table;}");
+            doc.DocumentNode.SelectSingleNode("//style").InnerHtml = GetCss();
 
-            HtmlNode body = doc.DocumentNode.SelectSingleNode("//body");
-            doc.DocumentNode.SelectSingleNode("//style").InnerHtml = content.ToString();
+            var contentArea = doc.DocumentNode.SelectSingleNode("//content");
 
-            var element = doc.CreateElement("h1");
-            element.InnerHtml = "Accessiblity Check";
-            body.AppendChild(element);
+            var reportTitle = doc.CreateElement("h1");
+            reportTitle.InnerHtml = "Accessibility Check";
+            contentArea.AppendChild(reportTitle);
 
-            element = doc.CreateElement("h3");
-            element.InnerHtml = "Context:";
-            body.AppendChild(element);
+            var contextGroup = doc.CreateElement("div");
+            contextGroup.SetAttributeValue("id", "context");
+            contentArea.AppendChild(contextGroup);
 
-            content = new StringBuilder();
-            content.AppendLine($"Url: {results.Url}<br>");
-            content.AppendLine($"Orientation: {results.TestEnvironment.OrientationType}<br>");
-            content.AppendLine($"Size: {results.TestEnvironment.WindowWidth} x {results.TestEnvironment.WindowHeight}<br>");
-            content.AppendLine($"Time: {results.Timestamp}<br>");
-            content.AppendLine($"User agent: {results.TestEnvironment.UserAgent}<br>");
-            content.AppendLine($"Using: {results.TestEngineName} ({results.TestEngineVersion})");
+            var contextHeader = doc.CreateElement("h3");
+            contextHeader.InnerHtml = "Context:";
+            contextGroup.AppendChild(contextHeader);
 
-            element = doc.CreateElement("div");
-            element.SetAttributeValue("class", "emOne");
-            element.SetAttributeValue("id", "reportContext");
-            element.InnerHtml = content.ToString();
-            body.AppendChild(element);
+            var contextContent = doc.CreateElement("div");
+            contextContent.SetAttributeValue("class", "emOne");
+            contextContent.SetAttributeValue("id", "reportContext");
+            contextContent.InnerHtml = GetContextContent(results);
+            contextGroup.AppendChild(contextContent);
 
-            element = doc.CreateElement("h3");
-            element.InnerHtml = "Counts:" ;
-            body.AppendChild(element);
+            var imgGroup = doc.CreateElement("div");
+            imgGroup.SetAttributeValue("id", "image");
+            contentArea.AppendChild(imgGroup);
 
-            element = doc.CreateElement("div");
-            element.SetAttributeValue("class", "emOne");
-            content = new StringBuilder();
-            content.AppendLine($" Violation: {violationCount}<br>");
-            content.AppendLine($" Incomplete: {incompleteCount}<br>");
-            content.AppendLine($" Pass: {passCount}<br>");
-            content.AppendLine($" Inapplicable: {inapplicableCount}");
-            element.InnerHtml = content.ToString();
-            body.AppendChild(element);
+            var imageHeader = doc.CreateElement("h3");
+            imageHeader.InnerHtml = "Image:";
+            imgGroup.AppendChild(imageHeader);
 
-            element = doc.CreateElement("h3");
-            element.InnerHtml = "Image:";
-            body.AppendChild(element);
+            var imageContent = doc.CreateElement("img");
+            imageContent.SetAttributeValue("class", "thumbnail");
+            imageContent.SetAttributeValue("id", "screenshotThumbnail");
+            imageContent.SetAttributeValue("src", $"data:image/png;base64, {GetDataImageString(context)}");
+            imageContent.SetAttributeValue("alt", "A Screenshot of the page");
+            imageContent.SetAttributeValue("width", "33%");
+            imageContent.SetAttributeValue("height", "auto");
+            imgGroup.AppendChild(imageContent);
 
-            element = doc.CreateElement("img");
-            element.SetAttributeValue("class", "fullImage");
-            element.SetAttributeValue("width", "33%");
-            element.SetAttributeValue("height", "auto");
-            body.AppendChild(element);
+            var modal = doc.CreateElement("div");
+            modal.SetAttributeValue("id", "modal");
+            contentArea.AppendChild(modal);
+
+            var modalImage = doc.CreateElement("img");
+            modalImage.SetAttributeValue("id", "modalimage");
+            modal.AppendChild(modalImage);
+
+            var countsGroup = doc.CreateElement("div");
+            countsGroup.SetAttributeValue("id", "counts");
+            contentArea.AppendChild(countsGroup);
+
+            var countsHeader = doc.CreateElement("h3");
+            countsHeader.InnerHtml = "Counts:" ;
+            countsGroup.AppendChild(countsHeader);
+
+            var countsContent = doc.CreateElement("div");
+            countsContent.SetAttributeValue("class", "emOne");
+            var countsString = new StringBuilder()
+                .AppendLine($" Violation: {violationCount}<br>")
+                .AppendLine($" Incomplete: {incompleteCount}<br>")
+                .AppendLine($" Pass: {passCount}<br>")
+                .AppendLine($" Inapplicable: {inapplicableCount}")
+                .ToString();
+            countsContent.InnerHtml = countsString;
+            countsGroup.AppendChild(countsContent);
 
             if (!string.IsNullOrEmpty(results.Error))
             {
-                element = doc.CreateElement("h2");
-                element.InnerHtml = "SCAN ERRORS:";
-                body.AppendChild(element);
+                var errorHeader = doc.CreateElement("h2");
+                errorHeader.InnerHtml = "SCAN ERRORS:";
+                contentArea.AppendChild(errorHeader);
 
-                var error = doc.CreateElement("div");
-                error.SetAttributeValue("id", "ErrorMessage");
-                error.InnerHtml = HttpUtility.HtmlEncode(results.Error);
-                body.AppendChild(error);
+                var errorContent = doc.CreateElement("div");
+                errorContent.SetAttributeValue("id", "ErrorMessage");
+                errorContent.InnerHtml = HttpUtility.HtmlEncode(results.Error);
+                contentArea.AppendChild(errorContent);
             }
 
-            element = doc.CreateElement("br");
-            body.AppendChild(element);
-
-            element = doc.CreateElement("br");
-            body.AppendChild(element);
-
-            var area = doc.CreateElement("div");
-            body.AppendChild(area);
+            var lineBreak = doc.CreateElement("br");
+            contentArea.AppendChild(lineBreak);
+            var lineBreak2 = doc.CreateElement("br");
+            contentArea.AppendChild(lineBreak2);
 
             if (violationCount > 0)
             {
-                area.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Violations, "Violations", doc, area);
+                contentArea.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Violations, "Violations", doc, contentArea);
             }
 
             if (incompleteCount > 0)
             {
-                area.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Incomplete, "Incomplete", doc, area);
+                contentArea.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Incomplete, "Incomplete", doc, contentArea);
             }
 
             if (passCount > 0)
             {
-                area.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Passes, "Passes", doc, area);
+                contentArea.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Passes, "Passes", doc, contentArea);
             }
 
             if (inapplicableCount > 0)
             {
-                area.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Inapplicable, "Inapplicable", doc, area);
+                contentArea.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Inapplicable, "Inapplicable", doc, contentArea);
             }
 
+            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = GetJS();
+
             doc.Save(destination, Encoding.UTF8);
+        }
+
+        private static string GetJS()
+        {
+            return @"var buttons = document.getElementsByClassName(""sectionbutton"");
+                              var i;
+                              
+                              for (i = 0; i < buttons.length; i++) 
+                              {
+                                  buttons[i].addEventListener(""click"", function() 
+                                  {
+                                      var expandoText = this.getElementsByClassName(""buttonExpandoText"")[0];
+                                      
+                                      this.classList.toggle(""active"");
+                              
+                                      var content = this.nextElementSibling;
+                                      if (content.style.maxHeight) 
+                                      {
+                                          content.style.maxHeight = null;
+                                          expandoText.innerHTML = ""+"";
+                                      } 
+                                      else 
+                                      {
+                                          content.style.maxHeight = content.scrollHeight + ""px"";
+                                          expandoText.innerHTML = ""-"";
+                                      }
+                                  })
+                              }
+  
+                              var thumbnail = document.getElementById(""screenshotThumbnail"");
+                              var modal = document.getElementById(""modal"");
+                              var modalimg = modal.getElementsByTagName(""img"")[0]
+                              
+                              modal.addEventListener('click',function(){
+                                 modal.style.display = ""none"";
+                                 modalimg.src = """";
+                                 modalimg.alt = """";
+                               })
+                              
+                              thumbnail.addEventListener('click',function(){
+                                 modal.style.display = ""block"";
+                                 modalimg.src = thumbnail.src;
+                                 modalimg.alt = thumbnail.alt;
+                               })";
+        }
+
+        private static string GetDataImageString(ISearchContext context)
+        {
+            ITakesScreenshot newScreen = (ITakesScreenshot)context;
+            return $"{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}";
+        }
+
+        private static string GetCss()
+        {
+            return @"
+                .thumbnail{border: 1px solid black;margin-left:1em;max-width:300px;}
+                .thumbnail:hover{border:2px solid black;}
+                .wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
+                .wrapOne {margin-left:1em;overflow-wrap:anywhere;}
+                .wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
+                .wrapThree {margin-left:3em;overflow-wrap:anywhere;}
+                .emOne {margin-left:1em;overflow-wrap:anywhere;}
+                .emTwo {margin-left:2em;overflow-wrap:anywhere;}
+                .emThree {margin-left:3em;overflow-wrap:anywhere;}
+                #modal {display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;top: 0;width: 100%;
+                 height: 100%;overflow: auto;background-color: rgba(0, 0, 0, 0.9);}
+                #modalimage {margin: auto;display: block;width: 80%;}
+                .htmlTable{border-top:double lightgray;width:100%;display:table;}
+                .sectionbutton{background-color: #000000; color: #FFFFFF; cursor: pointer; padding: 18px; width: 100%;
+                 text-align: left; outline: none; transition: 0.4s; border: 1px solid black;}
+                .sectionbutton:hover {background-color: #828282;}
+                .buttonInfoText {width: 50%; float: left;}
+                .buttonExpandoText {text-align: right; width: 50%; float: right;}
+                .majorSection{padding: 0 18px;background-color:white;max-height: 0;overflow:hidden;
+                 transition: max-height 0.2s ease-out;}
+                .findings{margin-top: 5px; border-top:1px solid black;}
+                .active {background-color: #474747; margin-bottom: 0px;}
+                #context {width: 50%; height: 200px; float: left;}
+                #image {width: 50%; height: 200px; float: right;}
+                #counts {clear: both;}
+                ";
+        }
+
+        private static string GetContextContent(AxeResult results)
+        {
+            var contextContent = new StringBuilder()
+                .AppendLine($"Url: {results.Url}<br>")
+                .AppendLine($"Orientation: {results.TestEnvironment.OrientationType}<br>")
+                .AppendLine($"Size: {results.TestEnvironment.WindowWidth} x {results.TestEnvironment.WindowHeight}<br>")
+                .AppendLine($"Time: {results.Timestamp}<br>")
+                .AppendLine($"User agent: {results.TestEnvironment.UserAgent}<br>")
+                .AppendLine($"Using: {results.TestEngineName} ({results.TestEngineVersion})")
+                .ToString();
+            return contextContent;
         }
 
         private static int GetCount(AxeResultItem[] results, ref HashSet<string> uniqueList)
@@ -180,20 +270,32 @@ p {}
 
         private static void GetReadableAxeResults(AxeResultItem[] results, string type, HtmlDocument doc, HtmlNode body)
         {
+            var selectors = new HashSet<string>();
+
+            var sectionButton = doc.CreateElement("button");
+            sectionButton.SetAttributeValue("class", "sectionbutton");
+            body.AppendChild(sectionButton);
+
+            var sectionButtonHeader = doc.CreateElement("h2");
+            sectionButtonHeader.SetAttributeValue("class", "buttonInfoText");
+            sectionButtonHeader.InnerHtml = $"{type}: {GetCount(results, ref selectors)}";
+            sectionButton.AppendChild(sectionButtonHeader);
+
+            var sectionButtonExpando = doc.CreateElement("h2");
+            sectionButtonExpando.SetAttributeValue("class", "buttonExpandoText");
+            sectionButtonExpando.InnerHtml = "+";
+            sectionButton.AppendChild(sectionButtonExpando);
+
             var section = doc.CreateElement("div");
             section.SetAttributeValue("class", "majorSection");
             section.SetAttributeValue("id", type + "Section");
             body.AppendChild(section);
 
-            var childEl = doc.CreateElement("h2");
-            childEl.InnerHtml = type;
-            section.AppendChild(childEl);
-
-            int loops = 1;
+            var loops = 1;
 
             foreach (var element in results)
             {
-                childEl = doc.CreateElement("div");
+                var childEl = doc.CreateElement("div");
                 childEl.SetAttributeValue("class", "findings");
                 childEl.InnerHtml = $@"{loops++}: {HttpUtility.HtmlEncode(element.Help)}";
                 section.AppendChild(childEl);
@@ -254,12 +356,6 @@ p {}
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
                 }
             }
-        }
-
-        private static string GetDataImageString(ISearchContext context)
-        {
-            ITakesScreenshot newScreen = (ITakesScreenshot)context;
-            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
         }
     }
 }
