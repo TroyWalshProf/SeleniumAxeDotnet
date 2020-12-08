@@ -22,9 +22,9 @@ namespace Selenium.Axe
                                       this.classList.toggle(""active"");
                               
                                       var content = this.nextElementSibling;
-                                      if (content.style.maxHeight) 
+                                      if (expandoText.innerHTML == ""-"") 
                                       {
-                                          content.style.maxHeight = null;
+                                          content.style.maxHeight = 0;
                                           expandoText.innerHTML = ""+"";
                                       } 
                                       else 
@@ -229,7 +229,7 @@ namespace Selenium.Axe
                 .sectionbutton:hover {background-color: #828282;}
                 .buttonInfoText {width: 50%; float: left;}
                 .buttonExpandoText {text-align: right; width: 50%; float: right;}
-                .majorSection{padding: 0 18px;background-color:white;max-height: 0;overflow:hidden;
+                .majorSection{padding: 0 18px;background-color:white; overflow:hidden;
                  transition: max-height 0.2s ease-out;}
                 .findings{margin-top: 5px; border-top:1px solid black;}
                 .active {background-color: #474747; margin-bottom: 0px;}
@@ -291,7 +291,7 @@ namespace Selenium.Axe
             body.AppendChild(resultWrapper);
 
             var sectionButton = doc.CreateElement("button");
-            sectionButton.SetAttributeValue("class", "sectionbutton");
+            sectionButton.SetAttributeValue("class", "sectionbutton active");
             resultWrapper.AppendChild(sectionButton);
 
             var sectionButtonHeader = doc.CreateElement("h2");
@@ -301,7 +301,7 @@ namespace Selenium.Axe
 
             var sectionButtonExpando = doc.CreateElement("h2");
             sectionButtonExpando.SetAttributeValue("class", "buttonExpandoText");
-            sectionButtonExpando.InnerHtml = "+";
+            sectionButtonExpando.InnerHtml = "-";
             sectionButton.AppendChild(sectionButtonExpando);
 
             var section = doc.CreateElement("div");
