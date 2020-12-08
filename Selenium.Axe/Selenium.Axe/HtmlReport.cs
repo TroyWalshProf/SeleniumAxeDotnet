@@ -47,9 +47,13 @@ namespace Selenium.Axe
             reportTitle.InnerHtml = "Accessibility Check";
             contentArea.AppendChild(reportTitle);
 
+            var metaFlex = doc.CreateElement("div");
+            metaFlex.SetAttributeValue("id", "metadata");
+            contentArea.AppendChild(metaFlex);
+
             var contextGroup = doc.CreateElement("div");
             contextGroup.SetAttributeValue("id", "context");
-            contentArea.AppendChild(contextGroup);
+            metaFlex.AppendChild(contextGroup);
 
             var contextHeader = doc.CreateElement("h3");
             contextHeader.InnerHtml = "Context:";
@@ -63,7 +67,7 @@ namespace Selenium.Axe
 
             var imgGroup = doc.CreateElement("div");
             imgGroup.SetAttributeValue("id", "image");
-            contentArea.AppendChild(imgGroup);
+            metaFlex.AppendChild(imgGroup);
 
             var imageHeader = doc.CreateElement("h3");
             imageHeader.InnerHtml = "Image:";
@@ -77,20 +81,12 @@ namespace Selenium.Axe
             imageContent.SetAttributeValue("height", "auto");
             imgGroup.AppendChild(imageContent);
 
-            var modal = doc.CreateElement("div");
-            modal.SetAttributeValue("id", "modal");
-            contentArea.AppendChild(modal);
-
-            var modalImage = doc.CreateElement("img");
-            modalImage.SetAttributeValue("id", "modalimage");
-            modal.AppendChild(modalImage);
-
             var countsGroup = doc.CreateElement("div");
             countsGroup.SetAttributeValue("id", "counts");
-            contentArea.AppendChild(countsGroup);
+            metaFlex.AppendChild(countsGroup);
 
             var countsHeader = doc.CreateElement("h3");
-            countsHeader.InnerHtml = "Counts:" ;
+            countsHeader.InnerHtml = "Counts:";
             countsGroup.AppendChild(countsHeader);
 
             var countsContent = doc.CreateElement("div");
@@ -103,6 +99,10 @@ namespace Selenium.Axe
                 .ToString();
             countsContent.InnerHtml = countsString;
             countsGroup.AppendChild(countsContent);
+
+            var resultsFlex = doc.CreateElement("div");
+            resultsFlex.SetAttributeValue("id", "results");
+            contentArea.AppendChild(resultsFlex);
 
             if (!string.IsNullOrEmpty(results.Error))
             {
@@ -123,27 +123,35 @@ namespace Selenium.Axe
 
             if (violationCount > 0)
             {
-                contentArea.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Violations, "Violations", doc, contentArea);
+                resultsFlex.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Violations, "Violations", doc, resultsFlex);
             }
 
             if (incompleteCount > 0)
             {
-                contentArea.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Incomplete, "Incomplete", doc, contentArea);
+                resultsFlex.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Incomplete, "Incomplete", doc, resultsFlex);
             }
 
             if (passCount > 0)
             {
-                contentArea.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Passes, "Passes", doc, contentArea);
+                resultsFlex.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Passes, "Passes", doc, resultsFlex);
             }
 
             if (inapplicableCount > 0)
             {
-                contentArea.AppendChild(doc.CreateElement("br"));
-                GetReadableAxeResults(results.Inapplicable, "Inapplicable", doc, contentArea);
+                resultsFlex.AppendChild(doc.CreateElement("br"));
+                GetReadableAxeResults(results.Inapplicable, "Inapplicable", doc, resultsFlex);
             }
+
+            var modal = doc.CreateElement("div");
+            modal.SetAttributeValue("id", "modal");
+            contentArea.AppendChild(modal);
+
+            var modalImage = doc.CreateElement("img");
+            modalImage.SetAttributeValue("id", "modalimage");
+            modal.AppendChild(modalImage);
 
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = GetJS();
 
@@ -184,12 +192,12 @@ namespace Selenium.Axe
                               
                               modal.addEventListener('click',function(){
                                  modal.style.display = ""none"";
-                                 modalimg.src = """";
+                                 modalimg.style.content = """";
                                  modalimg.alt = """";
                                })
                               
                               thumbnail.addEventListener('click',function(){
-                                 modal.style.display = ""block"";
+                                 modal.style.display = ""flex"";
                                  modalimg.style.content = thumbnailStyle.content;
                                  modalimg.alt = thumbnail.alt;
                                })";
@@ -205,19 +213,19 @@ namespace Selenium.Axe
         {
             var css = new StringBuilder();
             css.AppendLine(@".thumbnail{");
-            css.AppendLine($"content: url('{GetDataImageString(context)}; border: 1px solid black;margin-left:1em;max-width:300px;");
+            css.AppendLine($"content: url('{GetDataImageString(context)}; border: 1px solid black;margin-left:1em;margin-right:1em;width:auto;max-height:150px;");
             css.AppendLine(@"}
                 .thumbnail:hover{border:2px solid black;}
                 .wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
                 .wrapOne {margin-left:1em;overflow-wrap:anywhere;}
                 .wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
                 .wrapThree {margin-left:3em;overflow-wrap:anywhere;}
-                .emOne {margin-left:1em;overflow-wrap:anywhere;}
+                .emOne {margin-left:1em;margin-right:1em;overflow-wrap:anywhere;}
                 .emTwo {margin-left:2em;overflow-wrap:anywhere;}
                 .emThree {margin-left:3em;overflow-wrap:anywhere;}
-                #modal {display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;top: 0;width: 100%;
+                #modal {display: none;position: fixed;z-index: 1;left: 0;top: 0;width: 100%;
                  height: 100%;overflow: auto;background-color: rgba(0, 0, 0, 0.9);}
-                #modalimage {margin: auto;display: block;width: 80%;}
+                #modalimage {margin: auto;display: block;max-width: 95%; padding: 10px;}
                 .htmlTable{border-top:double lightgray;width:100%;display:table;}
                 .sectionbutton{background-color: #000000; color: #FFFFFF; cursor: pointer; padding: 18px; width: 100%;
                  text-align: left; outline: none; transition: 0.4s; border: 1px solid black;}
@@ -228,9 +236,15 @@ namespace Selenium.Axe
                  transition: max-height 0.2s ease-out;}
                 .findings{margin-top: 5px; border-top:1px solid black;}
                 .active {background-color: #474747; margin-bottom: 0px;}
-                #context {width: 50%; height: 200px; float: left;}
-                #image {width: 50%; height: 200px; float: right;}
-                #counts {clear: both;}
+                #context {width: 50%;}
+                #image {width: 50%;}
+                #metadata {display: flex; flex-wrap: wrap;}
+                #results {display: flex; flex-direction: column;}
+                @media (max-width: 800px) {
+                    #metadata {flex-direction: column;} 
+                    #context {width: 100%;} 
+                    #image {width: 100%;}
+                                          }
                 ");
             return css.ToString();
         }
@@ -275,9 +289,13 @@ namespace Selenium.Axe
         {
             var selectors = new HashSet<string>();
 
+            var resultWrapper = doc.CreateElement("div");
+            resultWrapper.SetAttributeValue("class", "resultWrapper");
+            body.AppendChild(resultWrapper);
+
             var sectionButton = doc.CreateElement("button");
             sectionButton.SetAttributeValue("class", "sectionbutton");
-            body.AppendChild(sectionButton);
+            resultWrapper.AppendChild(sectionButton);
 
             var sectionButtonHeader = doc.CreateElement("h2");
             sectionButtonHeader.SetAttributeValue("class", "buttonInfoText");
@@ -292,7 +310,7 @@ namespace Selenium.Axe
             var section = doc.CreateElement("div");
             section.SetAttributeValue("class", "majorSection");
             section.SetAttributeValue("id", type + "Section");
-            body.AppendChild(section);
+            resultWrapper.AppendChild(section);
 
             var loops = 1;
 
