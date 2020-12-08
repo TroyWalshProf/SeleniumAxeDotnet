@@ -158,32 +158,23 @@ namespace Selenium.Axe
                 contentArea.AppendChild(errorContent);
             }
 
-            var lineBreak = doc.CreateElement("br");
-            contentArea.AppendChild(lineBreak);
-            var lineBreak2 = doc.CreateElement("br");
-            contentArea.AppendChild(lineBreak2);
-
             if (violationCount > 0)
             {
-                resultsFlex.AppendChild(doc.CreateElement("br"));
                 GetReadableAxeResults(results.Violations, "Violations", doc, resultsFlex);
             }
 
             if (incompleteCount > 0)
             {
-                resultsFlex.AppendChild(doc.CreateElement("br"));
                 GetReadableAxeResults(results.Incomplete, "Incomplete", doc, resultsFlex);
             }
 
             if (passCount > 0)
             {
-                resultsFlex.AppendChild(doc.CreateElement("br"));
                 GetReadableAxeResults(results.Passes, "Passes", doc, resultsFlex);
             }
 
             if (inapplicableCount > 0)
             {
-                resultsFlex.AppendChild(doc.CreateElement("br"));
                 GetReadableAxeResults(results.Inapplicable, "Inapplicable", doc, resultsFlex);
             }
 
@@ -240,6 +231,7 @@ namespace Selenium.Axe
                  transition: max-height 0.2s ease-out;}
                 .findings{margin-top: 5px; border-top:1px solid black;}
                 .active {background-color: #474747; margin-bottom: 0px;}
+                .resultWrapper {margin: 5px}
                 #context {width: 50%;}
                 #image {width: 50%; height: 220px;}
                 #counts {width: 100%;}
