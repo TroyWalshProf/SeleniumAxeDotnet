@@ -78,7 +78,7 @@ namespace Selenium.Axe
 
             doc.CreateComment("<!DOCTYPE html>\r\n");
 
-            var htmlStructure = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><title>Accessibility Check</title><style></style></head><body><content></content><script></script></body></html>");
+            var htmlStructure = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Accessibility Check</title><style></style></head><body><content></content><script></script></body></html>");
             doc.DocumentNode.AppendChild(htmlStructure);
 
             doc.DocumentNode.SelectSingleNode("//style").InnerHtml = GetCss(context);
@@ -242,9 +242,10 @@ namespace Selenium.Axe
                 .active {background-color: #474747; margin-bottom: 0px;}
                 #context {width: 50%;}
                 #image {width: 50%; height: 220px;}
+                #counts {width: 100%;}
                 #metadata {display: flex; flex-wrap: wrap;}
                 #results {display: flex; flex-direction: column;}
-                @media (max-width: 800px) {
+                @media only screen and (max-width: 800px) {
                     #metadata {flex-direction: column;} 
                     #context {width: 100%;} 
                     #image {width: 100%;}
