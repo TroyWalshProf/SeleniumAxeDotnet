@@ -191,6 +191,11 @@ namespace Selenium.Axe
             modal.SetAttributeValue("id", "modal");
             contentArea.AppendChild(modal);
 
+            var modalClose = doc.CreateElement("div");
+            modalClose.InnerHtml = "X";
+            modalClose.SetAttributeValue("id", "modalclose");
+            modal.AppendChild(modalClose);
+
             var modalImage = doc.CreateElement("img");
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
@@ -221,8 +226,10 @@ namespace Selenium.Axe
                 .emTwo {margin-left:2em;overflow-wrap:anywhere;}
                 .emThree {margin-left:3em;overflow-wrap:anywhere;}
                 #modal {display: none;position: fixed;z-index: 1;left: 0;top: 0;width: 100%;
-                 height: 100%;overflow: auto;background-color: rgba(0, 0, 0, 0.9);}
-                #modalimage {margin: auto;display: block;max-width: 95%; padding: 10px;}
+                 height: 100%;overflow: auto;background-color: rgba(0, 0, 0, 0.9);  flex-direction: column;}
+                #modalclose{font-family: Lucida Console; font-size: 35px; width: auto; color: white; text-align: right; padding: 20px; 
+                 cursor: pointer; max-height: 10%}
+                #modalimage {margin: auto;display: block;max-width: 95%; padding: 10px; max-height: 90%}
                 .htmlTable{border-top:double lightgray;width:100%;display:table;}
                 .sectionbutton{background-color: #000000; color: #FFFFFF; cursor: pointer; padding: 18px; width: 100%;
                  text-align: left; outline: none; transition: 0.4s; border: 1px solid black;}
@@ -234,7 +241,7 @@ namespace Selenium.Axe
                 .findings{margin-top: 5px; border-top:1px solid black;}
                 .active {background-color: #474747; margin-bottom: 0px;}
                 #context {width: 50%;}
-                #image {width: 50%;}
+                #image {width: 50%; height: 220px;}
                 #metadata {display: flex; flex-wrap: wrap;}
                 #results {display: flex; flex-direction: column;}
                 @media (max-width: 800px) {
