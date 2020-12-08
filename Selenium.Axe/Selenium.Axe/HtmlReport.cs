@@ -10,6 +10,48 @@ namespace Selenium.Axe
 {
     public static class HtmlReport
     {
+        private const string js = @"var buttons = document.getElementsByClassName(""sectionbutton"");
+                              var i;
+                              
+                              for (i = 0; i < buttons.length; i++) 
+                              {
+                                  buttons[i].addEventListener(""click"", function() 
+                                  {
+                                      var expandoText = this.getElementsByClassName(""buttonExpandoText"")[0];
+                                      
+                                      this.classList.toggle(""active"");
+                              
+                                      var content = this.nextElementSibling;
+                                      if (content.style.maxHeight) 
+                                      {
+                                          content.style.maxHeight = null;
+                                          expandoText.innerHTML = ""+"";
+                                      } 
+                                      else 
+                                      {
+                                          content.style.maxHeight = content.scrollHeight + ""px"";
+                                          expandoText.innerHTML = ""-"";
+                                      }
+                                  })
+                              }
+  
+                              var thumbnail = document.getElementById(""screenshotThumbnail"");
+                              var thumbnailStyle = getComputedStyle(thumbnail);      
+                              var modal = document.getElementById(""modal"");
+                              var modalimg = modal.getElementsByTagName(""img"")[0]
+                              
+                              modal.addEventListener('click',function(){
+                                 modal.style.display = ""none"";
+                                 modalimg.style.content = """";
+                                 modalimg.alt = """";
+                               })
+                              
+                              thumbnail.addEventListener('click',function(){
+                                 modal.style.display = ""flex"";
+                                 modalimg.style.content = thumbnailStyle.content;
+                                 modalimg.alt = thumbnail.alt;
+                               })";
+
         public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination)
         {
             var axeBuilder = new AxeBuilder(webDriver);
@@ -153,54 +195,9 @@ namespace Selenium.Axe
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
 
-            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = GetJS();
+            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = js;
 
             doc.Save(destination, Encoding.UTF8);
-        }
-
-        private static string GetJS()
-        {
-            return @"var buttons = document.getElementsByClassName(""sectionbutton"");
-                              var i;
-                              
-                              for (i = 0; i < buttons.length; i++) 
-                              {
-                                  buttons[i].addEventListener(""click"", function() 
-                                  {
-                                      var expandoText = this.getElementsByClassName(""buttonExpandoText"")[0];
-                                      
-                                      this.classList.toggle(""active"");
-                              
-                                      var content = this.nextElementSibling;
-                                      if (content.style.maxHeight) 
-                                      {
-                                          content.style.maxHeight = null;
-                                          expandoText.innerHTML = ""+"";
-                                      } 
-                                      else 
-                                      {
-                                          content.style.maxHeight = content.scrollHeight + ""px"";
-                                          expandoText.innerHTML = ""-"";
-                                      }
-                                  })
-                              }
-  
-                              var thumbnail = document.getElementById(""screenshotThumbnail"");
-                              var thumbnailStyle = getComputedStyle(thumbnail);      
-                              var modal = document.getElementById(""modal"");
-                              var modalimg = modal.getElementsByTagName(""img"")[0]
-                              
-                              modal.addEventListener('click',function(){
-                                 modal.style.display = ""none"";
-                                 modalimg.style.content = """";
-                                 modalimg.alt = """";
-                               })
-                              
-                              thumbnail.addEventListener('click',function(){
-                                 modal.style.display = ""flex"";
-                                 modalimg.style.content = thumbnailStyle.content;
-                                 modalimg.alt = thumbnail.alt;
-                               })";
         }
 
         private static string GetDataImageString(ISearchContext context)
