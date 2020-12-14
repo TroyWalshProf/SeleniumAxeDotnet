@@ -329,7 +329,7 @@ namespace Selenium.Axe
             return countString.ToString();
         }
 
-        private static String ReportResultsToString(ResultType[] requestedResults)
+        private static string ReportResultsToString(ResultType[] requestedResults)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
