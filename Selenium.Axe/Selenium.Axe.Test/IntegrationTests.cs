@@ -10,6 +10,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
 using System.Linq;
+using static Selenium.Axe.HtmlReport;
 
 namespace Selenium.Axe.Test
 {
@@ -95,33 +96,34 @@ namespace Selenium.Axe.Test
         [TestMethod]
         [DataRow("Chrome")]
         [DataRow("FireFox")]
-        public void ReportFullPageViolationsOnly(String browser)
+        public void ReportFullPageViolationsOnly(string browser)
         {
-            String path = CreateReportPath();
+            string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
 
             var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(path, new ResultType[] { ResultType.Violations });
+
+            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations);
 
             ValidateReport(path, 4, 0);
-            ValidateResultNotWritten(path, new ResultType[] { ResultType.Passes, ResultType.Incomplete, ResultType.Inapplicable });
+            ValidateResultNotWritten(path, ReportTypes.Passes | ReportTypes.Incomplete | ReportTypes.Inapplicable);
         }
 
         [TestMethod]
         [DataRow("Chrome")]
         [DataRow("FireFox")]
-        public void ReportFullPageOnlyPassesInapplicableViolations(string browser)
+        public void ReportFullPagePassesInapplicableViolationsOnly(string browser)
         {
-            String path = CreateReportPath();
+            string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
 
             var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(path, new ResultType[] { ResultType.Passes, ResultType.Inapplicable, ResultType.Violations });
+            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
 
             ValidateReport(path, 4, 28, 0, 63);
-            ValidateResultNotWritten(path, new ResultType[] { ResultType.Incomplete});
+            ValidateResultNotWritten(path, ReportTypes.Incomplete);
         }
 
         [TestMethod]
@@ -284,23 +286,24 @@ namespace Selenium.Axe.Test
                 ValidateResultCount(text, incompleteCount, ResultType.Incomplete);
             }
         }
-        private void ValidateElementCount(HtmlDocument doc, int count, String xpath, ResultType resultType)
+
+        private void ValidateElementCount(HtmlDocument doc, int count, string xpath, ResultType resultType)
         {
             HtmlNodeCollection liNodes = doc.DocumentNode.SelectNodes(xpath) ?? new HtmlNodeCollection(null);
             Assert.AreEqual(liNodes.Count, count, $"Expected {count} {resultType}");
         }
-
 
         private void ValidateResultCount(string text, int count, ResultType resultType)
         {
             Assert.IsTrue(text.Contains($"{resultType}: {count}"), $"Expected to find '{resultType}: {count}'");
         }
 
-        private void ValidateResultNotWritten(string path, ResultType[] resultTypeArray)
+        private void ValidateResultNotWritten(string path, ReportTypes reportTypes)
         {
             string text = File.ReadAllText(path);
-        
-            foreach (ResultType resultType in resultTypeArray)
+            //string[] reportTypeList = ; 
+ 
+            foreach (string resultType in reportTypes.ToString().Split(','))
             {
                 Assert.IsFalse(text.Contains($"{resultType}: "), $"Expected to not find '{resultType}: '");
             }
