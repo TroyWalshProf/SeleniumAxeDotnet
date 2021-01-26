@@ -323,18 +323,6 @@ namespace Selenium.Axe
             return countString.ToString();
         }
 
-        private static string ReportResultsToString(ResultType[] requestedResults)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            foreach (ResultType reportType in requestedResults)
-            {
-                stringBuilder.AppendLine(reportType.ToString());
-            }
-
-            return stringBuilder.ToString();
-        }
-
         private static void GetReadableAxeResults(AxeResultItem[] results, string type, HtmlDocument doc, HtmlNode body)
         {
             var selectors = new HashSet<string>();
