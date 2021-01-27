@@ -36,7 +36,7 @@ namespace Selenium.Axe.Test
             _webDriver?.Quit();
             _webDriver?.Dispose();
         }
-        
+
         [TestMethod]
         [DataRow("Chrome")]
         [DataRow("Firefox")]
@@ -70,7 +70,7 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName("main")));
+            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
             AxeResult results = _webDriver.Analyze(mainElement);
             results.Violations.Should().HaveCount(3);
@@ -85,10 +85,44 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName("main")));
+            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+
             _webDriver.CreateAxeHtmlReport(path);
 
             ValidateReport(path, 4, 28, 0, 63);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("FireFox")]
+        public void ReportFullPageViolationsOnly(string browser)
+        {
+            string path = CreateReportPath();
+            InitDriver(browser);
+            LoadSimpleTestPage();
+
+            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+
+            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations);
+
+            ValidateReport(path, 4, 0);
+            ValidateResultNotWritten(path, ReportTypes.Passes | ReportTypes.Incomplete | ReportTypes.Inapplicable);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        [DataRow("FireFox")]
+        public void ReportFullPagePassesInapplicableViolationsOnly(string browser)
+        {
+            string path = CreateReportPath();
+            InitDriver(browser);
+            LoadSimpleTestPage();
+
+            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
+
+            ValidateReport(path, 4, 28, 0, 63);
+            ValidateResultNotWritten(path, ReportTypes.Incomplete);
         }
 
         [TestMethod]
@@ -100,7 +134,7 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             _webDriver.CreateAxeHtmlReport(mainElement, path);
 
             ValidateReport(path, 3, 16, 0, 69);
@@ -114,11 +148,11 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            
+
             _webDriver = new EventFiringWebDriver(_webDriver);
             _wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(20));
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             _webDriver.CreateAxeHtmlReport(mainElement, path);
 
             ValidateReport(path, 3, 16, 0, 69);
@@ -132,7 +166,7 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+            _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
 
             var builder = new AxeBuilder(_webDriver).DisableRules("color-contrast");
             _webDriver.CreateAxeHtmlReport(builder.Analyze(), path);
@@ -148,7 +182,7 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector("main")));
+            _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             JObject jResult = JObject.Parse(File.ReadAllText(IntegrationTestJsonResultFile));
             var results = new AxeResult(jResult);
             _webDriver.CreateAxeHtmlReport(results, path);
@@ -181,11 +215,11 @@ namespace Selenium.Axe.Test
             var axeResult = new AxeBuilder(_webDriver)
                 .WithOutputFile(@".\raw-axe-results.json")
                 .Analyze();
-            
+
             var colorContrast = axeResult
                 .Violations
                 .FirstOrDefault(x => x.Id == "color-contrast");
-            
+
             Assert.IsNotNull(colorContrast);
             var complexTargetNode = colorContrast
                 .Nodes
@@ -193,7 +227,7 @@ namespace Selenium.Axe.Test
                 .Select(x => x.Target.Last())
                 .First();
             Assert.IsNotNull(complexTargetNode);
-            Assert.IsTrue(complexTargetNode.Selectors.Count() == 2);
+            Assert.IsTrue(complexTargetNode.Selectors.Count == 2);
         }
 
         private string CreateReportPath()
@@ -203,7 +237,7 @@ namespace Selenium.Axe.Test
             string path = Uri.UnescapeDataString(uri.Path);
             return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
         }
-
+      
         private void ValidateReport(string path, int violationCount, int passCount, int incompleteCount = 0, int inapplicableCount = 0)
         {
             string text = File.ReadAllText(path);
@@ -212,30 +246,63 @@ namespace Selenium.Axe.Test
 
             // Check violations 
             string xpath = ".//*[@id=\"ViolationsSection\"]//*[contains(concat(\" \",normalize-space(@class),\" \"),\"htmlTable\")]";
-            HtmlNodeCollection liNodes = doc.DocumentNode.SelectNodes(xpath) ?? new HtmlNodeCollection(null);
-            Assert.AreEqual(violationCount, liNodes.Count, $"Expected {violationCount} violations");
+            ValidateElementCount(doc, violationCount, xpath, ResultType.Violations);
 
             // Check passes
             xpath = ".//*[@id=\"PassesSection\"]//*[contains(concat(\" \",normalize-space(@class),\" \"),\"htmlTable\")]";
-            liNodes = doc.DocumentNode.SelectNodes(xpath) ?? new HtmlNodeCollection(null);
-            Assert.AreEqual(passCount, liNodes.Count, $"Expected {passCount} passess");
+            ValidateElementCount(doc, passCount, xpath, ResultType.Passes);
 
             // Check inapplicables
             xpath = ".//*[@id=\"InapplicableSection\"]//*[contains(concat(\" \",normalize-space(@class),\" \"),\"findings\")]";
-            liNodes = doc.DocumentNode.SelectNodes(xpath) ?? new HtmlNodeCollection(null);
-            Assert.AreEqual(inapplicableCount, liNodes.Count, $"Expected {inapplicableCount} inapplicables");
+            ValidateElementCount(doc, inapplicableCount, xpath, ResultType.Inapplicable);
 
             // Check incompletes
             xpath = ".//*[@id=\"IncompleteSection\"]//*[contains(concat(\" \",normalize-space(@class),\" \"),\"htmlTable\")]";
-            liNodes = doc.DocumentNode.SelectNodes(xpath) ?? new HtmlNodeCollection(null);
-            Assert.AreEqual(incompleteCount, liNodes.Count, $"Expected {incompleteCount} incompletes");
+            ValidateElementCount(doc, incompleteCount, xpath, ResultType.Incomplete);
 
             // Check header data
             Assert.IsTrue(text.Contains("Using: axe-core"), "Expected to find 'Using: axe-core'");
-            Assert.IsTrue(text.Contains($"Violation: {violationCount}"), $"Expected to find 'Violation: {violationCount}'");
-            Assert.IsTrue(text.Contains($"Incomplete: {incompleteCount}"), $"Expected to find 'Incomplete: {incompleteCount}'");
-            Assert.IsTrue(text.Contains($"Pass: {passCount}"), $"Expected to find 'Pass: {passCount}'");
-            Assert.IsTrue(text.Contains($"Inapplicable: {inapplicableCount}"), $"Expected to find 'Inapplicable: {inapplicableCount}'");
+
+            if (!violationCount.Equals(0))
+            {
+                ValidateResultCount(text, violationCount, ResultType.Violations);
+            }
+
+            if (!passCount.Equals(0))
+            {
+                ValidateResultCount(text, passCount, ResultType.Passes);
+            }
+
+            if (!inapplicableCount.Equals(0))
+            {
+                ValidateResultCount(text, inapplicableCount, ResultType.Inapplicable);
+            }
+
+            if (!incompleteCount.Equals(0))
+            {
+                ValidateResultCount(text, incompleteCount, ResultType.Incomplete);
+            }
+        }
+
+        private void ValidateElementCount(HtmlDocument doc, int count, string xpath, ResultType resultType)
+        {
+            HtmlNodeCollection liNodes = doc.DocumentNode.SelectNodes(xpath) ?? new HtmlNodeCollection(null);
+            Assert.AreEqual(liNodes.Count, count, $"Expected {count} {resultType}");
+        }
+
+        private void ValidateResultCount(string text, int count, ResultType resultType)
+        {
+            Assert.IsTrue(text.Contains($"{resultType}: {count}"), $"Expected to find '{resultType}: {count}'");
+        }
+
+        private void ValidateResultNotWritten(string path, ReportTypes ReportType)
+        {
+            string text = File.ReadAllText(path);
+ 
+            foreach (string resultType in ReportType.ToString().Split(','))
+            {
+                Assert.IsFalse(text.Contains($"{resultType}: "), $"Expected to not find '{resultType}: '");
+            }
         }
 
         private void LoadSimpleTestPage()

@@ -349,6 +349,17 @@ var builder = new AxeBuilder(webDriver).DisableRules("color-contrast");
 webDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 ```
 
+Report with only violations and passes:
+
+```csharp
+IWebDriver webDriver = new ChromeDriver();
+// Navigate to page
+AxeResult results = new AxeBuilder(webDriver).Analyze();
+string path = Path.Combine(GetDestFolder(), "AxeReport.html");
+```
+
+webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations | ReportTypes.Passes);
+
 ## Contributing
 
 *Please note that this project is released with a [Contributor Code of Conduct](https://github.com/TroyWalshProf/SeleniumAxeDotnet/blob/master/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.*
