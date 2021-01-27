@@ -85,7 +85,7 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
             _webDriver.CreateAxeHtmlReport(path);
 
@@ -101,12 +101,12 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
-            _webDriver.CreateAxeHtmlReport(path, ReportType.Violations);
+            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations);
 
             ValidateReport(path, 4, 0);
-            ValidateResultNotWritten(path, ReportType.Passes | ReportType.Incomplete | ReportType.Inapplicable);
+            ValidateResultNotWritten(path, ReportTypes.Passes | ReportTypes.Incomplete | ReportTypes.Inapplicable);
         }
 
         [TestMethod]
@@ -118,11 +118,11 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(path, ReportType.Passes | ReportType.Inapplicable | ReportType.Violations);
+            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
 
             ValidateReport(path, 4, 28, 0, 63);
-            ValidateResultNotWritten(path, ReportType.Incomplete);
+            ValidateResultNotWritten(path, ReportTypes.Incomplete);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+            _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
 
             var builder = new AxeBuilder(_webDriver).DisableRules("color-contrast");
             _webDriver.CreateAxeHtmlReport(builder.Analyze(), path);
@@ -182,7 +182,7 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+            _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             JObject jResult = JObject.Parse(File.ReadAllText(IntegrationTestJsonResultFile));
             var results = new AxeResult(jResult);
             _webDriver.CreateAxeHtmlReport(results, path);
@@ -227,7 +227,7 @@ namespace Selenium.Axe.Test
                 .Select(x => x.Target.Last())
                 .First();
             Assert.IsNotNull(complexTargetNode);
-            Assert.IsTrue(complexTargetNode.Selectors.Count() == 2);
+            Assert.IsTrue(complexTargetNode.Selectors.Count == 2);
         }
 
         private string CreateReportPath()
@@ -295,7 +295,7 @@ namespace Selenium.Axe.Test
             Assert.IsTrue(text.Contains($"{resultType}: {count}"), $"Expected to find '{resultType}: {count}'");
         }
 
-        private void ValidateResultNotWritten(string path, ReportType ReportType)
+        private void ValidateResultNotWritten(string path, ReportTypes ReportType)
         {
             string text = File.ReadAllText(path);
  

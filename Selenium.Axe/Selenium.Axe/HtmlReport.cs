@@ -12,7 +12,7 @@ namespace Selenium.Axe
     /// Findings to include in your HTML
     /// </summary>
     [Flags]
-    public enum ReportType
+    public enum ReportTypes
     {
         Violations = 1,
         Incomplete = 2,
@@ -65,25 +65,25 @@ namespace Selenium.Axe
                                  modalimg.alt = thumbnail.alt;
                                })";
 
-        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination, ReportType requestedResults = ReportType.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination, ReportTypes requestedResults = ReportTypes.All)
         {
             var axeBuilder = new AxeBuilder(webDriver);
             webDriver.CreateAxeHtmlReport(axeBuilder.Analyze(), destination, requestedResults);
         }
 
-        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportType requestedResults = ReportType.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportTypes requestedResults = ReportTypes.All)
         {
             var axeBuilder = new AxeBuilder(webDriver);
             context.CreateAxeHtmlReportFile(axeBuilder.Analyze(context), destination, requestedResults);
         }
         
         
-        public static void CreateAxeHtmlReport(this IWebDriver webdriver, AxeResult results, string destination, ReportType requestedResults = ReportType.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webdriver, AxeResult results, string destination, ReportTypes requestedResults = ReportTypes.All)
         {
             webdriver.CreateAxeHtmlReportFile(results, destination, requestedResults);
         }
         
-        private static void CreateAxeHtmlReportFile(this ISearchContext context, AxeResult results, string destination, ReportType requestedResults)
+        private static void CreateAxeHtmlReportFile(this ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults)
         {
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
@@ -175,22 +175,22 @@ namespace Selenium.Axe
             }
 
 
-            if (violationCount > 0 && requestedResults.HasFlag(ReportType.Violations))
+            if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
                 GetReadableAxeResults(results.Violations, ResultType.Violations.ToString(), doc, resultsFlex);
             }
 
-            if (incompleteCount > 0 && requestedResults.HasFlag(ReportType.Incomplete))
+            if (incompleteCount > 0 && requestedResults.HasFlag(ReportTypes.Incomplete))
             {
                 GetReadableAxeResults(results.Incomplete, ResultType.Incomplete.ToString(), doc, resultsFlex);
             }
 
-            if (passCount > 0 && requestedResults.HasFlag(ReportType.Passes))
+            if (passCount > 0 && requestedResults.HasFlag(ReportTypes.Passes))
             {
                 GetReadableAxeResults(results.Passes, ResultType.Passes.ToString(), doc, resultsFlex);
             }
 
-            if (inapplicableCount > 0 && requestedResults.HasFlag(ReportType.Inapplicable))
+            if (inapplicableCount > 0 && requestedResults.HasFlag(ReportTypes.Inapplicable))
             {
                 GetReadableAxeResults(results.Inapplicable, ResultType.Inapplicable.ToString(), doc, resultsFlex);
             }
@@ -300,25 +300,25 @@ namespace Selenium.Axe
             return count;
         }
 
-        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportType requestedResults) {
+        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportTypes requestedResults) {
             StringBuilder countString = new StringBuilder();
 
-            if (requestedResults.HasFlag(ReportType.Violations))
+            if (requestedResults.HasFlag(ReportTypes.Violations))
             {
                 countString.AppendLine($" Violation: {violationCount}<br>");
             }
             
-            if (requestedResults.HasFlag(ReportType.Incomplete))
+            if (requestedResults.HasFlag(ReportTypes.Incomplete))
             {
                 countString.AppendLine($" Incomplete: {incompleteCount}<br>");
             }
             
-            if (requestedResults.HasFlag(ReportType.Passes))
+            if (requestedResults.HasFlag(ReportTypes.Passes))
             {
                 countString.AppendLine($" Pass: {passCount}<br>");
             }
             
-            if (requestedResults.HasFlag(ReportType.Inapplicable))
+            if (requestedResults.HasFlag(ReportTypes.Inapplicable))
             {
                 countString.AppendLine($" Inapplicable: {inapplicableCount}");
             }
