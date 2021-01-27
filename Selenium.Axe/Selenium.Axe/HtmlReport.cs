@@ -8,18 +8,21 @@ using System.Web;
 
 namespace Selenium.Axe
 {
+    /// <summary>
+    /// Findings to include in your HTML
+    /// </summary>
+    [Flags]
+    public enum ReportType
+    {
+        Violations = 1,
+        Incomplete = 2,
+        Inapplicable = 4,
+        Passes = 8,
+        All = 15
+    }
+
     public static class HtmlReport
     {
-        [Flags]
-        public enum ReportTypes
-        {
-            Violations = 1,
-            Incomplete = 2,
-            Inapplicable = 4,
-            Passes = 8,
-            All = 15
-        }
-
         private const string js = @"var buttons = document.getElementsByClassName(""sectionbutton"");
                               var i;
                               
@@ -62,25 +65,25 @@ namespace Selenium.Axe
                                  modalimg.alt = thumbnail.alt;
                                })";
 
-        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination, ReportTypes requestedResults = ReportTypes.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination, ReportType requestedResults = ReportType.All)
         {
             var axeBuilder = new AxeBuilder(webDriver);
             webDriver.CreateAxeHtmlReport(axeBuilder.Analyze(), destination, requestedResults);
         }
 
-        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportTypes requestedResults = ReportTypes.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportType requestedResults = ReportType.All)
         {
             var axeBuilder = new AxeBuilder(webDriver);
             context.CreateAxeHtmlReportFile(axeBuilder.Analyze(context), destination, requestedResults);
         }
         
         
-        public static void CreateAxeHtmlReport(this IWebDriver webdriver, AxeResult results, string destination, ReportTypes requestedResults = ReportTypes.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webdriver, AxeResult results, string destination, ReportType requestedResults = ReportType.All)
         {
             webdriver.CreateAxeHtmlReportFile(results, destination, requestedResults);
         }
         
-        private static void CreateAxeHtmlReportFile(this ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults)
+        private static void CreateAxeHtmlReportFile(this ISearchContext context, AxeResult results, string destination, ReportType requestedResults)
         {
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
@@ -172,22 +175,22 @@ namespace Selenium.Axe
             }
 
 
-            if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
+            if (violationCount > 0 && requestedResults.HasFlag(ReportType.Violations))
             {
                 GetReadableAxeResults(results.Violations, ResultType.Violations.ToString(), doc, resultsFlex);
             }
 
-            if (incompleteCount > 0 && requestedResults.HasFlag(ReportTypes.Incomplete))
+            if (incompleteCount > 0 && requestedResults.HasFlag(ReportType.Incomplete))
             {
                 GetReadableAxeResults(results.Incomplete, ResultType.Incomplete.ToString(), doc, resultsFlex);
             }
 
-            if (passCount > 0 && requestedResults.HasFlag(ReportTypes.Passes))
+            if (passCount > 0 && requestedResults.HasFlag(ReportType.Passes))
             {
                 GetReadableAxeResults(results.Passes, ResultType.Passes.ToString(), doc, resultsFlex);
             }
 
-            if (inapplicableCount > 0 && requestedResults.HasFlag(ReportTypes.Inapplicable))
+            if (inapplicableCount > 0 && requestedResults.HasFlag(ReportType.Inapplicable))
             {
                 GetReadableAxeResults(results.Inapplicable, ResultType.Inapplicable.ToString(), doc, resultsFlex);
             }
@@ -297,25 +300,25 @@ namespace Selenium.Axe
             return count;
         }
 
-        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportTypes requestedResults) {
+        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportType requestedResults) {
             StringBuilder countString = new StringBuilder();
 
-            if (requestedResults.HasFlag(ReportTypes.Violations))
+            if (requestedResults.HasFlag(ReportType.Violations))
             {
                 countString.AppendLine($" Violation: {violationCount}<br>");
             }
             
-            if (requestedResults.HasFlag(ReportTypes.Incomplete))
+            if (requestedResults.HasFlag(ReportType.Incomplete))
             {
                 countString.AppendLine($" Incomplete: {incompleteCount}<br>");
             }
             
-            if (requestedResults.HasFlag(ReportTypes.Passes))
+            if (requestedResults.HasFlag(ReportType.Passes))
             {
                 countString.AppendLine($" Pass: {passCount}<br>");
             }
             
-            if (requestedResults.HasFlag(ReportTypes.Inapplicable))
+            if (requestedResults.HasFlag(ReportType.Inapplicable))
             {
                 countString.AppendLine($" Inapplicable: {inapplicableCount}");
             }

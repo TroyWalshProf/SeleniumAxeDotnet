@@ -10,7 +10,6 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.IO;
 using System.Linq;
-using static Selenium.Axe.HtmlReport;
 
 namespace Selenium.Axe.Test
 {
@@ -104,10 +103,10 @@ namespace Selenium.Axe.Test
 
             var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
-            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations);
+            _webDriver.CreateAxeHtmlReport(path, ReportType.Violations);
 
             ValidateReport(path, 4, 0);
-            ValidateResultNotWritten(path, ReportTypes.Passes | ReportTypes.Incomplete | ReportTypes.Inapplicable);
+            ValidateResultNotWritten(path, ReportType.Passes | ReportType.Incomplete | ReportType.Inapplicable);
         }
 
         [TestMethod]
@@ -120,10 +119,10 @@ namespace Selenium.Axe.Test
             LoadSimpleTestPage();
 
             var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
+            _webDriver.CreateAxeHtmlReport(path, ReportType.Passes | ReportType.Inapplicable | ReportType.Violations);
 
             ValidateReport(path, 4, 28, 0, 63);
-            ValidateResultNotWritten(path, ReportTypes.Incomplete);
+            ValidateResultNotWritten(path, ReportType.Incomplete);
         }
 
         [TestMethod]
@@ -238,9 +237,7 @@ namespace Selenium.Axe.Test
             string path = Uri.UnescapeDataString(uri.Path);
             return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
         }
-
-       
-
+      
         private void ValidateReport(string path, int violationCount, int passCount, int incompleteCount = 0, int inapplicableCount = 0)
         {
             string text = File.ReadAllText(path);
@@ -298,12 +295,11 @@ namespace Selenium.Axe.Test
             Assert.IsTrue(text.Contains($"{resultType}: {count}"), $"Expected to find '{resultType}: {count}'");
         }
 
-        private void ValidateResultNotWritten(string path, ReportTypes reportTypes)
+        private void ValidateResultNotWritten(string path, ReportType ReportType)
         {
             string text = File.ReadAllText(path);
-            //string[] reportTypeList = ; 
  
-            foreach (string resultType in reportTypes.ToString().Split(','))
+            foreach (string resultType in ReportType.ToString().Split(','))
             {
                 Assert.IsFalse(text.Contains($"{resultType}: "), $"Expected to not find '{resultType}: '");
             }
