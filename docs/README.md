@@ -356,9 +356,9 @@ IWebDriver webDriver = new ChromeDriver();
 // Navigate to page
 AxeResult results = new AxeBuilder(webDriver).Analyze();
 string path = Path.Combine(GetDestFolder(), "AxeReport.html");
-```
 
 webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations | ReportTypes.Passes);
+```
 
 ## Contributing
 
