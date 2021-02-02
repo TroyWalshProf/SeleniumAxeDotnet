@@ -6,7 +6,7 @@
     <PackageProjectUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/TroyWalshProf/axe-selenium-csharp</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Copyright>Copyright 2020</Copyright>
+    <Copyright>Copyright 2021</Copyright>
     <PackageTags>selenium accessibility axe ada webdriver</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
