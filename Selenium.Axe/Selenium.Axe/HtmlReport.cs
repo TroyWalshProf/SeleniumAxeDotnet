@@ -74,16 +74,10 @@ namespace Selenium.Axe
         public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportTypes requestedResults = ReportTypes.All)
         {
             var axeBuilder = new AxeBuilder(webDriver);
-            context.CreateAxeHtmlReportFile(axeBuilder.Analyze(context), destination, requestedResults);
+            context.CreateAxeHtmlReport(axeBuilder.Analyze(context), destination, requestedResults);
         }
         
-        
-        public static void CreateAxeHtmlReport(this IWebDriver webdriver, AxeResult results, string destination, ReportTypes requestedResults = ReportTypes.All)
-        {
-            webdriver.CreateAxeHtmlReportFile(results, destination, requestedResults);
-        }
-        
-        private static void CreateAxeHtmlReportFile(this ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults)
+        public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults = ReportTypes.All)
         {
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
