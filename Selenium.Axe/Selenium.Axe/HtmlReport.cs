@@ -65,19 +65,34 @@ namespace Selenium.Axe
                                  modalimg.alt = thumbnail.alt;
                                })";
 
-        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination, ReportTypes requestedResults = ReportTypes.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination)
+        {
+            webDriver.CreateAxeHtmlReport(destination, ReportTypes.All);
+        }
+
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination, ReportTypes requestedResults)
         {
             var axeBuilder = new AxeBuilder(webDriver);
             webDriver.CreateAxeHtmlReport(axeBuilder.Analyze(), destination, requestedResults);
         }
 
-        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportTypes requestedResults = ReportTypes.All)
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination)
+        {
+            webDriver.CreateAxeHtmlReport(context, destination, ReportTypes.All);
+        }
+
+        public static void CreateAxeHtmlReport(this IWebDriver webDriver, IWebElement context, string destination, ReportTypes requestedResults)
         {
             var axeBuilder = new AxeBuilder(webDriver);
             context.CreateAxeHtmlReport(axeBuilder.Analyze(context), destination, requestedResults);
         }
-        
-        public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults = ReportTypes.All)
+
+        public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination)
+        {
+            context.CreateAxeHtmlReport(results, destination, ReportTypes.All);
+        }
+
+        public static void CreateAxeHtmlReport(this ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults)
         {
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
