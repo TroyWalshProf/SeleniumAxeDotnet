@@ -186,24 +186,24 @@ namespace Selenium.Axe
 
             if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
-                GetReadableAxeResults(results.Violations, ResultType.Violations.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Violations, ResultType.Violations, doc, resultsFlex);
             }
 
             if (incompleteCount > 0 && requestedResults.HasFlag(ReportTypes.Incomplete))
             {
-                GetReadableAxeResults(results.Incomplete, ResultType.Incomplete.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Incomplete, ResultType.Incomplete, doc, resultsFlex);
             }
 
             if (passCount > 0 && requestedResults.HasFlag(ReportTypes.Passes))
             {
-                GetReadableAxeResults(results.Passes, ResultType.Passes.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Passes, ResultType.Passes, doc, resultsFlex);
             }
 
             if (inapplicableCount > 0 && requestedResults.HasFlag(ReportTypes.Inapplicable))
             {
-                GetReadableAxeResults(results.Inapplicable, ResultType.Inapplicable.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Inapplicable, ResultType.Inapplicable, doc, resultsFlex);
             }
-           
+
 
             var modal = doc.CreateElement("div");
             modal.SetAttributeValue("id", "modal");
@@ -309,24 +309,25 @@ namespace Selenium.Axe
             return count;
         }
 
-        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportTypes requestedResults) {
+        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportTypes requestedResults)
+        {
             StringBuilder countString = new StringBuilder();
 
             if (requestedResults.HasFlag(ReportTypes.Violations))
             {
                 countString.AppendLine($" Violation: {violationCount}<br>");
             }
-            
+
             if (requestedResults.HasFlag(ReportTypes.Incomplete))
             {
                 countString.AppendLine($" Incomplete: {incompleteCount}<br>");
             }
-            
+
             if (requestedResults.HasFlag(ReportTypes.Passes))
             {
                 countString.AppendLine($" Pass: {passCount}<br>");
             }
-            
+
             if (requestedResults.HasFlag(ReportTypes.Inapplicable))
             {
                 countString.AppendLine($" Inapplicable: {inapplicableCount}");
@@ -335,7 +336,7 @@ namespace Selenium.Axe
             return countString.ToString();
         }
 
-        private static void GetReadableAxeResults(AxeResultItem[] results, string type, HtmlDocument doc, HtmlNode body)
+        private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
         {
             var selectors = new HashSet<string>();
 
@@ -425,6 +426,38 @@ namespace Selenium.Axe
 
                     htmlAndSelector.InnerHtml = content.ToString();
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                    // Add fixes if this is for violations
+                    if (ResultType.Violations.Equals(type) && item.Any.Length > 0)
+                    {
+                        if (item.Any.Length == 1)
+                        {
+                            htmlAndSelector = doc.CreateTextNode("To fix this violation address the following issue:");
+                        }
+                        else
+                        {
+                            htmlAndSelector = doc.CreateTextNode("To fix this violation address at least one the following issues:");
+                        }
+
+                        htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                        htmlAndSelector = doc.CreateElement("p");
+                        htmlAndSelector.SetAttributeValue("class", "wrapOne");
+                        htmlAndSelector.InnerHtml = $"{HttpUtility.HtmlEncode(item.Html)}";
+
+                        content = new StringBuilder();
+                        htmlAndSelector = doc.CreateElement("p");
+                        htmlAndSelector.SetAttributeValue("class", "wrapTwo");
+
+                        //Fix the following
+                        foreach (var allMessages in item.Any)
+                        {
+                            content.AppendLine($"Issue ({HttpUtility.HtmlEncode(allMessages.Impact)}): {HttpUtility.HtmlEncode(allMessages.Message)}<br>");
+                        }
+
+                        htmlAndSelector.InnerHtml = content.ToString();
+                        htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                    }
                 }
             }
         }
