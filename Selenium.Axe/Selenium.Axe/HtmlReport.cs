@@ -427,16 +427,22 @@ namespace Selenium.Axe
                     htmlAndSelector.InnerHtml = content.ToString();
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
+                    var anyCheckResults = item.Any;
+                    var allCheckResults = item.All;
+                    var noneCheckResults = item.None;
+
+                    int checkResultsCount = anyCheckResults.Length + allCheckResults.Length + noneCheckResults.Length;
+
                     // Add fixes if this is for violations
-                    if (ResultType.Violations.Equals(type) && item.Any.Length > 0)
+                    if (ResultType.Violations.Equals(type) && checkResultsCount > 0)
                     {
-                        if (item.Any.Length == 1)
+                        if (checkResultsCount == 1)
                         {
                             htmlAndSelector = doc.CreateTextNode("To fix this violation address the following issue:");
                         }
                         else
                         {
-                            htmlAndSelector = doc.CreateTextNode("To fix this violation address at least one the following issues:");
+                            htmlAndSelector = doc.CreateTextNode("To fix this violation address at least one of the following issues:");
                         }
 
                         htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
@@ -449,11 +455,24 @@ namespace Selenium.Axe
                         htmlAndSelector = doc.CreateElement("p");
                         htmlAndSelector.SetAttributeValue("class", "wrapTwo");
 
-                        //Fix the following
-                        foreach (var allMessages in item.Any)
+                        content.AppendLine("<ul>");
+
+                        foreach (var checkResult in anyCheckResults)
                         {
-                            content.AppendLine($"Issue ({HttpUtility.HtmlEncode(allMessages.Impact)}): {HttpUtility.HtmlEncode(allMessages.Message)}<br>");
+                            content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
                         }
+
+                        foreach (var checkResult in allCheckResults)
+                        {
+                            content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                        }
+
+                        foreach (var checkResult in noneCheckResults)
+                        {
+                            content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                        }
+
+                        content.AppendLine("</ul>");
 
                         htmlAndSelector.InnerHtml = content.ToString();
                         htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
