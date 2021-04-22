@@ -183,27 +183,26 @@ namespace Selenium.Axe
                 contentArea.AppendChild(errorContent);
             }
 
-
             if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
-                GetReadableAxeResults(results.Violations, ResultType.Violations.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Violations, ResultType.Violations, doc, resultsFlex);
             }
 
             if (incompleteCount > 0 && requestedResults.HasFlag(ReportTypes.Incomplete))
             {
-                GetReadableAxeResults(results.Incomplete, ResultType.Incomplete.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Incomplete, ResultType.Incomplete, doc, resultsFlex);
             }
 
             if (passCount > 0 && requestedResults.HasFlag(ReportTypes.Passes))
             {
-                GetReadableAxeResults(results.Passes, ResultType.Passes.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Passes, ResultType.Passes, doc, resultsFlex);
             }
 
             if (inapplicableCount > 0 && requestedResults.HasFlag(ReportTypes.Inapplicable))
             {
-                GetReadableAxeResults(results.Inapplicable, ResultType.Inapplicable.ToString(), doc, resultsFlex);
+                GetReadableAxeResults(results.Inapplicable, ResultType.Inapplicable, doc, resultsFlex);
             }
-           
+
 
             var modal = doc.CreateElement("div");
             modal.SetAttributeValue("id", "modal");
@@ -309,24 +308,25 @@ namespace Selenium.Axe
             return count;
         }
 
-        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportTypes requestedResults) {
+        private static string GetCountContent(int violationCount, int incompleteCount, int passCount, int inapplicableCount, ReportTypes requestedResults)
+        {
             StringBuilder countString = new StringBuilder();
 
             if (requestedResults.HasFlag(ReportTypes.Violations))
             {
                 countString.AppendLine($" Violation: {violationCount}<br>");
             }
-            
+
             if (requestedResults.HasFlag(ReportTypes.Incomplete))
             {
                 countString.AppendLine($" Incomplete: {incompleteCount}<br>");
             }
-            
+
             if (requestedResults.HasFlag(ReportTypes.Passes))
             {
                 countString.AppendLine($" Pass: {passCount}<br>");
             }
-            
+
             if (requestedResults.HasFlag(ReportTypes.Inapplicable))
             {
                 countString.AppendLine($" Inapplicable: {inapplicableCount}");
@@ -335,7 +335,7 @@ namespace Selenium.Axe
             return countString.ToString();
         }
 
-        private static void GetReadableAxeResults(AxeResultItem[] results, string type, HtmlDocument doc, HtmlNode body)
+        private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
         {
             var selectors = new HashSet<string>();
 
@@ -423,6 +423,74 @@ namespace Selenium.Axe
                         content.AppendLine($"{HttpUtility.HtmlEncode(target)}");
                     }
 
+                    htmlAndSelector.InnerHtml = content.ToString();
+                    htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                    AddFixes(item, type, doc, htmlAndSelectorWrapper);
+                }
+            }
+        }
+
+        private static void AddFixes(AxeResultNode resultsNode, ResultType type, HtmlDocument doc, HtmlNode htmlAndSelectorWrapper)
+        {
+            HtmlNode htmlAndSelector;
+
+            var anyCheckResults = resultsNode.Any;
+            var allCheckResults = resultsNode.All;
+            var noneCheckResults = resultsNode.None;
+
+            int checkResultsCount = anyCheckResults.Length + allCheckResults.Length + noneCheckResults.Length;
+
+            // Add fixes if this is for violations
+            if (ResultType.Violations.Equals(type) && checkResultsCount > 0)
+            {
+                htmlAndSelector = doc.CreateTextNode("To solve:");
+                htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                StringBuilder content;
+                htmlAndSelector = doc.CreateElement("p");
+                htmlAndSelector.SetAttributeValue("class", "wrapTwo");
+                htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                if (allCheckResults.Length > 0 || noneCheckResults.Length > 0)
+                {
+                    htmlAndSelector = doc.CreateElement("p");
+                    htmlAndSelector.SetAttributeValue("class", "wrapOne");
+                    content = new StringBuilder();
+
+                    content.AppendLine("Fix all of the following issues:");
+                    content.AppendLine("<ul>");
+
+                    foreach (var checkResult in allCheckResults)
+                    {
+                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                    }
+
+                    foreach (var checkResult in noneCheckResults)
+                    {
+                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                    }
+
+                    content.AppendLine("</ul>");
+                    htmlAndSelector.InnerHtml = content.ToString();
+                    htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                }
+
+                if (anyCheckResults.Length > 0)
+                {
+                    content = new StringBuilder();
+
+                    htmlAndSelector = doc.CreateElement("p");
+                    htmlAndSelector.SetAttributeValue("class", "wrapOne");
+                    content.AppendLine("Fix at least one of the following issues:");
+                    content.AppendLine("<ul>");
+
+                    foreach (var checkResult in anyCheckResults)
+                    {
+                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                    }
+
+                    content.AppendLine("</ul>");
                     htmlAndSelector.InnerHtml = content.ToString();
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
                 }
