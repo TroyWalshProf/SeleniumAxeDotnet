@@ -183,7 +183,6 @@ namespace Selenium.Axe
                 contentArea.AppendChild(errorContent);
             }
 
-
             if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
                 GetReadableAxeResults(results.Violations, ResultType.Violations, doc, resultsFlex);
@@ -427,56 +426,73 @@ namespace Selenium.Axe
                     htmlAndSelector.InnerHtml = content.ToString();
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
-                    var anyCheckResults = item.Any;
-                    var allCheckResults = item.All;
-                    var noneCheckResults = item.None;
+                    AddFixes(item, type, doc, htmlAndSelectorWrapper);
+                }
+            }
+        }
 
-                    int checkResultsCount = anyCheckResults.Length + allCheckResults.Length + noneCheckResults.Length;
+        private static void AddFixes(AxeResultNode resultsNode, ResultType type, HtmlDocument doc, HtmlNode htmlAndSelectorWrapper)
+        {
+            HtmlNode htmlAndSelector;
 
-                    // Add fixes if this is for violations
-                    if (ResultType.Violations.Equals(type) && checkResultsCount > 0)
+            var anyCheckResults = resultsNode.Any;
+            var allCheckResults = resultsNode.All;
+            var noneCheckResults = resultsNode.None;
+
+            int checkResultsCount = anyCheckResults.Length + allCheckResults.Length + noneCheckResults.Length;
+
+            // Add fixes if this is for violations
+            if (ResultType.Violations.Equals(type) && checkResultsCount > 0)
+            {
+                htmlAndSelector = doc.CreateTextNode("To solve:");
+                htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                StringBuilder content;
+                htmlAndSelector = doc.CreateElement("p");
+                htmlAndSelector.SetAttributeValue("class", "wrapTwo");
+                htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+
+                if (allCheckResults.Length > 0 || noneCheckResults.Length > 0)
+                {
+                    htmlAndSelector = doc.CreateElement("p");
+                    htmlAndSelector.SetAttributeValue("class", "wrapOne");
+                    content = new StringBuilder();
+
+                    content.AppendLine("Fix all of the following issues:");
+                    content.AppendLine("<ul>");
+
+                    foreach (var checkResult in allCheckResults)
                     {
-                        if (checkResultsCount == 1)
-                        {
-                            htmlAndSelector = doc.CreateTextNode("To fix this violation address the following issue:");
-                        }
-                        else
-                        {
-                            htmlAndSelector = doc.CreateTextNode("To fix this violation address at least one of the following issues:");
-                        }
-
-                        htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
-
-                        htmlAndSelector = doc.CreateElement("p");
-                        htmlAndSelector.SetAttributeValue("class", "wrapOne");
-                        htmlAndSelector.InnerHtml = $"{HttpUtility.HtmlEncode(item.Html)}";
-
-                        content = new StringBuilder();
-                        htmlAndSelector = doc.CreateElement("p");
-                        htmlAndSelector.SetAttributeValue("class", "wrapTwo");
-
-                        content.AppendLine("<ul>");
-
-                        foreach (var checkResult in anyCheckResults)
-                        {
-                            content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
-                        }
-
-                        foreach (var checkResult in allCheckResults)
-                        {
-                            content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
-                        }
-
-                        foreach (var checkResult in noneCheckResults)
-                        {
-                            content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
-                        }
-
-                        content.AppendLine("</ul>");
-
-                        htmlAndSelector.InnerHtml = content.ToString();
-                        htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
                     }
+
+                    foreach (var checkResult in noneCheckResults)
+                    {
+                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                    }
+
+                    content.AppendLine("</ul>");
+                    htmlAndSelector.InnerHtml = content.ToString();
+                    htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                }
+
+                if (anyCheckResults.Length > 0)
+                {
+                    content = new StringBuilder();
+
+                    htmlAndSelector = doc.CreateElement("p");
+                    htmlAndSelector.SetAttributeValue("class", "wrapOne");
+                    content.AppendLine("Fix at least one of the following issues:");
+                    content.AppendLine("<ul>");
+
+                    foreach (var checkResult in anyCheckResults)
+                    {
+                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+                    }
+
+                    content.AppendLine("</ul>");
+                    htmlAndSelector.InnerHtml = content.ToString();
+                    htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
                 }
             }
         }
