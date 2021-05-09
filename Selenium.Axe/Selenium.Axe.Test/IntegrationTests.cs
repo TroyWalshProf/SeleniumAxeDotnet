@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading;
 
 // Setup parallelization
-[assembly: Parallelize(Workers = 0, Scope = ExecutionScope.MethodLevel)]
+[assembly: Parallelize(Workers = 4, Scope = ExecutionScope.MethodLevel)]
 
 namespace Selenium.Axe.Test
 {
