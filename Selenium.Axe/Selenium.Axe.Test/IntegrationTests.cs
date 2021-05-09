@@ -326,6 +326,7 @@ namespace Selenium.Axe.Test
                     options.AddArgument("no-sandbox");
                     options.AddArgument("--log-level=3");
                     options.AddArgument("--silent");
+                    options.AddArgument("--disable-web-security");
 
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
                     service.SuppressInitialDiagnosticInformation = true;
