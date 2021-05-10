@@ -34,12 +34,12 @@ namespace Selenium.Axe.Test
         {
             get
             {
-                return localDriver[TestContext.FullyQualifiedTestClassName];
+                return localDriver[GetFullyQualifiedTestName()];
             }
 
             set
             {
-                localDriver.AddOrUpdate(TestContext.FullyQualifiedTestClassName, value, (oldkey, oldvalue) => value);
+                localDriver.AddOrUpdate(GetFullyQualifiedTestName(), value, (oldkey, oldvalue) => value);
             }
         }
 
@@ -47,12 +47,12 @@ namespace Selenium.Axe.Test
         {
             get
             {
-                return localWaitDriver[TestContext.FullyQualifiedTestClassName];
+                return localWaitDriver[GetFullyQualifiedTestName()];
             }
 
             set
             {
-                localWaitDriver.AddOrUpdate(TestContext.FullyQualifiedTestClassName, value, (oldkey, oldvalue) => value);
+                localWaitDriver.AddOrUpdate(GetFullyQualifiedTestName(), value, (oldkey, oldvalue) => value);
             }
         }
 
@@ -380,6 +380,11 @@ namespace Selenium.Axe.Test
             Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
             WebDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
             WebDriver.Manage().Window.Maximize();
+        }
+
+        private string GetFullyQualifiedTestName()
+        {
+            return $"{this.TestContext.FullyQualifiedTestClassName}{this.TestContext.TestName}";
         }
     }
 }
