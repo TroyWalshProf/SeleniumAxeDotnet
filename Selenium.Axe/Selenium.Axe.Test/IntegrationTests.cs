@@ -8,9 +8,9 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
 // Setup parallelization
 [assembly: Parallelize(Workers = 5, Scope = ExecutionScope.MethodLevel)]
@@ -26,19 +26,20 @@ namespace Selenium.Axe.Test
     [TestCategory("Integration")]
     public class IntegrationTests
     {
-        private readonly ThreadLocal<IWebDriver> localDriver = new ThreadLocal<IWebDriver>();
-        private readonly ThreadLocal<WebDriverWait> localWaitDriver = new ThreadLocal<WebDriverWait>();
+        public TestContext TestContext { get; set; }
+        private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
+        private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
 
         public IWebDriver WebDriver
         {
             get
             {
-                return localDriver.Value;
+                return localDriver[TestContext.FullyQualifiedTestClassName];
             }
 
             set
             {
-                localDriver.Value =  value;
+                localDriver.AddOrUpdate(TestContext.FullyQualifiedTestClassName, value, (oldkey, oldvalue) => value);
             }
         }
 
@@ -46,12 +47,12 @@ namespace Selenium.Axe.Test
         {
             get
             {
-                return localWaitDriver.Value;
+                return localWaitDriver[TestContext.FullyQualifiedTestClassName];
             }
 
             set
             {
-                localWaitDriver.Value = value;
+                localWaitDriver.AddOrUpdate(TestContext.FullyQualifiedTestClassName, value, (oldkey, oldvalue) => value);
             }
         }
 
