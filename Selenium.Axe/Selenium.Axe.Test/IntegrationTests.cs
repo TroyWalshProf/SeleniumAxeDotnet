@@ -8,8 +8,12 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.Events;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+
+// Setup parallelization
+[assembly: Parallelize(Workers = 5, Scope = ExecutionScope.MethodLevel)]
 
 namespace Selenium.Axe.Test
 {
@@ -22,8 +26,36 @@ namespace Selenium.Axe.Test
     [TestCategory("Integration")]
     public class IntegrationTests
     {
-        private IWebDriver _webDriver;
-        private WebDriverWait _wait;
+        public TestContext TestContext { get; set; }
+        private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
+        private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
+
+        public IWebDriver WebDriver
+        {
+            get
+            {
+                return localDriver[GetFullyQualifiedTestName()];
+            }
+
+            set
+            {
+                localDriver.AddOrUpdate(GetFullyQualifiedTestName(), value, (oldkey, oldvalue) => value);
+            }
+        }
+
+        public WebDriverWait Wait
+        {
+            get
+            {
+                return localWaitDriver[GetFullyQualifiedTestName()];
+            }
+
+            set
+            {
+                localWaitDriver.AddOrUpdate(GetFullyQualifiedTestName(), value, (oldkey, oldvalue) => value);
+            }
+        }
+
         private static readonly string IntegrationTestTargetSimpleFile = @"integration-test-simple.html";
         private static readonly string IntegrationTestTargetComplexTargetsFile = @"integration-test-target-complex.html";
         private static readonly string IntegrationTestJsonResultFile = Path.GetFullPath(@"SampleResults.json");
@@ -33,8 +65,9 @@ namespace Selenium.Axe.Test
         [TestCleanup]
         public virtual void TearDown()
         {
-            _webDriver?.Quit();
-            _webDriver?.Dispose();
+            
+            WebDriver?.Quit();
+            WebDriver?.Dispose();
         }
 
         [TestMethod]
@@ -47,7 +80,7 @@ namespace Selenium.Axe.Test
 
             var timeBeforeScan = DateTime.Now;
 
-            var builder = new AxeBuilder(_webDriver)
+            var builder = new AxeBuilder(WebDriver)
                 .WithOptions(new AxeRunOptions() { XPath = true })
                 .WithTags("wcag2a", "wcag2aa")
                 .DisableRules("color-contrast")
@@ -70,9 +103,9 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            var mainElement = Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
-            AxeResult results = _webDriver.Analyze(mainElement);
+            AxeResult results = WebDriver.Analyze(mainElement);
             results.Violations.Should().HaveCount(3);
         }
 
@@ -85,9 +118,9 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
-            _webDriver.CreateAxeHtmlReport(path);
+            WebDriver.CreateAxeHtmlReport(path);
 
             ValidateReport(path, 4, 26, 0, 69);
         }
@@ -101,9 +134,9 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
 
-            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Violations);
+            WebDriver.CreateAxeHtmlReport(path, ReportTypes.Violations);
 
             ValidateReport(path, 4, 0);
             ValidateResultNotWritten(path, ReportTypes.Passes | ReportTypes.Incomplete | ReportTypes.Inapplicable);
@@ -118,8 +151,8 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
+            Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            WebDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
 
             ValidateReport(path, 4, 26, 0, 69);
             ValidateResultNotWritten(path, ReportTypes.Incomplete);
@@ -134,8 +167,8 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(mainElement, path);
+            var mainElement = Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+            WebDriver.CreateAxeHtmlReport(mainElement, path);
 
             ValidateReport(path, 3, 14, 0, 75);
         }
@@ -149,11 +182,11 @@ namespace Selenium.Axe.Test
             InitDriver(browser);
             LoadSimpleTestPage();
 
-            _webDriver = new EventFiringWebDriver(_webDriver);
-            _wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(20));
+            WebDriver = new EventFiringWebDriver(WebDriver);
+            Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
 
-            var mainElement = _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
-            _webDriver.CreateAxeHtmlReport(mainElement, path);
+            var mainElement = Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+            WebDriver.CreateAxeHtmlReport(mainElement, path);
 
             ValidateReport(path, 3, 14, 0, 75);
         }
@@ -166,10 +199,10 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+            Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
 
-            var builder = new AxeBuilder(_webDriver).DisableRules("color-contrast");
-            _webDriver.CreateAxeHtmlReport(builder.Analyze(), path);
+            var builder = new AxeBuilder(WebDriver).DisableRules("color-contrast");
+            WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
             ValidateReport(path, 3, 21, 0, 69);
         }
@@ -182,10 +215,10 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             InitDriver(browser);
             LoadSimpleTestPage();
-            _wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+            Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             JObject jResult = JObject.Parse(File.ReadAllText(IntegrationTestJsonResultFile));
             var results = new AxeResult(jResult);
-            _webDriver.CreateAxeHtmlReport(results, path);
+            WebDriver.CreateAxeHtmlReport(results, path);
 
             ValidateReport(path, 3, 5, 2, 4);
 
@@ -211,8 +244,8 @@ namespace Selenium.Axe.Test
         {
             var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsolutePath;
             InitDriver(browser);
-            _webDriver.Navigate().GoToUrl(filename);
-            var axeResult = new AxeBuilder(_webDriver)
+            WebDriver.Navigate().GoToUrl(filename);
+            var axeResult = new AxeBuilder(WebDriver)
                 .WithOutputFile(@".\raw-axe-results.json")
                 .Analyze();
 
@@ -308,9 +341,9 @@ namespace Selenium.Axe.Test
         private void LoadSimpleTestPage()
         {
             var filename = new Uri(Path.GetFullPath(IntegrationTestTargetSimpleFile)).AbsoluteUri;
-            _webDriver.Navigate().GoToUrl(filename);
+            WebDriver.Navigate().GoToUrl(filename);
 
-            _wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
+            Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
         }
 
         private void InitDriver(string browser)
@@ -319,6 +352,7 @@ namespace Selenium.Axe.Test
             {
                 case "CHROME":
                     var chromeDriverDirectory = Environment.GetEnvironmentVariable("ChromeWebDriver") ?? Environment.CurrentDirectory;
+
                     ChromeOptions options = new ChromeOptions
                     {
                         UnhandledPromptBehavior = UnhandledPromptBehavior.Accept,
@@ -330,13 +364,13 @@ namespace Selenium.Axe.Test
 
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
                     service.SuppressInitialDiagnosticInformation = true;
-                    _webDriver = new ChromeDriver(chromeDriverDirectory, options);
+                    WebDriver = new ChromeDriver(chromeDriverDirectory, options);
 
                     break;
 
                 case "FIREFOX":
                     var geckoDriverDirectory = Environment.GetEnvironmentVariable("GeckoWebDriver") ?? Environment.CurrentDirectory;
-                    _webDriver = new FirefoxDriver(geckoDriverDirectory);
+                    WebDriver = new FirefoxDriver(geckoDriverDirectory);
                     break;
 
                 default:
@@ -344,9 +378,14 @@ namespace Selenium.Axe.Test
 
             }
 
-            _wait = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(20));
-            _webDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
-            _webDriver.Manage().Window.Maximize();
+            Wait = new WebDriverWait(WebDriver, TimeSpan.FromSeconds(20));
+            WebDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(20);
+            WebDriver.Manage().Window.Maximize();
+        }
+
+        private string GetFullyQualifiedTestName()
+        {
+            return $"{this.TestContext.FullyQualifiedTestClassName}{this.TestContext.TestName}";
         }
     }
 }
