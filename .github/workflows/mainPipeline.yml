@@ -100,7 +100,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: | 
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof"  /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ needs.getVersion.outputs.buildNumber }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}\testResults\**\coverage.opencover.xml"  /d:sonar.cs.dotcover.reportsPaths="${{ github.workspace }}\testResults\**\*.coverage"
           dotnet build Selenium.Axe/Selenium.Axe.sln
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
@@ -112,7 +112,11 @@ jobs:
           path: |
             ${{github.workspace}}/artifactTests/packages/**/*.nupkg
             ${{github.workspace}}/artifactTests/packages/**/*.snupkg
-            
+   
+      - name: Do stuff
+        shell: powershell
+        run: Get-ChildItem -Path "${{ github.workspace }}\testResults\"
+ 
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always() 
