@@ -94,8 +94,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"SeleniumAxeDotnet" /o:"TroyWalshProf" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ steps.ver.outputs.BUILD_NUMBER }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=${{ github.workspace }}\coverage\**\coverage.opencover.xml  /d:sonar.cs.dotcover.reportsPaths=${{ github.workspace }}\coverage\**\*.coverage
+        run: | 
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ steps.ver.outputs.BUILD_NUMBER }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=${{ github.workspace }}\coverage\**\coverage.opencover.xml  /d:sonar.cs.dotcover.reportsPaths=${{ github.workspace }}\coverage\**\*.coverage
           dotnet build Selenium.Axe/Selenium.Axe.sln --no-restore --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages/" --logger trx --results-directory "${{github.workspace}}/testResults/" /p:CoverletOutput="${{ github.workspace }}/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
