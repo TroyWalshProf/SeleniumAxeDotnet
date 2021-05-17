@@ -99,7 +99,7 @@ jobs:
           dotnet build Selenium.Axe/Selenium.Axe.sln --no-restore --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages/" --logger trx --results-directory "${{github.workspace}}/testResults/" /p:CoverletOutput="${{ github.workspace }}/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
-       - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         if: always()
         name: "Upload NuGet packages artifact"
         with:
@@ -108,7 +108,7 @@ jobs:
             ${{github.workspace}}/artifactTests/packages/**/*.nupkg
             ${{github.workspace}}/artifactTests/packages/**/*.snupkg
             
-       - name: Test Report
+      - name: Test Report
         uses: dorny/test-reporter@v1
         if: always() 
         with:
@@ -122,16 +122,16 @@ jobs:
     needs: buildTest
     runs-on: windows-latest
     environment: nuget 
-    steps:
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
+    steps:            
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
 
-    - uses: actions/download-artifact@v2
-      with:
-        name: 'packages'
-        path: ${{ github.workspace }}/packages
-        
-     - name: Deploy to nuget
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.SONAR_TOKEN }} --source https://api.nuget.org/v3/index.json
+      - uses: actions/download-artifact@v2
+        with:
+          name: 'packages'
+          path: ${{ github.workspace }}/packages
+
+       - name: Deploy to nuget
+        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.SONAR_TOKEN }} --source https://api.nuget.org/v3/index.json
