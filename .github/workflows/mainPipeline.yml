@@ -113,7 +113,7 @@ jobs:
         if: always() 
         with:
           name: ReportResults
-          path: ${{ github.workspace }}/testResults/**/*.trx
+          path: ${{github.workspace}}/testResults/*.trx
           reporter: dotnet-trx
             
   publish:
