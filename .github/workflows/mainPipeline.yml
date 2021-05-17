@@ -134,4 +134,4 @@ jobs:
           path: ${{ github.workspace }}/packages
 
       - name: Deploy to nuget
-        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.SONAR_TOKEN }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
