@@ -89,6 +89,11 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+    
+      - name: Test
+        shell: powershell
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/testResults/" --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} /p:CoverletOutput="${{ github.workspace }}/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -96,9 +101,7 @@ jobs:
         shell: powershell
         run: | 
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          #.\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ steps.ver.outputs.BUILD_NUMBER }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=${{ github.workspace }}\coverage\**\coverage.opencover.xml  /d:sonar.cs.dotcover.reportsPaths=${{ github.workspace }}\coverage\**\*.coverage
           dotnet build Selenium.Axe/Selenium.Axe.sln
-          dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{github.workspace}}/testResults/" --no-restore --no-build --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages/" /p:CoverletOutput="${{ github.workspace }}/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
       - uses: actions/upload-artifact@v2
