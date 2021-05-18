@@ -92,7 +92,7 @@ jobs:
     
       - name: Test
         shell: powershell
-        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{github.workspace}}/artifactTests/coverage/testResults/" --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} /p:CoverletOutput="${{github.workspace}}/artifactTests/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} /p:CoverletOutput="${{github.workspace}}/artifactTests/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover "--collect:Code Coverage"
 
       - name: Build and analyze
         env:
@@ -115,14 +115,14 @@ jobs:
    
       - name: Do stuff
         shell: powershell
-        run: Get-ChildItem -Path "${{ github.workspace }}\coverage\"
+        run: Get-ChildItem -Path "${{ github.workspace }}/artifactTests/coverage/testResults/"
  
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always() 
         with:
           name: ReportResults
-          path: "${{ github.workspace }}/coverage/*.trx"
+          path: "${{ github.workspace }}/artifactTests/coverage/**/*.trx"
           reporter: dotnet-trx
             
   publish:
