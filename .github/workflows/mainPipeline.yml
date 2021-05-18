@@ -93,7 +93,7 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: Build
-        run: dotnet build Selenium.Axe/Selenium.Axe.sln
+        run: dotnet build Selenium.Axe/Selenium.Axe.sln -c Release
         
       - name: Test
         shell: powershell
