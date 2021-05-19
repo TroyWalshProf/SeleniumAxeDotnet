@@ -60,18 +60,15 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-      
-      - name: Update Chrome
-        run: choco upgrade googlechrome
-      
+          
       - name: Update Firefox
         run: choco upgrade firefox
+        
+      - name: Update Chrome
+        run: choco upgrade googlechrome
 
       - name: Install dependencies
         run: dotnet restore Selenium.Axe/Selenium.Axe.sln
-        
-        
-
          
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -120,6 +117,7 @@ jobs:
             ${{github.workspace}}/artifactTests/packages/**/*.snupkg
    
       - name: Do stuff
+        if: always()
         shell: powershell
         run: Get-ChildItem -Path "${{ github.workspace }}/artifactTests/coverage/testResults/" -Recurse
  
