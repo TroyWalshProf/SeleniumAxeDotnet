@@ -124,18 +124,36 @@ jobs:
         shell: powershell
         run: Get-ChildItem -Path "${{ github.workspace }}/artifactTests/coverage/testResults/" -Recurse
  
+      - uses: actions/upload-artifact@v2
+        if: always()
+        name: "Upload test artifact"
+        with:
+          name: testResults
+          path: |
+            ${{ github.workspace }}/artifactTests/coverage/testResults/**/*.xml
+            ${{ github.workspace }}/artifactTests/coverage/testResults/
+  
+  report:
+    name: Report
+    runs-on: ubuntu-latest
+    needs: buildTest
+    if: always()  
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          path: ${{ github.workspace }}/Results
       - name: Test Report
         uses: dorny/test-reporter@v1
-        if: always() 
         with:
           name: ReportResults
-          path: '${{ github.workspace }}\artifactTests\coverage\testResults\**]*.trx'
+          path: ${{ github.workspace }}/Results/**/*.trx    # Path to test results
           reporter: dotnet-trx
-            
+
   publish:
     name: Publish NuGet - v${{ needs.getVersion.outputs.buildNumber }}
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    needs: buildTest
+    needs: [buildTest,report]
     runs-on: windows-latest
     environment: nuget 
     steps:            
