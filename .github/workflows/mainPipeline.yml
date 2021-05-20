@@ -60,19 +60,18 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
+
+      - name: Install dependencies
+        run: dotnet restore Selenium.Axe/Selenium.Axe.sln
+        
+     # - name: Build
+    #  run: dotnet build Selenium.Axe/Selenium.Axe.sln --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages"
           
 #      - name: Update Firefox
 #        run: #choco upgrade firefox
         
       - name: Update Chrome
         run: choco upgrade googlechrome
-
-      - name: Install dependencies
-        run: dotnet restore Selenium.Axe/Selenium.Axe.sln
-        
-      - name: Build
-        run: dotnet build Selenium.Axe/Selenium.Axe.sln --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages"
-
         
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -98,7 +97,7 @@ jobs:
           
       - name: Test
         shell: powershell
-        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --no-build -c Release -v D
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
       
       - name: Build and analyze
         env:
@@ -107,7 +106,7 @@ jobs:
         shell: powershell
         run: | 
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof"  /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ steps.ver.outputs.BUILD_NUMBER }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/artifactTests/coverage/testResults/*.opencover.xml"  /d:sonar.cs.dotcover.reportsPaths="${{ github.workspace }}/artifactTests/coverage/testResults/*.coverage"
-          dotnet build Selenium.Axe/Selenium.Axe.sln
+          dotnet build Selenium.Axe/Selenium.Axe.sln  --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
       - uses: actions/upload-artifact@v2
