@@ -69,7 +69,10 @@ jobs:
 
       - name: Install dependencies
         run: dotnet restore Selenium.Axe/Selenium.Axe.sln
-         
+        
+      - name: Build
+        run: dotnet build Selenium.Axe/Selenium.Axe.sln -c Release
+        
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -89,8 +92,7 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      #- name: Build
-      #  run: dotnet build Selenium.Axe/Selenium.Axe.sln -c Release
+
         
       - name: Test
         shell: powershell
@@ -127,7 +129,7 @@ jobs:
         if: always() 
         with:
           name: ReportResults
-          path: '${{ github.workspace }}\artifactTests\coverage\testResults\*.trx'
+          path: '${{ github.workspace }}\artifactTests\coverage\testResults\**]*.trx'
           reporter: dotnet-trx
             
   publish:
