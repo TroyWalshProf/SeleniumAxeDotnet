@@ -64,6 +64,12 @@ jobs:
       - name: Update Firefox
         run: choco upgrade firefox
         
+      - name: Update Firefox
+        run: choco upgrade firefox
+        
+      - name: Update Firefox
+        run: 'C:\Program Files\Mozilla Firefox\firefox.exe'
+        
       - name: Update Chrome
         run: choco upgrade googlechrome
 
