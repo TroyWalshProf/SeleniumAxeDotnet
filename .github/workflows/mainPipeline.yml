@@ -71,7 +71,7 @@ jobs:
         run: dotnet restore Selenium.Axe/Selenium.Axe.sln
         
       - name: Build
-        run: dotnet build Selenium.Axe/Selenium.Axe.sln  --no-restore --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages/"
+        run: dotnet build Selenium.Axe/Selenium.Axe.sln --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages/"
 
         
       - name: Cache SonarCloud packages
