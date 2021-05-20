@@ -27,6 +27,8 @@ jobs:
     name: Build and test
     runs-on: windows-latest 
     needs: draftRelease
+    outputs:
+      buildNumber: ${{ steps.ver.outputs.BUILD_NUMBER }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -150,7 +152,7 @@ jobs:
           reporter: dotnet-trx
 
   publish:
-    name: Publish NuGet - v${{ needs.getVersion.outputs.buildNumber }}
+    name: Publish NuGet - v${{ needs.buildTest.outputs.buildNumber }}
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: [buildTest,report]
     runs-on: windows-latest
