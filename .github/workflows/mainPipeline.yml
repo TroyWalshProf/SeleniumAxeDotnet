@@ -94,7 +94,8 @@ jobs:
         
       - name: Test
         shell: powershell
-        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" --no-build -c Release -v D "--collect:Code Coverage"
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --no-build -c Release -v D
+        #--logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" --no-build -c Release -v D "--collect:Code Coverage"
         #--logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} /p:CoverletOutput="${{github.workspace}}/artifactTests/coverage/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover "--collect:Code Coverage"
 
       - name: Build and analyze
