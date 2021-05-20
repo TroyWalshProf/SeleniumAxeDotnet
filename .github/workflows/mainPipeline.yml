@@ -68,7 +68,7 @@ jobs:
         run: choco upgrade firefox
         
       - name: Update Firefox
-        run: 'C:\Program Files\Mozilla Firefox\firefox.exe'
+        run: &'C:\Program Files\Mozilla Firefox\firefox.exe'
         
       - name: Update Chrome
         run: choco upgrade googlechrome
