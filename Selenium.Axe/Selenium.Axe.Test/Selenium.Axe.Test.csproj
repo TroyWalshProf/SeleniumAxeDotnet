@@ -41,6 +41,9 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />
   </ItemGroup>
 </Project>
