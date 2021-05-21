@@ -51,6 +51,7 @@ jobs:
                 $version = $info.name[0].Trim("v")
               }
               
+              Write-Host "Version: $($version)"
               Write-Host "::set-output name=BUILD_NUMBER::$($version)"
           
       - name: Set up JDK 11
