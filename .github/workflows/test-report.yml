@@ -2,14 +2,13 @@ name: 'Test Report'
 on:
   workflow_run:
     workflows: ['Main pipeline']
+    branches: [main, MigrateToMainn]
     types:
       - completed
 jobs:
   report:
     name: Report
     runs-on: ubuntu-latest
-    needs: buildTest
-    if: always()  
     steps:
       - name: Test Report
         uses: dorny/test-reporter@v1
