@@ -7,7 +7,7 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-      override:
+      version_override:
         description: 'Version Number'     
         required: true
         default: '0.0.0'
@@ -38,10 +38,10 @@ jobs:
         id: ver
         shell: pwsh
         run: |
-              if ("${{github.event.inputs.override}}")
+              if ("${{github.event.inputs.version_override}}")
               {
                 Write-Host "Using manually entered override version"
-                $version = "${{ github.event.inputs.override}}"
+                $version = "${{ github.event.inputs.version_override}}"
               }
               else
               {
