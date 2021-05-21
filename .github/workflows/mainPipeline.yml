@@ -96,7 +96,7 @@ jobs:
           
       - name: Run tests
         shell: powershell
-        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --logger trx --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
       
       - name: Build and analyze
         env:
