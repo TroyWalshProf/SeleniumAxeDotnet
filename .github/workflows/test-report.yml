@@ -2,7 +2,7 @@ name: 'Test Report'
 on:
   workflow_run:
     workflows: ['Main pipeline']
-    branches: [main, MigrateToMainn]
+    branches: [main, MigrateToMain]
     types: [completed]
 jobs:
   report:
