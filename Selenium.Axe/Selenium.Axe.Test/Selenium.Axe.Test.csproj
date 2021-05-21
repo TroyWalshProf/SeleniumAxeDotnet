@@ -46,4 +46,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+		<VSTestLogger>trx%3bLogFileName=Results$(TargetFramework).trx</VSTestLogger>
+	</PropertyGroup>
 </Project>
