@@ -3,8 +3,7 @@ on:
   workflow_run:
     workflows: ['Main pipeline']
     branches: [main, MigrateToMainn]
-    types:
-      - completed
+    types: [completed]
 jobs:
   report:
     name: Report
