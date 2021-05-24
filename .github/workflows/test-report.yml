@@ -1,0 +1,17 @@
+name: 'Test Report'
+on:
+  workflow_run:
+    workflows: ['Main pipeline']
+    types: [completed]
+jobs:
+  report:
+    name: Report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          artifact: testResults
+          name: ReportResults
+          path: ${{ github.workspace }}/Results/**/*.trx
+          reporter: dotnet-trx

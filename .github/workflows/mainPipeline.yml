@@ -1,0 +1,132 @@
+name: Main pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Version Number'     
+        required: true
+        default: '0.0.0'
+
+jobs:
+  draftRelease:
+    name: Draft release
+    runs-on: ubuntu-latest
+    steps:
+      # Drafts your next Release notes as Pull Requests are merged into "master"
+      - uses: release-drafter/release-drafter@v5
+        if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  buildTest:
+    name: Build and test
+    runs-on: windows-latest 
+    needs: draftRelease
+    outputs:
+      buildNumber: ${{ steps.ver.outputs.BUILD_NUMBER }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: GetVersion
+        id: ver
+        shell: pwsh
+        run: |
+              if ("${{github.event.inputs.version_override}}")
+              {
+                Write-Host "Using manually entered override version"
+                $version = "${{ github.event.inputs.version_override}}"
+              }
+              else
+              {
+                $header = @{Authorization = 'Bearer ${{ secrets.GITHUB_TOKEN }}' }
+                $endPoint = "https://api.github.com/repos/${{github.repository}}/releases"
+                $info = Invoke-RestMethod -Uri $endPoint -Headers $header
+                $version = $info.name[0].Trim("v")
+              }
+              
+              Write-Host "Version: $($version)"
+              Write-Host "::set-output name=BUILD_NUMBER::$($version)"
+          
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+
+      - name: Install dependencies
+        run: dotnet restore Selenium.Axe/Selenium.Axe.sln
+        
+      - name: Update Firefox
+        run: choco upgrade firefox
+        
+      - name: Update Chrome
+        run: choco upgrade googlechrome
+
+      - name: Install SonarCloud scanner
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          
+      - name: Run tests
+        shell: powershell
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
+      
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: | 
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof"  /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ steps.ver.outputs.BUILD_NUMBER }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/artifactTests/coverage/testResults/*.opencover.xml"  /d:sonar.cs.dotcover.reportsPaths="${{ github.workspace }}/artifactTests/coverage/testResults/*.coverage"
+          dotnet build Selenium.Axe/Selenium.Axe.sln  --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+ 
+      - uses: actions/upload-artifact@v2
+        if: always()
+        name: "Upload NuGet packages artifact"
+        with:
+          name: packages
+          path: |
+            ${{github.workspace}}/artifactTests/packages/**/*.nupkg
+            ${{github.workspace}}/artifactTests/packages/**/*.snupkg
+   
+      - uses: actions/upload-artifact@v2
+        if: always()
+        name: "Upload test artifact"
+        with:
+          name: testResults
+          path: |
+            ${{ github.workspace }}/artifactTests/coverage/testResults/**/*.xml
+            ${{ github.workspace }}/artifactTests/coverage/testResults/
+
+  publish:
+    name: Publish NuGet - v${{ needs.buildTest.outputs.buildNumber }}
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: [buildTest]
+    runs-on: windows-latest
+    environment: nuget 
+    steps:            
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: 'packages'
+          path: ${{ github.workspace }}/packages
+
+      - name: Deploy to nuget
+        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json

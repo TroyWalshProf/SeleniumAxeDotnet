@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{7D5DB0A8-263E-40D4-90C8-B86BA672C783}</ProjectGuid>
-    <TargetFrameworks>net45;net471;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp3.1;net45</TargetFrameworks>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <AssemblyTitle>Selenium.Axe.Test</AssemblyTitle>
     <Product>Selenium.Axe.Test</Product>
@@ -22,6 +22,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="3.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="Moq" Version="4.16.1" />
@@ -37,6 +41,12 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+		<VSTestLogger>trx%3bLogFileName=Results$(TargetFramework).trx</VSTestLogger>
+	</PropertyGroup>
 </Project>
