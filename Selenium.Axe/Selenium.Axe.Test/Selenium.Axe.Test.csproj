@@ -40,6 +40,9 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <Reference Include="netstandard" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />
   </ItemGroup>
