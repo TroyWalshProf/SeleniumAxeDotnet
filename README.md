@@ -2,7 +2,7 @@
 
 [![Selenium.Axe NuGet package](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe) 
 [![NuGet package download counter](https://img.shields.io/nuget/dt/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe/) 
-[![main pipeline](https://github.com/TroyWalshProf/SeleniumAxeDotnet/actions/workflows/mainPipeline.yml/badge.svg)](https://github.com/TroyWalshProf/SeleniumAxeDotnet/actions/workflows/mainPipeline.yml)
+[![Main pipeline](https://github.com/TroyWalshProf/SeleniumAxeDotnet/actions/workflows/mainPipeline.yml/badge.svg?branch=main)](https://github.com/TroyWalshProf/SeleniumAxeDotnet/actions/workflows/mainPipeline.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TroyWalshProf_SeleniumAxeDotnet&metric=alert_status)](https://sonarcloud.io/dashboard?id=TroyWalshProf_SeleniumAxeDotnet)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=TroyWalshProf_SeleniumAxeDotnet&metric=coverage)](https://sonarcloud.io/dashboard?id=TroyWalshProf_SeleniumAxeDotnet)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=TroyWalshProf_SeleniumAxeDotnet&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=TroyWalshProf_SeleniumAxeDotnet)
