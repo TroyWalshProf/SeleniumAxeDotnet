@@ -3,6 +3,9 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Web;
 
@@ -186,16 +189,19 @@ namespace Selenium.Axe
             if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
                 GetReadableAxeResults(results.Violations, ResultType.Violations, doc, resultsFlex);
+                SetImages(ResultType.Violations.ToString(), doc, context);
             }
 
             if (incompleteCount > 0 && requestedResults.HasFlag(ReportTypes.Incomplete))
             {
                 GetReadableAxeResults(results.Incomplete, ResultType.Incomplete, doc, resultsFlex);
+                SetImages(ResultType.Violations.ToString(), doc, context);
             }
 
             if (passCount > 0 && requestedResults.HasFlag(ReportTypes.Passes))
             {
                 GetReadableAxeResults(results.Passes, ResultType.Passes, doc, resultsFlex);
+                SetImages(ResultType.Violations.ToString(), doc, context);
             }
 
             if (inapplicableCount > 0 && requestedResults.HasFlag(ReportTypes.Inapplicable))
@@ -225,6 +231,7 @@ namespace Selenium.Axe
         private static string GetDataImageString(ISearchContext context)
         {
             ITakesScreenshot newScreen = (ITakesScreenshot)context;
+            string str = $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
             return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
         }
 
@@ -239,6 +246,8 @@ namespace Selenium.Axe
                 .wrapOne {margin-left:1em;overflow-wrap:anywhere;}
                 .wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
                 .wrapThree {margin-left:3em;overflow-wrap:anywhere;}
+                .wrapThree {margin-left:3em;transition: transform .2s;position: absolute;right: 25%;margin-top: -8s%}
+                .wrapThree:hover {transform: scale(1.5);}
                 .emOne {margin-left:1em;margin-right:1em;overflow-wrap:anywhere;}
                 .emTwo {margin-left:2em;overflow-wrap:anywhere;}
                 .emThree {margin-left:3em;overflow-wrap:anywhere;}
@@ -493,6 +502,53 @@ namespace Selenium.Axe
                     content.AppendLine("</ul>");
                     htmlAndSelector.InnerHtml = content.ToString();
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                }
+            }
+        }
+
+        private static string GetDataImageString(ISearchContext context, IWebElement webElement)
+        {
+            /*
+            Screenshot sc = ((ITakesScreenshot)context).GetScreenshot();         
+            var screen = new Bitmap(new MemoryStream(sc.AsByteArray));
+            var bitmap = screen.Clone(new Rectangle(webElement.Location, webElement.Size), screen.PixelFormat);
+            byte[] bytes = (byte[])TypeDescriptor.GetConverter(bitmap).ConvertTo(bitmap, typeof(byte[]));
+            return $"data:image/png;base64,{Convert.ToBase64String(bytes)}');";
+            */
+            return "";
+        }
+
+        private static void SetImages(string resultType, HtmlDocument doc, ISearchContext context)
+        {
+            var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
+            int count = 1;
+
+            foreach (HtmlNode finding in section)
+            {
+                var htmlTable = finding.SelectNodes($"div[contains(@class, 'htmlTable')]");
+
+                foreach (HtmlNode table in htmlTable)
+                {
+                    var wrapTwo = table.SelectSingleNode($"div/p[2]");
+                    var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();
+
+                    var screenShot = doc.DocumentNode.SelectSingleNode($" //*[@id=\"screenshotThumbnail\"]");
+                    var style = doc.DocumentNode.SelectSingleNode($"/ html / head / style");
+                    var screenshotString = style.InnerText.Substring(style.InnerText.IndexOf("data"));
+                    screenshotString = screenshotString.Substring(0, screenshotString.IndexOf(")") + 2);
+
+                    string imageString = GetDataImageString(context.FindElement(By.CssSelector(selectorText)));
+                    
+                    var element = doc.CreateElement("div");
+                    element.SetAttributeValue("class", "wrapThree");
+
+                    var image = doc.CreateElement("img");
+                    image.SetAttributeValue("src", imageString);
+                    image.SetAttributeValue("alt", resultType + "Element" + count++);
+                    element.AppendChild(image);
+
+                    var emThree = table.SelectSingleNode($"div[contains(@class, 'emThree')]");
+                    emThree.AppendChild(element);
                 }
             }
         }
