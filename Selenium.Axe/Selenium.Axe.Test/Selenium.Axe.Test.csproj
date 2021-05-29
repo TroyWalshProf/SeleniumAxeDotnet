@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{7D5DB0A8-263E-40D4-90C8-B86BA672C783}</ProjectGuid>
-    <TargetFrameworks>net471;net45</TargetFrameworks>
+    <TargetFrameworks>net471;net45;netcoreapp3.1</TargetFrameworks>
 	  <!--<TargetFrameworks>net471;netcoreapp3.1;net45</TargetFrameworks>-->
     <_HasReferenceToSystemRuntime>true</_HasReferenceToSystemRuntime>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
