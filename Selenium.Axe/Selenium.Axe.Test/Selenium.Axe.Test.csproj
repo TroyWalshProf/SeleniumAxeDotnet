@@ -42,20 +42,10 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp3.1' ">
-    <Reference Include="netstandard" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Selenium.Axe\Selenium.Axe.csproj" />
   </ItemGroup>
   <PropertyGroup>
 		<VSTestLogger>trx%3bLogFileName=Results$(TargetFramework).trx</VSTestLogger>
 	</PropertyGroup>
-	   <Choose>
-    <When Condition=" '$(TargetFramework)' != 'netstandard2.0' and '$(TargetFramework)' != 'netstandard2.1'   ">
-      <ItemGroup>
-        <Reference Include="System.Web" />
-      </ItemGroup>
-    </When>
-  </Choose>
 </Project>
