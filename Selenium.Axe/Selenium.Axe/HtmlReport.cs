@@ -245,8 +245,7 @@ namespace Selenium.Axe
                 .wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
                 .wrapOne {margin-left:1em;overflow-wrap:anywhere;}
                 .wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
-                .wrapThree {margin-left:3em;overflow-wrap:anywhere;}
-                .wrapThree {margin-left:3em;transition: transform .2s;position: absolute;right: 25%;margin-top: -8s%}
+                .wrapThree {margin-left:3em;overflow-wrap:anywhere;transition: transform .2s;position: absolute;right: 25%;margin-top: -8%}
                 .wrapThree:hover {transform: scale(1.5);}
                 .emOne {margin-left:1em;margin-right:1em;overflow-wrap:anywhere;}
                 .emTwo {margin-left:2em;overflow-wrap:anywhere;}
@@ -532,10 +531,12 @@ namespace Selenium.Axe
                     var wrapTwo = table.SelectSingleNode($"div/p[2]");
                     var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();
 
+                    /*
                     var screenShot = doc.DocumentNode.SelectSingleNode($" //*[@id=\"screenshotThumbnail\"]");
                     var style = doc.DocumentNode.SelectSingleNode($"/ html / head / style");
                     var screenshotString = style.InnerText.Substring(style.InnerText.IndexOf("data"));
                     screenshotString = screenshotString.Substring(0, screenshotString.IndexOf(")") + 2);
+                    */
 
                     string imageString = GetDataImageString(context.FindElement(By.CssSelector(selectorText)));
                     
