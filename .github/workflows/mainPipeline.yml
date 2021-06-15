@@ -89,6 +89,8 @@ jobs:
         run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
       
       - name: Build and analyze
+        # Skip when dependabot PR - Dependabot PRs cannot access action secrets
+        if: github.actor != 'dependabot[bot]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
