@@ -97,7 +97,7 @@ jobs:
         shell: powershell
         run: | 
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"TroyWalshProf_SeleniumAxeDotnet" /o:"troywalshprof"  /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:projectVersion="${{ steps.ver.outputs.BUILD_NUMBER }}"  /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/artifactTests/coverage/testResults/*.opencover.xml"  /d:sonar.cs.dotcover.reportsPaths="${{ github.workspace }}/artifactTests/coverage/testResults/*.coverage"
-          dotnet build Selenium.Axe/Selenium.Axe.sln  --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -o "${{github.workspace}}/artifactTests/packages/"
+          dotnet build Selenium.Axe/Selenium.Axe.sln  --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -p:BaseOutputPath="${{github.workspace}}/artifactTests/packages/"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
       - uses: actions/upload-artifact@v2
