@@ -245,7 +245,6 @@ namespace Selenium.Axe.Test
             string path = CreateReportPath();
             string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
-
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
             Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
