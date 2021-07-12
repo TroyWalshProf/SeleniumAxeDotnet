@@ -12,7 +12,8 @@ namespace Selenium.Axe
         /// </summary>
         /// <param name="driver">WebDriver instance to inject into</param>
         /// <param name="scriptProvider">Provider that get the aXe script to inject.</param>
-        internal static void Inject(this IWebDriver driver, IAxeScriptProvider scriptProvider)
+        /// <param name="runOptions">Axe run options</param>
+        internal static void Inject(this IWebDriver driver, IAxeScriptProvider scriptProvider, AxeRunOptions runOptions)
         {
             if (scriptProvider == null)
                 throw new ArgumentNullException(nameof(scriptProvider));
@@ -21,7 +22,12 @@ namespace Selenium.Axe
             IList<IWebElement> parents = new List<IWebElement>();
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
-            InjectIntoFrames(driver, script, parents);
+            // Skip if value is set to false
+            if (runOptions.Iframes != false)
+            {
+                InjectIntoFrames(driver, script, parents);
+            }
+
             driver.SwitchTo().DefaultContent();
             js.ExecuteScript(script);
         }
