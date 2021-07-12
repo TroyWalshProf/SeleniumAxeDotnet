@@ -240,11 +240,11 @@ namespace Selenium.Axe.Test
 
         [TestMethod]
         [DataRow("Chrome")]
-        [DataRow("Firefox")]
         public void ReportRespectsIframeImplicitTrue(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsolutePath;
+            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -259,11 +259,10 @@ namespace Selenium.Axe.Test
 
         [TestMethod]
         [DataRow("Chrome")]
-        [DataRow("Firefox")]
         public void ReportRespectsIframeTrue(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsolutePath;
+            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
             
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
@@ -286,7 +285,7 @@ namespace Selenium.Axe.Test
         public void ReportRespectsIframeFalse(string browser)
         {
             string path = CreateReportPath();
-            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsolutePath;
+            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
 
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
