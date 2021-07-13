@@ -21,18 +21,15 @@ namespace Selenium.Axe.Test
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        private readonly string testAxeResult = JsonConvert.SerializeObject(new
+        private readonly object testAxeResult = new
         {
-            results = new
-            {
-                violations = new object[] { },
-                passes = new object[] { },
-                inapplicable = new object[] { },
-                incomplete = new object[] { },
-                timestamp = DateTimeOffset.Now,
-                url = "www.test.com",
-            }
-        });
+            violations = new object[] { },
+            passes = new object[] { },
+            inapplicable = new object[] { },
+            incomplete = new object[] { },
+            timestamp = DateTimeOffset.Now,
+            url = "www.test.com"
+        };
 
         [TestInitialize]
         public void TestInitialize()

@@ -242,7 +242,7 @@ namespace Selenium.Axe.Test
         [DataRow("Chrome")]
         public void RunSiteThatReturnsMultipleTargets(string browser)
         {
-            var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsolutePath;
+            var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
             var axeResult = new AxeBuilder(WebDriver)

@@ -221,14 +221,14 @@ namespace Selenium.Axe
 
             string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("scan.js");
             object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
-            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
+            var result = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
 
-            JObject jObject = JObject.Parse(stringifiedResult);
+            JObject jObject = JObject.FromObject(result);
 
-            if (outputFilePath != null && jObject["results"].Type == JTokenType.Object) {
+            if (outputFilePath != null && jObject.Type == JTokenType.Object) {
                 Encoding utf8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
                 using (var outputFileWriter = new StreamWriter(outputFilePath, append: false, encoding: utf8NoBOM)) {
-                    jObject["results"].WriteTo(new JsonTextWriter(outputFileWriter));
+                    jObject.WriteTo(new JsonTextWriter(outputFileWriter));
                 }
             }
 
