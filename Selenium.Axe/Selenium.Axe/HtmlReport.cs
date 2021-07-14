@@ -97,11 +97,10 @@ namespace Selenium.Axe
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
 
-            var selectors = new HashSet<string>();
-            var violationCount = GetCount(results.Violations, ref selectors);
-            var incompleteCount = GetCount(results.Incomplete, ref selectors);
-            var passCount = GetCount(results.Passes, ref selectors);
-            var inapplicableCount = GetCount(results.Inapplicable, ref selectors);
+            var violationCount = GetCount(results.Violations);
+            var incompleteCount = GetCount(results.Incomplete);
+            var passCount = GetCount(results.Passes);
+            var inapplicableCount = GetCount(results.Inapplicable);
 
             var doc = new HtmlDocument();
 
@@ -285,18 +284,14 @@ namespace Selenium.Axe
             return contextContent;
         }
 
-        private static int GetCount(AxeResultItem[] results, ref HashSet<string> uniqueList)
+        private static int GetCount(AxeResultItem[] results)
         {
             int count = 0;
             foreach (AxeResultItem item in results)
             {
                 foreach (AxeResultNode node in item.Nodes)
                 {
-                    foreach (var target in node.Target)
-                    {
-                        count++;
-                        uniqueList.Add(target.ToString());
-                    }
+                    count++;
                 }
 
                 // Still add one if no targets are included
@@ -337,8 +332,6 @@ namespace Selenium.Axe
 
         private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
         {
-            var selectors = new HashSet<string>();
-
             var resultWrapper = doc.CreateElement("div");
             resultWrapper.SetAttributeValue("class", "resultWrapper");
             body.AppendChild(resultWrapper);
@@ -349,7 +342,7 @@ namespace Selenium.Axe
 
             var sectionButtonHeader = doc.CreateElement("h2");
             sectionButtonHeader.SetAttributeValue("class", "buttonInfoText");
-            sectionButtonHeader.InnerHtml = $"{type}: {GetCount(results, ref selectors)}";
+            sectionButtonHeader.InnerHtml = $"{type}: {GetCount(results)}";
             sectionButton.AppendChild(sectionButtonHeader);
 
             var sectionButtonExpando = doc.CreateElement("h2");
@@ -411,7 +404,7 @@ namespace Selenium.Axe
                     htmlAndSelector.InnerHtml = $"{HttpUtility.HtmlEncode(item.Html)}";
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
-                    htmlAndSelector = doc.CreateTextNode("Selector(s):");
+                    htmlAndSelector = doc.CreateTextNode("Selector:");
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
                     content = new StringBuilder();

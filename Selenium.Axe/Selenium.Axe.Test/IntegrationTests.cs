@@ -240,6 +240,70 @@ namespace Selenium.Axe.Test
 
         [TestMethod]
         [DataRow("Chrome")]
+        public void ReportRespectsIframeImplicitTrue(string browser)
+        {
+            string path = CreateReportPath();
+            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+
+            InitDriver(browser);
+            WebDriver.Navigate().GoToUrl(filename);
+            Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+
+            var builder = new AxeBuilder(WebDriver);
+
+            WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
+
+            ValidateReport(path, 4, 43, 0, 64);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        public void ReportRespectsIframeTrue(string browser)
+        {
+            string path = CreateReportPath();
+            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+            
+            InitDriver(browser);
+            WebDriver.Navigate().GoToUrl(filename);
+            Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+
+            AxeRunOptions runOptions = new AxeRunOptions
+            {
+                Iframes = true
+            };
+
+            var builder = new AxeBuilder(WebDriver).WithOptions(runOptions);
+
+            WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
+
+            ValidateReport(path, 4, 43, 0, 64);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
+        public void ReportRespectsIframeFalse(string browser)
+        {
+            string path = CreateReportPath();
+            string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
+
+            InitDriver(browser);
+            WebDriver.Navigate().GoToUrl(filename);
+            Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
+
+            AxeRunOptions runOptions = new AxeRunOptions
+            {
+                Iframes = false
+            };
+
+            var builder = new AxeBuilder(WebDriver).WithOptions(runOptions);
+
+            WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
+
+            ValidateReport(path, 1, 24, 1, 65);
+        }
+
+        [TestMethod]
+        [DataRow("Chrome")]
         public void RunSiteThatReturnsMultipleTargets(string browser)
         {
             var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
