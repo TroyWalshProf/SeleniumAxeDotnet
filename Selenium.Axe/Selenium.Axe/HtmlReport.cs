@@ -413,7 +413,7 @@ namespace Selenium.Axe
 
                     foreach (var target in item.Target)
                     {
-                        content.AppendLine($"{HttpUtility.HtmlEncode(target.ToString().Replace(",", " "))}");
+                        content.AppendLine($"{HttpUtility.HtmlEncode(target)}");
                     }
 
                     htmlAndSelector.InnerHtml = content.ToString();
