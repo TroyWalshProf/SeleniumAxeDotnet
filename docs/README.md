@@ -238,6 +238,21 @@ Causes future calls to `Analyze` to use the specified options when calling `axe.
 
 `WithOptions` is not compatible with the deprecated raw `Options` property.
 
+#### Skip iFrames
+If you don't want to run Axe on iFrames you can tell Axe skip with AxeRunOptions.
+
+```csharp
+AxeResult axeResult = new AxeBuilder(webDriver)
+    .WithOptions(new AxeRunOptions()
+    {
+        Iframes = false
+    })
+    .Analyze();
+```
+Prevents Axe core from getting injected into page iFrames.
+
+Causes future calls to `Analyze` to use the specified options when calling `axe.run` in axe-core. See [the axe-core API documentation](https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter) for descriptions of the different properties of `AxeRunOptions`.
+
 ### `AxeBuilder.WithOutputFile(string filePath)`
 
 ```csharp
