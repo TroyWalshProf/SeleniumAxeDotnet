@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Internal;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Web;
 
@@ -23,48 +24,6 @@ namespace Selenium.Axe
 
     public static class HtmlReport
     {
-        private const string js = @"var buttons = document.getElementsByClassName(""sectionbutton"");
-                              var i;
-                              
-                              for (i = 0; i < buttons.length; i++) 
-                              {
-                                  buttons[i].addEventListener(""click"", function() 
-                                  {
-                                      var expandoText = this.getElementsByClassName(""buttonExpandoText"")[0];
-                                      
-                                      this.classList.toggle(""active"");
-                              
-                                      var content = this.nextElementSibling;
-                                      if (expandoText.innerHTML == ""-"") 
-                                      {
-                                          content.style.maxHeight = 0;
-                                          expandoText.innerHTML = ""+"";
-                                      } 
-                                      else 
-                                      {
-                                          content.style.maxHeight = content.scrollHeight + ""px"";
-                                          expandoText.innerHTML = ""-"";
-                                      }
-                                  })
-                              }
-  
-                              var thumbnail = document.getElementById(""screenshotThumbnail"");
-                              var thumbnailStyle = getComputedStyle(thumbnail);      
-                              var modal = document.getElementById(""modal"");
-                              var modalimg = modal.getElementsByTagName(""img"")[0]
-                              
-                              modal.addEventListener('click',function(){
-                                 modal.style.display = ""none"";
-                                 modalimg.style.content = """";
-                                 modalimg.alt = """";
-                               })
-                              
-                              thumbnail.addEventListener('click',function(){
-                                 modal.style.display = ""flex"";
-                                 modalimg.style.content = thumbnailStyle.content;
-                                 modalimg.alt = thumbnail.alt;
-                               })";
-
         public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination)
         {
             webDriver.CreateAxeHtmlReport(destination, ReportTypes.All);
@@ -216,7 +175,9 @@ namespace Selenium.Axe
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
 
-            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = js;
+            var javascript = File.ReadAllText("C:\\Users\\jonr\\SeleniumAxeDotnet\\Selenium.Axe\\Selenium.Axe\\Resources\\htmlReportElements.js");
+
+            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = javascript;
 
             doc.Save(destination, Encoding.UTF8);
         }
@@ -224,51 +185,13 @@ namespace Selenium.Axe
         private static string GetDataImageString(ISearchContext context)
         {
             ITakesScreenshot newScreen = (ITakesScreenshot)context;
-            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
+            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}";
         }
 
         private static string GetCss(ISearchContext context)
         {
-            var css = new StringBuilder();
-            css.AppendLine(@".thumbnail{");
-            css.AppendLine($"content: url('{GetDataImageString(context)}; border: 1px solid black;margin-left:1em;margin-right:1em;width:auto;max-height:150px;");
-            css.AppendLine(@"}
-                .thumbnail:hover{border:2px solid black;}
-                .wrap .wrapTwo .wrapThree{margin:2px;max-width:70vw;}
-                .wrapOne {margin-left:1em;overflow-wrap:anywhere;}
-                .wrapTwo {margin-left:2em;overflow-wrap:anywhere;}
-                .wrapThree {margin-left:3em;overflow-wrap:anywhere;}
-                .emOne {margin-left:1em;margin-right:1em;overflow-wrap:anywhere;}
-                .emTwo {margin-left:2em;overflow-wrap:anywhere;}
-                .emThree {margin-left:3em;overflow-wrap:anywhere;}
-                #modal {display: none;position: fixed;z-index: 1;left: 0;top: 0;width: 100%;
-                 height: 100%;overflow: auto;background-color: rgba(0, 0, 0, 0.9);  flex-direction: column;}
-                #modalclose{font-family: Lucida Console; font-size: 35px; width: auto; color: white; text-align: right; padding: 20px; 
-                 cursor: pointer; max-height: 10%}
-                #modalimage {margin: auto;display: block;max-width: 95%; padding: 10px; max-height: 90%}
-                .htmlTable{border-top:double lightgray;width:100%;display:table;}
-                .sectionbutton{background-color: #000000; color: #FFFFFF; cursor: pointer; padding: 18px; width: 100%;
-                 text-align: left; outline: none; transition: 0.4s; border: 1px solid black;}
-                .sectionbutton:hover {background-color: #828282;}
-                .buttonInfoText {width: 50%; float: left;}
-                .buttonExpandoText {text-align: right; width: 50%; float: right;}
-                .majorSection{padding: 0 18px;background-color:white; overflow:hidden;
-                 transition: max-height 0.2s ease-out;}
-                .findings{margin-top: 5px; border-top:1px solid black;}
-                .active {background-color: #474747; margin-bottom: 0px;}
-                .resultWrapper {margin: 5px}
-                #context {width: 50%;}
-                #image {width: 50%; height: 220px;}
-                #counts {width: 100%;}
-                #metadata {display: flex; flex-wrap: wrap;}
-                #results {display: flex; flex-direction: column;}
-                @media only screen and (max-width: 800px) {
-                    #metadata {flex-direction: column;} 
-                    #context {width: 100%;} 
-                    #image {width: 100%;}
-                                          }
-                ");
-            return css.ToString();
+            var css2 = File.ReadAllText("C:/Users/jonr/SeleniumAxeDotnet/Selenium.Axe/Selenium.Axe/Resources/htmlReporter.css");
+            return css2.Replace("url('", $"url('{GetDataImageString(context)}");
         }
 
         private static string GetContextContent(AxeResult results)
