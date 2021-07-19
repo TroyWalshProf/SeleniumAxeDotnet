@@ -23,8 +23,6 @@ namespace Selenium.Axe
 
     public static class HtmlReport
     {
-        private static readonly string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "SeleniumAxeDotnet\\Selenium.Axe\\Selenium.Axe\\Resources");
-
         public static void CreateAxeHtmlReport(this IWebDriver webDriver, string destination)
         {
             webDriver.CreateAxeHtmlReport(destination, ReportTypes.All);
@@ -176,7 +174,7 @@ namespace Selenium.Axe
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
 
-            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = File.ReadAllText(Path.Combine(filePath, "htmlReporterElements.js"));
+            doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
 
             doc.Save(destination, Encoding.UTF8);
         }
@@ -189,7 +187,7 @@ namespace Selenium.Axe
 
         private static string GetCss(ISearchContext context)
         {
-            return File.ReadAllText(Path.Combine(filePath, "htmlReporter.css")).Replace("url('", $"url('{GetDataImageString(context)}");
+            return EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporter.css").Replace("url('", $"url('{GetDataImageString(context)}");
         }
 
         private static string GetContextContent(AxeResult results)
