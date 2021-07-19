@@ -16,11 +16,11 @@ namespace Selenium.Axe
     public class AxeBuilder
     {
         private readonly IWebDriver _webDriver;
+        private readonly AxeBuilderOptions _AxeBuilderOptions;
         private readonly AxeRunContext runContext = new AxeRunContext();
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
-
-        private static readonly AxeBuilderOptions DefaultOptions = new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() };
+        
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
@@ -38,7 +38,7 @@ namespace Selenium.Axe
         /// Initialize an instance of <see cref="AxeBuilder"/>
         /// </summary>
         /// <param name="webDriver">Selenium driver to use</param>
-        public AxeBuilder(IWebDriver webDriver) : this(webDriver, DefaultOptions)
+        public AxeBuilder(IWebDriver webDriver) : this(webDriver, new AxeBuilderOptions { ScriptProvider = new EmbeddedResourceAxeProvider() })
         {
         }
 
@@ -53,7 +53,7 @@ namespace Selenium.Axe
             ValidateNotNullParameter(options, nameof(options));
 
             _webDriver = webDriver;
-            _webDriver.Inject(options.ScriptProvider);
+            _AxeBuilderOptions = options;
         }
 
         /// <summary>
@@ -215,20 +215,22 @@ namespace Selenium.Axe
         /// <param name="rawContextArg">The value to pass as-is to scan.js to use as the axe.run "context" argument</param>
         private AxeResult AnalyzeRawContext(object rawContextArg)
         {
+            _webDriver.Inject(_AxeBuilderOptions.ScriptProvider, runOptions);
+
             #pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
             string rawOptionsArg = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
             #pragma warning restore CS0618
 
             string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("scan.js");
             object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
-            string stringifiedResult = (string)((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
+            var result = ((IJavaScriptExecutor)_webDriver).ExecuteAsyncScript(scanJsContent, rawArgs);
 
-            JObject jObject = JObject.Parse(stringifiedResult);
+            JObject jObject = JObject.FromObject(result);
 
-            if (outputFilePath != null && jObject["results"].Type == JTokenType.Object) {
+            if (outputFilePath != null && jObject.Type == JTokenType.Object) {
                 Encoding utf8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
                 using (var outputFileWriter = new StreamWriter(outputFilePath, append: false, encoding: utf8NoBOM)) {
-                    jObject["results"].WriteTo(new JsonTextWriter(outputFileWriter));
+                    jObject.WriteTo(new JsonTextWriter(outputFileWriter));
                 }
             }
 

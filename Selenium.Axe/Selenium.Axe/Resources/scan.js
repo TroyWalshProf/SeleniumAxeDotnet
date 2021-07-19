@@ -5,15 +5,13 @@ context = context || document;
 
 var options = JSON.parse(arguments[1]);
 
-var result = { error: '', results: null };
-
 axe.run(context, options, function (err, res) {
-    {
+    {  
         if (err) {
-            result.error = err.message;
-        } else {
-            result.results = res;
+            callback({ error: err.message }, res);
         }
-        callback(JSON.stringify(result));
+        else {
+            callback(res);
+        }
     }
 });

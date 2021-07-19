@@ -4,10 +4,11 @@
     <title>Failure generates complex target</title>
 </head>
 <body>
-<main role="main">
-    <h1>Example of a shadow root iframe</h1>
-    <div id="container"></div>
-</main>
+    <main role="main">
+        <p style="color: #aaaaaa">low-contrast outer</p>
+        <h1>Example of a shadow root iframe</h1>
+        <div id="container"></div>
+    </main>
 <script>
     let container = document.getElementById('container');
     if (window.top === window.self) {

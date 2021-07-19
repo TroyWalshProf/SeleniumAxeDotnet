@@ -22,18 +22,17 @@ namespace Selenium.Axe
 
         public AxeResult(JObject result)
         {
-            JToken results = result.SelectToken("results");
-            JToken violationsToken = results.SelectToken("violations");
-            JToken passesToken = results.SelectToken("passes");
-            JToken inapplicableToken = results.SelectToken("inapplicable");
-            JToken incompleteToken = results.SelectToken("incomplete");
-            JToken timestampToken = results.SelectToken("timestamp");
-            JToken urlToken = results.SelectToken("url");
-            JToken error = result.SelectToken("error");
-            JToken testEnvironment = results.SelectToken("testEnvironment");
-            JToken testEngine = results.SelectToken("testEngine");
+            JToken violationsToken = result.SelectToken("violations");
+            JToken passesToken = result.SelectToken("passes");
+            JToken inapplicableToken = result.SelectToken("inapplicable");
+            JToken incompleteToken = result.SelectToken("incomplete");
+            JToken timestampToken = result.SelectToken("timestamp");
+            JToken urlToken = result.SelectToken("url");
+            JToken testEnvironment = result.SelectToken("testEnvironment");
+            JToken testEngine = result.SelectToken("testEngine");
             JToken testEngineName = testEngine?.SelectToken("name");
             JToken testEngineVersion = testEngine?.SelectToken("version");
+            JToken error = result.SelectToken("error");
 
             Violations = violationsToken?.ToObject<AxeResultItem[]>();
             Passes = passesToken?.ToObject<AxeResultItem[]>();

@@ -100,11 +100,10 @@ namespace Selenium.Axe
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
 
-            var selectors = new HashSet<string>();
-            var violationCount = GetCount(results.Violations, ref selectors);
-            var incompleteCount = GetCount(results.Incomplete, ref selectors);
-            var passCount = GetCount(results.Passes, ref selectors);
-            var inapplicableCount = GetCount(results.Inapplicable, ref selectors);
+            var violationCount = GetCount(results.Violations);
+            var incompleteCount = GetCount(results.Incomplete);
+            var passCount = GetCount(results.Passes);
+            var inapplicableCount = GetCount(results.Inapplicable);
 
             var doc = new HtmlDocument();
 
@@ -293,18 +292,14 @@ namespace Selenium.Axe
             return contextContent;
         }
 
-        private static int GetCount(AxeResultItem[] results, ref HashSet<string> uniqueList)
+        private static int GetCount(AxeResultItem[] results)
         {
             int count = 0;
             foreach (AxeResultItem item in results)
             {
                 foreach (AxeResultNode node in item.Nodes)
                 {
-                    foreach (var target in node.Target)
-                    {
-                        count++;
-                        uniqueList.Add(target.ToString());
-                    }
+                    count++;
                 }
 
                 // Still add one if no targets are included
@@ -345,8 +340,6 @@ namespace Selenium.Axe
 
         private static void GetReadableAxeResults(AxeResultItem[] results, ResultType type, HtmlDocument doc, HtmlNode body)
         {
-            var selectors = new HashSet<string>();
-
             var resultWrapper = doc.CreateElement("div");
             resultWrapper.SetAttributeValue("class", "resultWrapper");
             body.AppendChild(resultWrapper);
@@ -357,7 +350,7 @@ namespace Selenium.Axe
 
             var sectionButtonHeader = doc.CreateElement("h2");
             sectionButtonHeader.SetAttributeValue("class", "buttonInfoText");
-            sectionButtonHeader.InnerHtml = $"{type}: {GetCount(results, ref selectors)}";
+            sectionButtonHeader.InnerHtml = $"{type}: {GetCount(results)}";
             sectionButton.AppendChild(sectionButtonHeader);
 
             var sectionButtonExpando = doc.CreateElement("h2");
@@ -419,7 +412,7 @@ namespace Selenium.Axe
                     htmlAndSelector.InnerHtml = $"{HttpUtility.HtmlEncode(item.Html)}";
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
-                    htmlAndSelector = doc.CreateTextNode("Selector(s):");
+                    htmlAndSelector = doc.CreateTextNode("Selector:");
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
                     content = new StringBuilder();
@@ -455,54 +448,65 @@ namespace Selenium.Axe
                 htmlAndSelector = doc.CreateTextNode("To solve:");
                 htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
-                StringBuilder content;
                 htmlAndSelector = doc.CreateElement("p");
                 htmlAndSelector.SetAttributeValue("class", "wrapTwo");
                 htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
                 if (allCheckResults.Length > 0 || noneCheckResults.Length > 0)
                 {
-                    htmlAndSelector = doc.CreateElement("p");
-                    htmlAndSelector.SetAttributeValue("class", "wrapOne");
-                    content = new StringBuilder();
-
-                    content.AppendLine("Fix all of the following issues:");
-                    content.AppendLine("<ul>");
-
-                    foreach (var checkResult in allCheckResults)
-                    {
-                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
-                    }
-
-                    foreach (var checkResult in noneCheckResults)
-                    {
-                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
-                    }
-
-                    content.AppendLine("</ul>");
-                    htmlAndSelector.InnerHtml = content.ToString();
-                    htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                    FixAllIssues(doc, htmlAndSelectorWrapper, allCheckResults, noneCheckResults);
                 }
 
                 if (anyCheckResults.Length > 0)
                 {
-                    content = new StringBuilder();
-
-                    htmlAndSelector = doc.CreateElement("p");
-                    htmlAndSelector.SetAttributeValue("class", "wrapOne");
-                    content.AppendLine("Fix at least one of the following issues:");
-                    content.AppendLine("<ul>");
-
-                    foreach (var checkResult in anyCheckResults)
-                    {
-                        content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
-                    }
-
-                    content.AppendLine("</ul>");
-                    htmlAndSelector.InnerHtml = content.ToString();
-                    htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+                    FixAnyIssues(doc, htmlAndSelectorWrapper, anyCheckResults);
                 }
             }
+        }
+
+        private static void FixAllIssues(HtmlDocument doc, HtmlNode htmlAndSelectorWrapper, AxeResultCheck[] allCheckResults, AxeResultCheck[] noneCheckResults)
+        {
+            HtmlNode htmlAndSelector;
+
+            htmlAndSelector = doc.CreateElement("p");
+            htmlAndSelector.SetAttributeValue("class", "wrapOne");
+            StringBuilder content = new StringBuilder();
+
+            content.AppendLine("Fix all of the following issues:");
+            content.AppendLine("<ul>");
+
+            foreach (var checkResult in allCheckResults)
+            {
+                content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+            }
+
+            foreach (var checkResult in noneCheckResults)
+            {
+                content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+            }
+
+            content.AppendLine("</ul>");
+            htmlAndSelector.InnerHtml = content.ToString();
+            htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
+        }
+
+        private static void FixAnyIssues(HtmlDocument doc, HtmlNode htmlAndSelectorWrapper, AxeResultCheck[] anyCheckResults)
+        {
+            StringBuilder content = new StringBuilder();
+
+            HtmlNode htmlAndSelector = doc.CreateElement("p");
+            htmlAndSelector.SetAttributeValue("class", "wrapOne");
+            content.AppendLine("Fix at least one of the following issues:");
+            content.AppendLine("<ul>");
+
+            foreach (var checkResult in anyCheckResults)
+            {
+                content.AppendLine($"<li>{HttpUtility.HtmlEncode(checkResult.Impact.ToUpper())}: {HttpUtility.HtmlEncode(checkResult.Message)}</li>");
+            }
+
+            content.AppendLine("</ul>");
+            htmlAndSelector.InnerHtml = content.ToString();
+            htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
         }
 
         private static string GetDataImageString(ISearchContext context, IWebElement webElement)
