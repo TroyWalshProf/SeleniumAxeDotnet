@@ -28,15 +28,14 @@
 
 .wrapThree {
     margin-left: 3em;
-    overflow-wrap: anywhere;
     transition: transform .2s;
     position: absolute;
     right: 25%;
-    margin-top: -8%
+    margin-top: -9%
 }
 
 .wrapThree:hover {
-        transform: scale(1.5);
+        transform: scale(2);
     }
 
 .emOne {

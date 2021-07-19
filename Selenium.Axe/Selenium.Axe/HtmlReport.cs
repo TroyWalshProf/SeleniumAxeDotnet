@@ -2,10 +2,6 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Internal;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.IO;
 using System.Text;
 using System.Web;
 
@@ -200,7 +196,6 @@ namespace Selenium.Axe
             if (passCount > 0 && requestedResults.HasFlag(ReportTypes.Passes))
             {
                 GetReadableAxeResults(results.Passes, ResultType.Passes, doc, resultsFlex);
-                SetImages(ResultType.Violations.ToString(), doc, context);
             }
 
             if (inapplicableCount > 0 && requestedResults.HasFlag(ReportTypes.Inapplicable))
@@ -230,8 +225,7 @@ namespace Selenium.Axe
         private static string GetDataImageString(ISearchContext context)
         {
             ITakesScreenshot newScreen = (ITakesScreenshot)context;
-            string str = $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
-            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}');";
+            return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}";
         }
 
         private static string GetCss(ISearchContext context)
@@ -469,18 +463,6 @@ namespace Selenium.Axe
             htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
         }
 
-        private static string GetDataImageString(ISearchContext context, IWebElement webElement)
-        {
-            /*
-            Screenshot sc = ((ITakesScreenshot)context).GetScreenshot();         
-            var screen = new Bitmap(new MemoryStream(sc.AsByteArray));
-            var bitmap = screen.Clone(new Rectangle(webElement.Location, webElement.Size), screen.PixelFormat);
-            byte[] bytes = (byte[])TypeDescriptor.GetConverter(bitmap).ConvertTo(bitmap, typeof(byte[]));
-            return $"data:image/png;base64,{Convert.ToBase64String(bytes)}');";
-            */
-            return "";
-        }
-
         private static void SetImages(string resultType, HtmlDocument doc, ISearchContext context)
         {
             var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
@@ -494,14 +476,6 @@ namespace Selenium.Axe
                 {
                     var wrapTwo = table.SelectSingleNode($"div/p[2]");
                     var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();
-
-                    /*
-                    var screenShot = doc.DocumentNode.SelectSingleNode($" //*[@id=\"screenshotThumbnail\"]");
-                    var style = doc.DocumentNode.SelectSingleNode($"/ html / head / style");
-                    var screenshotString = style.InnerText.Substring(style.InnerText.IndexOf("data"));
-                    screenshotString = screenshotString.Substring(0, screenshotString.IndexOf(")") + 2);
-                    */
-
                     string imageString = GetDataImageString(context.FindElement(By.CssSelector(selectorText)));
                     
                     var element = doc.CreateElement("div");

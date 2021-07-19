@@ -44,6 +44,7 @@
         <Link>Resources\axe.min.js</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\scan.js" />
+    <EmbeddedResource Include="Resources\htmlReporter.css" />
   </ItemGroup>
   <Choose>
     <When Condition=" '$(TargetFramework)' != 'netstandard2.0' and '$(TargetFramework)' != 'netstandard2.1'   ">
