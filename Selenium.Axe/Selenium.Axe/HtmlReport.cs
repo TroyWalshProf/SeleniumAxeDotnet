@@ -175,7 +175,7 @@ namespace Selenium.Axe
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
 
-            
+            var docs = doc.DocumentNode.SelectSingleNode("//script");
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
 
             doc.Save(destination, Encoding.UTF8);
@@ -422,6 +422,35 @@ namespace Selenium.Axe
             htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
         }
 
+        private static void SetImages2(string resultType, HtmlDocument doc, ISearchContext context)
+        {
+            var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
+            int count = 1;
+
+            foreach (HtmlNode finding in section)
+            {
+                var htmlTable = finding.SelectNodes($"div[contains(@class, 'htmlTable')]");
+                var imageElement = doc.CreateElement("div");
+                imageElement.SetAttributeValue("class", "emFour");                
+
+                foreach (HtmlNode table in htmlTable)
+                {
+                    if (table.OuterHtml.Contains("emThree"))
+                    {
+                        var wrapTwo = table.SelectSingleNode($"div/p[2]");
+                        var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();
+                        string imageString = GetDataImageString(context.FindElement(By.CssSelector(selectorText)));
+
+                        var image = doc.CreateElement("img");
+                        image.SetAttributeValue("src", imageString);
+                        image.SetAttributeValue("alt", resultType + "Element" + count++);
+                        imageElement.AppendChild(image);
+                        table.AppendChild(imageElement);
+                    }
+                }
+            }
+        }
+
         private static void SetImages(string resultType, HtmlDocument doc, ISearchContext context)
         {
             var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
@@ -436,7 +465,7 @@ namespace Selenium.Axe
                     var wrapTwo = table.SelectSingleNode($"div/p[2]");
                     var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();
                     string imageString = GetDataImageString(context.FindElement(By.CssSelector(selectorText)));
-                    
+
                     var element = doc.CreateElement("div");
                     element.SetAttributeValue("class", "wrapThree");
 

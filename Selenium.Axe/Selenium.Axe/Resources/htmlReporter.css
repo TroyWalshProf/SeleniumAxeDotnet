@@ -18,40 +18,39 @@
 
 .wrapOne {
     margin-left: 1em;
-    overflow-wrap: anywhere;
 }
 
 .wrapTwo {
     margin-left: 2em;
-    overflow-wrap: anywhere;
 }
 
 .wrapThree {
-    margin-left: 3em;
+    width: 50%;
+    display: table-cell;
     transition: transform .2s;
-    position: absolute;
-    right: 25%;
-    margin-top: -9%
 }
-
-.wrapThree:hover {
-        transform: scale(2);
-    }
 
 .emOne {
     margin-left: 1em;
     margin-right: 1em;
-    overflow-wrap: anywhere;
 }
 
 .emTwo {
     margin-left: 2em;
-    overflow-wrap: anywhere;
 }
 
 .emThree {
-    margin-left: 3em;
-    overflow-wrap: anywhere;
+    width: 40%;
+    display: table-cell;
+}
+
+.emFour {
+    display: table-cell;
+    transition: transform .2s;
+}
+
+.emFour:hover {
+    transform: scale(2);
 }
 
 #modal {
@@ -104,9 +103,9 @@
     border: 1px solid black;
 }
 
-    .sectionbutton:hover {
-        background-color: #828282;
-    }
+.sectionbutton:hover {
+    background-color: #828282;
+}
 
 .buttonInfoText {
     width: 50%;
