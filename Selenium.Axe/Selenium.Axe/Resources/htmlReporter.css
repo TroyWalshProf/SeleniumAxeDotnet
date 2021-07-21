@@ -18,33 +18,27 @@
 
 .wrapOne {
     margin-left: 1em;
-    overflow-wrap: anywhere;
 }
 
 .wrapTwo {
     margin-left: 2em;
-    overflow-wrap: anywhere;
 }
 
 .wrapThree {
     margin-left: 3em;
-    overflow-wrap: anywhere;
 }
 
 .emOne {
     margin-left: 1em;
     margin-right: 1em;
-    overflow-wrap: anywhere;
 }
 
 .emTwo {
     margin-left: 2em;
-    overflow-wrap: anywhere;
 }
 
 .emThree {
     margin-left: 3em;
-    overflow-wrap: anywhere;
 }
 
 #modal {
