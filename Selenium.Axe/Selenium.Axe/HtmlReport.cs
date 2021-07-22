@@ -341,6 +341,10 @@ namespace Selenium.Axe
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
 
                     AddFixes(item, type, doc, htmlAndSelectorWrapper);
+
+                    htmlAndSelectorWrapper = doc.CreateElement("div");
+                    htmlAndSelectorWrapper.SetAttributeValue("class", "emFour");
+                    elementNodes.AppendChild(htmlAndSelectorWrapper);
                 }
             }
         }
@@ -422,16 +426,14 @@ namespace Selenium.Axe
             htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
         }
 
-        private static void SetImages2(string resultType, HtmlDocument doc, ISearchContext context)
+        private static void SetImages(string resultType, HtmlDocument doc, ISearchContext context)
         {
             var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
             int count = 1;
 
             foreach (HtmlNode finding in section)
             {
-                var htmlTable = finding.SelectNodes($"div[contains(@class, 'htmlTable')]");
-                var imageElement = doc.CreateElement("div");
-                imageElement.SetAttributeValue("class", "emFour");                
+                var htmlTable = finding.SelectNodes($"div[contains(@class, 'htmlTable')]");             
 
                 foreach (HtmlNode table in htmlTable)
                 {
@@ -444,40 +446,13 @@ namespace Selenium.Axe
                         var image = doc.CreateElement("img");
                         image.SetAttributeValue("src", imageString);
                         image.SetAttributeValue("alt", resultType + "Element" + count++);
-                        imageElement.AppendChild(image);
-                        table.AppendChild(imageElement);
+
+                        var emFour = table.SelectSingleNode("div[contains(@class, 'emFour')]");
+                        emFour.AppendChild(image);                       
                     }
                 }
             }
         }
 
-        private static void SetImages(string resultType, HtmlDocument doc, ISearchContext context)
-        {
-            var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
-            int count = 1;
-
-            foreach (HtmlNode finding in section)
-            {
-                var htmlTable = finding.SelectNodes($"div[contains(@class, 'htmlTable')]");
-
-                foreach (HtmlNode table in htmlTable)
-                {
-                    var wrapTwo = table.SelectSingleNode($"div/p[2]");
-                    var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();
-                    string imageString = GetDataImageString(context.FindElement(By.CssSelector(selectorText)));
-
-                    var element = doc.CreateElement("div");
-                    element.SetAttributeValue("class", "wrapThree");
-
-                    var image = doc.CreateElement("img");
-                    image.SetAttributeValue("src", imageString);
-                    image.SetAttributeValue("alt", resultType + "Element" + count++);
-                    element.AppendChild(image);
-
-                    var emThree = table.SelectSingleNode($"div[contains(@class, 'emThree')]");
-                    emThree.AppendChild(element);
-                }
-            }
-        }
     }
 }

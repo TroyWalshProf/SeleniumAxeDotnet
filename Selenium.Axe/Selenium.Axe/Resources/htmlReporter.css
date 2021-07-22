@@ -24,12 +24,6 @@
     margin-left: 2em;
 }
 
-.wrapThree {
-    width: 50%;
-    display: table-cell;
-    transition: transform .2s;
-}
-
 .emOne {
     margin-left: 1em;
     margin-right: 1em;
@@ -45,7 +39,6 @@
 }
 
 .emFour {
-    display: table-cell;
     transition: transform .2s;
 }
 
@@ -88,7 +81,6 @@
 .htmlTable {
     border-top: double lightgray;
     width: 100%;
-    display: table;
 }
 
 .sectionbutton {
