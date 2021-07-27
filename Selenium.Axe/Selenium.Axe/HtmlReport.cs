@@ -2,6 +2,8 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Internal;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Web;
 
@@ -66,6 +68,7 @@ namespace Selenium.Axe
             var htmlStructure = HtmlNode.CreateNode("<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Accessibility Check</title><style></style></head><body><content></content><script></script></body></html>");
             doc.DocumentNode.AppendChild(htmlStructure);
 
+            var screenshot = GetScreenshot(context);
             doc.DocumentNode.SelectSingleNode("//style").InnerHtml = GetCss(context);
 
             var contentArea = doc.DocumentNode.SelectSingleNode("//content");
@@ -142,7 +145,7 @@ namespace Selenium.Axe
             if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
                 GetReadableAxeResults(results.Violations, ResultType.Violations, doc, resultsFlex);
-                SetImages(ResultType.Violations.ToString(), doc, context);
+                SetImages2(ResultType.Violations.ToString(), doc, screenshot, context);
             }
 
             if (incompleteCount > 0 && requestedResults.HasFlag(ReportTypes.Incomplete))
@@ -175,9 +178,7 @@ namespace Selenium.Axe
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
 
-            var docs = doc.DocumentNode.SelectSingleNode("//script");
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
-
             doc.Save(destination, Encoding.UTF8);
         }
 
@@ -185,6 +186,20 @@ namespace Selenium.Axe
         {
             ITakesScreenshot newScreen = (ITakesScreenshot)context;
             return $"data:image/png;base64,{Convert.ToBase64String(newScreen.GetScreenshot().AsByteArray)}";
+        }
+
+        private static ITakesScreenshot GetScreenshot(ISearchContext context) 
+        {
+           return (ITakesScreenshot)context;
+        }
+
+        private static string GetElementDataImageString(ITakesScreenshot screenshot, IWebElement element)
+        {
+            Screenshot sc = screenshot.GetScreenshot();
+            var img = Image.FromStream(new MemoryStream(sc.AsByteArray)) as Bitmap;
+            var bitmap = img.Clone(new Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height), img.PixelFormat);
+            ImageConverter converter = new ImageConverter();
+            return $"data:image/png;base64,{Convert.ToBase64String((byte[])converter.ConvertTo(bitmap, typeof(byte[])))}";
         }
 
         private static string GetCss(ISearchContext context)
@@ -342,9 +357,9 @@ namespace Selenium.Axe
 
                     AddFixes(item, type, doc, htmlAndSelectorWrapper);
 
-                    htmlAndSelectorWrapper = doc.CreateElement("div");
-                    htmlAndSelectorWrapper.SetAttributeValue("class", "emFour");
-                    elementNodes.AppendChild(htmlAndSelectorWrapper);
+                    var elementImage = doc.CreateElement("div");
+                    elementImage.SetAttributeValue("class", "emFour");
+                    elementNodes.AppendChild(elementImage);
                 }
             }
         }
@@ -454,5 +469,32 @@ namespace Selenium.Axe
             }
         }
 
+        private static void SetImages2(string resultType, HtmlDocument doc, ITakesScreenshot screenshot, ISearchContext context)
+        {
+            var section = doc.DocumentNode.SelectNodes($"//*[@id=\"{resultType}Section\"]/div");
+            int count = 1;
+
+            foreach (HtmlNode finding in section)
+            {
+                var htmlTable = finding.SelectNodes($"div[contains(@class, 'htmlTable')]");
+
+                foreach (HtmlNode table in htmlTable)
+                {
+                    if (table.OuterHtml.Contains("emThree"))
+                    {
+                        var wrapTwo = table.SelectSingleNode($"div/p[2]");
+                        var selectorText = HttpUtility.HtmlDecode(wrapTwo.InnerText).Trim();                       
+                        string elementString = GetElementDataImageString(screenshot, context.FindElement(By.CssSelector(selectorText)));
+
+                        var image = doc.CreateElement("img");
+                        image.SetAttributeValue("src", elementString);
+                        image.SetAttributeValue("alt", resultType + "Element" + count++);
+
+                        var emFour = table.SelectSingleNode("div[contains(@class, 'emFour')]");
+                        emFour.AppendChild(image);
+                    }
+                }
+            }
+        }
     }
 }

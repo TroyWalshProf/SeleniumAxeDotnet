@@ -34,17 +34,18 @@
 }
 
 .emThree {
-    width: 40%;
-    display: table-cell;
+    width: 50%;
 }
 
 .emFour {
+    width: 50%;
+    align-self: center;
     transition: transform .2s;
 }
 
-.emFour:hover {
-    transform: scale(2);
-}
+    .emFour:hover {
+        transform: scale(1.1);
+    }
 
 #modal {
     display: none;
@@ -81,6 +82,8 @@
 .htmlTable {
     border-top: double lightgray;
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .sectionbutton {
