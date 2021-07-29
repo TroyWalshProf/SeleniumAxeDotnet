@@ -7,7 +7,7 @@
     max-height: 150px;
 }
 
-.thumbnail:hover {
+    .thumbnail:hover {
         border: 2px solid black;
     }
 
@@ -22,6 +22,10 @@
 
 .wrapTwo {
     margin-left: 2em;
+}
+
+.wrapThree {
+    margin-left: 3em;
 }
 
 .emOne {
@@ -45,7 +49,7 @@
 
     .emFour:hover {
         transform: scale(1.1);
-    }
+}
 
 #modal {
     display: none;
@@ -61,7 +65,7 @@
 }
 
 #modalclose {
-    font-family: Lucida Console;
+    font-family: Lucida Console, sans-serif;
     font-size: 35px;
     width: auto;
     color: white;
@@ -98,9 +102,9 @@
     border: 1px solid black;
 }
 
-.sectionbutton:hover {
-    background-color: #828282;
-}
+    .sectionbutton:hover {
+        background-color: #828282;
+    }
 
 .buttonInfoText {
     width: 50%;
