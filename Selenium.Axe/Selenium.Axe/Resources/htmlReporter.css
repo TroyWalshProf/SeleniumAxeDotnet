@@ -47,9 +47,13 @@
     transition: transform .2s;
 }
 
-    .emFour:hover {
+    .emFour img {
+        transition: all 1.5s ease;
+    }
+
+    .emFour:hover img{
         transform: scale(1.1);
-}
+    }
 
 #modal {
     display: none;
