@@ -9,6 +9,13 @@ updates:
   labels:
   - dependencies
   commit-message:
+  ignore:
+    # FluentAssertions v6 dropped support for .NET Framework 4.5, but we want
+    # to maintain support for it at least until Microsoft drops official support,
+    # so we need to pin to FluentAssertions v5 for the time being.
+  - dependency-name: FluentAssertions
+    versions:
+    - ">=6.0.0"
 - package-ecosystem: npm
   directory: "/Selenium.Axe/Selenium.Axe"
   schedule:
