@@ -64,7 +64,7 @@ namespace Selenium.Axe.Test
 
         [TestCleanup]
         public virtual void TearDown()
-        {         
+        {
             WebDriver?.Quit();
             WebDriver?.Dispose();
         }
@@ -261,7 +261,7 @@ namespace Selenium.Axe.Test
         {
             string path = CreateReportPath();
             string filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
-            
+
             InitDriver(browser);
             WebDriver.Navigate().GoToUrl(filename);
             Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
@@ -333,7 +333,7 @@ namespace Selenium.Axe.Test
             string path = Uri.UnescapeDataString(uri.Path);
             return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
         }
-      
+
         private void ValidateReport(string path, int violationCount, int passCount, int incompleteCount = 0, int inapplicableCount = 0)
         {
             string text = File.ReadAllText(path);
@@ -394,7 +394,7 @@ namespace Selenium.Axe.Test
         private void ValidateResultNotWritten(string path, ReportTypes ReportType)
         {
             string text = File.ReadAllText(path);
- 
+
             foreach (string resultType in ReportType.ToString().Split(','))
             {
                 Assert.IsFalse(text.Contains($"{resultType}: "), $"Expected to not find '{resultType}: '");

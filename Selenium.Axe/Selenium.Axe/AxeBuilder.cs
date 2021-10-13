@@ -20,7 +20,7 @@ namespace Selenium.Axe
         private readonly AxeRunContext runContext = new AxeRunContext();
         private AxeRunOptions runOptions = new AxeRunOptions();
         private string outputFilePath = null;
-        
+
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
@@ -217,9 +217,9 @@ namespace Selenium.Axe
         {
             _webDriver.Inject(_AxeBuilderOptions.ScriptProvider, runOptions);
 
-            #pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
+#pragma warning disable CS0618 // Intentionally falling back to publicly deprecated property for backcompat
             string rawOptionsArg = Options == "{}" ? JsonConvert.SerializeObject(runOptions, JsonSerializerSettings) : Options;
-            #pragma warning restore CS0618
+#pragma warning restore CS0618
 
             string scanJsContent = EmbeddedResourceProvider.ReadEmbeddedFile("scan.js");
             object[] rawArgs = new[] { rawContextArg, rawOptionsArg };
@@ -227,9 +227,11 @@ namespace Selenium.Axe
 
             JObject jObject = JObject.FromObject(result);
 
-            if (outputFilePath != null && jObject.Type == JTokenType.Object) {
+            if (outputFilePath != null && jObject.Type == JTokenType.Object)
+            {
                 Encoding utf8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-                using (var outputFileWriter = new StreamWriter(outputFilePath, append: false, encoding: utf8NoBOM)) {
+                using (var outputFileWriter = new StreamWriter(outputFilePath, append: false, encoding: utf8NoBOM))
+                {
                     jObject.WriteTo(new JsonTextWriter(outputFileWriter));
                 }
             }
@@ -257,9 +259,9 @@ namespace Selenium.Axe
 
         private void ThrowIfDeprecatedOptionsSet()
         {
-            #pragma warning disable CS0618 // Intentionally checking publicly deprecated property for backcompat
+#pragma warning disable CS0618 // Intentionally checking publicly deprecated property for backcompat
             if (Options != "{}")
-            #pragma warning restore CS0618
+#pragma warning restore CS0618
             {
                 throw new InvalidOperationException("Deprecated Options api shouldn't be used with the new apis - WithOptions/WithRules/WithTags or DisableRules");
             }

@@ -1,8 +1,6 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Internal;
 using System;
-using System.IO;
 using System.Text;
 using System.Web;
 
@@ -174,7 +172,7 @@ namespace Selenium.Axe
             modalImage.SetAttributeValue("id", "modalimage");
             modal.AppendChild(modalImage);
 
-            
+
             doc.DocumentNode.SelectSingleNode("//script").InnerHtml = EmbeddedResourceProvider.ReadEmbeddedFile("htmlReporterElements.js");
 
             doc.Save(destination, Encoding.UTF8);
