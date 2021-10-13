@@ -1,6 +1,6 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace Selenium.Axe
 {
@@ -23,10 +23,10 @@ namespace Selenium.Axe
                         Selectors = serializer.Deserialize<List<string>>(reader)
                     };
             }
-            
+
             throw new ArgumentException("Cannot unmarshal type Target");
         }
-        
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var val = (AxeResultTarget)value;
@@ -41,7 +41,7 @@ namespace Selenium.Axe
                 serializer.Serialize(writer, val.Selectors);
                 return;
             }
-            
+
             throw new ArgumentException("Cannot marshal type Target");
         }
     }
