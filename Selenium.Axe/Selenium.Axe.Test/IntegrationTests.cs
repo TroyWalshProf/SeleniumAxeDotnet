@@ -17,6 +17,7 @@ using System.Linq;
 
 namespace Selenium.Axe.Test
 {
+    [DoNotParallelize]
     [TestClass]
     [DeploymentItem("integration-test-simple.html")]
     [DeploymentItem("integration-test-target-complex.html")]
