@@ -11,13 +11,14 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
 
 // Setup parallelization
 [assembly: Parallelize(Workers = 4, Scope = ExecutionScope.MethodLevel)]
-
 namespace Selenium.Axe.Test
 {
-    [DoNotParallelize]
     [TestClass]
     [DeploymentItem("integration-test-simple.html")]
     [DeploymentItem("integration-test-target-complex.html")]
@@ -30,6 +31,8 @@ namespace Selenium.Axe.Test
         public TestContext TestContext { get; set; }
         private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
         private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
+        private static string ChromeDriverPath = null;
+        private static string FirefoxDriverPath = null;
 
         public IWebDriver WebDriver
         {
@@ -329,7 +332,7 @@ namespace Selenium.Axe.Test
 
         private string CreateReportPath()
         {
-            string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+            string codeBase = System.Reflection.Assembly.GetExecutingAssembly().Location;
             UriBuilder uri = new UriBuilder(codeBase);
             string path = Uri.UnescapeDataString(uri.Path);
             return Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + ".html");
@@ -415,7 +418,7 @@ namespace Selenium.Axe.Test
             switch (browser.ToUpper())
             {
                 case "CHROME":
-                    var chromeDriverDirectory = Environment.GetEnvironmentVariable("ChromeWebDriver") ?? Environment.CurrentDirectory;
+                    LazyInitializer.EnsureInitialized(ref ChromeDriverPath, () => new DriverManager().SetUpDriver(new ChromeConfig()));
 
                     ChromeOptions options = new ChromeOptions
                     {
@@ -426,15 +429,15 @@ namespace Selenium.Axe.Test
                     options.AddArgument("--silent");
                     options.AddArgument("--allow-file-access-from-files");
 
-                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
+                    ChromeDriverService service = ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(ChromeDriverPath));
                     service.SuppressInitialDiagnosticInformation = true;
-                    WebDriver = new ChromeDriver(chromeDriverDirectory, options);
+                    WebDriver = new ChromeDriver(ChromeDriverService.CreateDefaultService(), options);
 
                     break;
 
                 case "FIREFOX":
-                    var geckoDriverDirectory = Environment.GetEnvironmentVariable("GeckoWebDriver") ?? Environment.CurrentDirectory;
-                    WebDriver = new FirefoxDriver(geckoDriverDirectory);
+                    LazyInitializer.EnsureInitialized(ref FirefoxDriverPath, () => new DriverManager().SetUpDriver(new FirefoxConfig()));
+                    WebDriver = new FirefoxDriver(Path.GetDirectoryName(FirefoxDriverPath));
                     break;
 
                 default:
