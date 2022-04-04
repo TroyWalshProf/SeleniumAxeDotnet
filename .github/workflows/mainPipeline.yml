@@ -25,7 +25,7 @@ jobs:
 
   buildTest:
     name: Build and test
-    runs-on: windows-2019 
+    runs-on: windows-latest 
     needs: draftRelease
     outputs:
       buildNumber: ${{ steps.ver.outputs.BUILD_NUMBER }}
@@ -59,16 +59,13 @@ jobs:
         with:
           java-version: 1.11
       
-      - name: Setup .NET Core 2
+      - name: Setup .NET Core 3 and 6
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 2.1.*
+          dotnet-version: | 
+            3.1.x
+            6.x.x
       
-      - name: Setup .NET Core 3
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.*
-
       - name: Install dependencies
         run: dotnet restore Selenium.Axe/Selenium.Axe.sln
         
@@ -122,13 +119,15 @@ jobs:
     name: Publish NuGet - v${{ needs.buildTest.outputs.buildNumber }}
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: [buildTest]
-    runs-on: windows-2019
+    runs-on: windows-latest
     environment: nuget 
     steps:            
-      - name: Setup .NET Core
+      - name: Setup .NET Core 3 and 6
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.101
+          dotnet-version: | 
+            3.1.x
+            6.x.x
 
       - uses: actions/download-artifact@v2
         with:
