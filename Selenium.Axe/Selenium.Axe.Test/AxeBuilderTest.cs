@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace Selenium.Axe.Test
 {
-    [TestClass]
+    [TestFixture]
     public class AxeBuilderTest
     {
         private Mock<IWebDriver> webDriverMock;
@@ -31,7 +31,7 @@ namespace Selenium.Axe.Test
             url = "www.test.com"
         };
 
-        [TestInitialize]
+        [SetUp]
         public void TestInitialize()
         {
             webDriverMock = new Mock<IWebDriver>();
@@ -39,28 +39,32 @@ namespace Selenium.Axe.Test
             targetLocatorMock = new Mock<ITargetLocator>();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ThrowWhenDriverIsNull()
         {
-            //arrange / act /assert
-            var axeBuilder = new AxeBuilder(null);
-            axeBuilder.Should().NotBeNull();
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                //arrange / act /assert
+                var axeBuilder = new AxeBuilder(null);
+                axeBuilder.Should().NotBeNull();
+            });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ThrowWhenOptionsAreNull()
         {
             //arrange
             var driver = new Mock<IWebDriver>();
 
-            // act / assert
-            var axeBuilder = new AxeBuilder(driver.Object, null);
-            axeBuilder.Should().NotBeNull();
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // act / assert
+                var axeBuilder = new AxeBuilder(driver.Object, null);
+                axeBuilder.Should().NotBeNull();
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleIfOptionsAndContextNotSet()
         {
 
@@ -78,7 +82,7 @@ namespace Selenium.Axe.Test
 
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassContextIfIncludeSet()
         {
             var expectedContext = SerializeObject(new AxeRunContext()
@@ -100,7 +104,7 @@ namespace Selenium.Axe.Test
             jsExecutorMock.VerifyAll();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassContextIfIncludeAndExcludeSet()
         {
             var includeSelector = "#div1";
@@ -126,7 +130,7 @@ namespace Selenium.Axe.Test
         }
 
 
-        [TestMethod]
+        [Test]
         public void ShouldPassContextIfExcludeSet()
         {
             var expectedContext = SerializeObject(new AxeRunContext()
@@ -149,7 +153,7 @@ namespace Selenium.Axe.Test
         }
 
 
-        [TestMethod]
+        [Test]
         public void ShouldPassRunOptionsIfDeprecatedOptionsSet()
         {
             var expectedOptions = "deprecated run options";
@@ -171,7 +175,7 @@ namespace Selenium.Axe.Test
             jsExecutorMock.VerifyAll();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassRunOptionsIfDeprecatedOptionsSetWithContextElement()
         {
             var expectedOptions = "deprecated run options";
@@ -194,7 +198,7 @@ namespace Selenium.Axe.Test
             jsExecutorMock.VerifyAll();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassRuleConfig()
         {
             var expectedRules = new List<string> { "rule1", "rule2" };
@@ -230,7 +234,7 @@ namespace Selenium.Axe.Test
             jsExecutorMock.VerifyAll();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassRunOptionsWithTagConfig()
         {
             var expectedTags = new List<string> { "tag1", "tag2" };
@@ -259,7 +263,7 @@ namespace Selenium.Axe.Test
             jsExecutorMock.VerifyAll();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassRunOptions()
         {
             var runOptions = new AxeRunOptions()
@@ -285,7 +289,7 @@ namespace Selenium.Axe.Test
             jsExecutorMock.VerifyAll();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldThrowIfNullParameterPassed()
         {
             SetupVerifiableAxeInjectionCall();
@@ -303,7 +307,7 @@ namespace Selenium.Axe.Test
             VerifyExceptionThrown<ArgumentNullException>(() => builder.WithOptions(null));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldThrowIfEmptyParameterPassed()
         {
             var values = new string[] { "val1", "" };
@@ -319,7 +323,7 @@ namespace Selenium.Axe.Test
             VerifyExceptionThrown<ArgumentException>(() => builder.Exclude(values));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldThrowIfDeprecatedOptionsIsUsedWithNewOptionsApis()
         {
             SetupVerifiableAxeInjectionCall();

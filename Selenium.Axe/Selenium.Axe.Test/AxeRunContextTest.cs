@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Selenium.Axe.Test
 {
-    [TestClass]
+    [TestFixture]
     public class AxeRunContextTest
     {
-        [TestMethod]
+        [Test]
         public void ShouldSerializeObject()
         {
             var context = new AxeRunContext()
@@ -22,7 +22,7 @@ namespace Selenium.Axe.Test
             JsonConvert.SerializeObject(context).Should().Be(expectedContent);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldNotIncludeNullPropertiesOnSerializing()
         {
             var context = new AxeRunContext();
