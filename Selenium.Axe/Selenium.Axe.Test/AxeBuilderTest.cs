@@ -10,11 +10,12 @@ using System.Collections.ObjectModel;
 namespace Selenium.Axe.Test
 {
     [TestFixture]
+    [NonParallelizable]
     public class AxeBuilderTest
     {
-        private static Mock<IWebDriver> webDriverMock;
-        private static Mock<IJavaScriptExecutor> jsExecutorMock;
-        private static Mock<ITargetLocator> targetLocatorMock;
+        private static Mock<IWebDriver> webDriverMock = new Mock<IWebDriver>();
+        private static Mock<IJavaScriptExecutor> jsExecutorMock = webDriverMock.As<IJavaScriptExecutor>();
+        private static Mock<ITargetLocator> targetLocatorMock = new Mock<ITargetLocator>();
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
@@ -30,14 +31,6 @@ namespace Selenium.Axe.Test
             timestamp = DateTimeOffset.Now,
             url = "www.test.com"
         };
-
-        [OneTimeSetUp]
-        public void TestInitialize()
-        {
-            webDriverMock = new Mock<IWebDriver>();
-            jsExecutorMock = webDriverMock.As<IJavaScriptExecutor>();
-            targetLocatorMock = new Mock<ITargetLocator>();
-        }
 
         [Test]
         public void ThrowWhenDriverIsNull()
@@ -105,7 +98,6 @@ namespace Selenium.Axe.Test
         }
 
         [Test]
-        [NonParallelizable]
         public void ShouldPassContextIfIncludeAndExcludeSet()
         {
             var includeSelector = "#div1";
