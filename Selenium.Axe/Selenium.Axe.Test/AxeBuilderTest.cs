@@ -105,6 +105,7 @@ namespace Selenium.Axe.Test
         }
 
         [Test]
+        [NonParallelizable]
         public void ShouldPassContextIfIncludeAndExcludeSet()
         {
             var includeSelector = "#div1";
