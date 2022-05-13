@@ -12,9 +12,9 @@ namespace Selenium.Axe.Test
     [TestFixture]
     public class AxeBuilderTest
     {
-        private Mock<IWebDriver> webDriverMock;
-        private Mock<IJavaScriptExecutor> jsExecutorMock;
-        private Mock<ITargetLocator> targetLocatorMock;
+        private static Mock<IWebDriver> webDriverMock;
+        private static Mock<IJavaScriptExecutor> jsExecutorMock;
+        private static Mock<ITargetLocator> targetLocatorMock;
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.None,
@@ -31,7 +31,7 @@ namespace Selenium.Axe.Test
             url = "www.test.com"
         };
 
-        [SetUp]
+        [OneTimeSetUp]
         public void TestInitialize()
         {
             webDriverMock = new Mock<IWebDriver>();
