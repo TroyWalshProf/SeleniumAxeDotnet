@@ -447,7 +447,7 @@ namespace Selenium.Axe.Test
             WebDriver.Manage().Window.Maximize();
         }
 
-        private string GetFullyQualifiedTestName()
+        private static string GetFullyQualifiedTestName()
         {
             return TestContext.CurrentContext.Test.FullName;
         }

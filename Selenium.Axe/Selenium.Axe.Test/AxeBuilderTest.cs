@@ -357,7 +357,8 @@ namespace Selenium.Axe.Test
             result.Passes.Length.Should().Be(0);
             result.Violations.Length.Should().Be(0);
         }
-        private void SetupVerifiableAxeInjectionCall()
+
+        private static void SetupVerifiableAxeInjectionCall()
         {
             webDriverMock
                 .Setup(d => d.FindElements(It.IsAny<By>()))
