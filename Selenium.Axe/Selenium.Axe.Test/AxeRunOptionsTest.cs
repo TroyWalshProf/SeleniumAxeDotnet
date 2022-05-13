@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Selenium.Axe.Test
 {
-    [TestClass]
+    [TestFixture]
     public class AxeRunOptionsTest
     {
         private readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings
@@ -13,7 +13,7 @@ namespace Selenium.Axe.Test
             Formatting = Formatting.None,
         };
 
-        [TestMethod]
+        [Test]
         public void ShouldSerializeRunOnlyOption()
         {
             var options = new AxeRunOptions()
@@ -32,7 +32,7 @@ namespace Selenium.Axe.Test
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSerializeRuleOptions()
         {
             var options = new AxeRunOptions()
@@ -52,7 +52,7 @@ namespace Selenium.Axe.Test
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSerializeLiteralTypes()
         {
             var options = new AxeRunOptions()
@@ -70,7 +70,7 @@ namespace Selenium.Axe.Test
             JsonConvert.DeserializeObject<AxeRunOptions>(expectedObject).Should().BeEquivalentTo(options);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSerializeResultTypes()
         {
             var options = new AxeRunOptions()

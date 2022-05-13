@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using HtmlAgilityPack;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -11,24 +11,20 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 
 // Setup parallelization
-[assembly: Parallelize(Workers = 4, Scope = ExecutionScope.MethodLevel)]
+[assembly: Parallelizable(ParallelScope.All)]
+
 namespace Selenium.Axe.Test
 {
-    [TestClass]
-    [DeploymentItem("integration-test-simple.html")]
-    [DeploymentItem("integration-test-target-complex.html")]
-    [DeploymentItem("SampleResults.json")]
-    [DeploymentItem("chromedriver.exe")]
-    [DeploymentItem("geckodriver.exe")]
-    [TestCategory("Integration")]
+    [TestFixture]
+    [Category("Integration")]
     public class IntegrationTests
     {
-        public TestContext TestContext { get; set; }
         private readonly ConcurrentDictionary<string, IWebDriver> localDriver = new ConcurrentDictionary<string, IWebDriver>();
         private readonly ConcurrentDictionary<string, WebDriverWait> localWaitDriver = new ConcurrentDictionary<string, WebDriverWait>();
         private static string ChromeDriverPath = null;
@@ -60,22 +56,23 @@ namespace Selenium.Axe.Test
             }
         }
 
-        private static readonly string IntegrationTestTargetSimpleFile = @"integration-test-simple.html";
-        private static readonly string IntegrationTestTargetComplexTargetsFile = @"integration-test-target-complex.html";
-        private static readonly string IntegrationTestJsonResultFile = Path.GetFullPath(@"SampleResults.json");
+        private static readonly string TestFileRoot = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static readonly string IntegrationTestTargetSimpleFile = Path.Combine(TestFileRoot, @"integration-test-simple.html");
+        private static readonly string IntegrationTestTargetComplexTargetsFile = Path.Combine(TestFileRoot, @"integration-test-target-complex.html");
+        private static readonly string IntegrationTestJsonResultFile = Path.GetFullPath(Path.Combine(TestFileRoot, @"SampleResults.json"));
 
         private const string mainElementSelector = "main";
 
-        [TestCleanup]
+        [TearDown]
         public virtual void TearDown()
         {
             WebDriver?.Quit();
             WebDriver?.Dispose();
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void RunScanOnPage(string browser)
         {
             InitDriver(browser);
@@ -98,9 +95,9 @@ namespace Selenium.Axe.Test
             File.GetLastWriteTime(@"./raw-axe-results.json").Should().BeOnOrAfter(timeBeforeScan);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void RunScanOnGivenElement(string browser)
         {
             InitDriver(browser);
@@ -112,9 +109,9 @@ namespace Selenium.Axe.Test
             results.Violations.Should().HaveCount(3);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ReportFullPage(string browser)
         {
             string path = CreateReportPath();
@@ -128,9 +125,9 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 4, 26, 0, 69);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("FireFox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("FireFox")]
         public void ReportFullPageViolationsOnly(string browser)
         {
             string path = CreateReportPath();
@@ -145,9 +142,9 @@ namespace Selenium.Axe.Test
             ValidateResultNotWritten(path, ReportTypes.Passes | ReportTypes.Incomplete | ReportTypes.Inapplicable);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("FireFox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("FireFox")]
         public void ReportFullPagePassesInapplicableViolationsOnly(string browser)
         {
             string path = CreateReportPath();
@@ -161,9 +158,9 @@ namespace Selenium.Axe.Test
             ValidateResultNotWritten(path, ReportTypes.Incomplete);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ReportOnElement(string browser)
         {
             string path = CreateReportPath();
@@ -176,9 +173,9 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 3, 14, 0, 75);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ReportOnElementEventFiring(string browser)
         {
             string path = CreateReportPath();
@@ -194,9 +191,9 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 3, 14, 0, 75);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ReportRespectRules(string browser)
         {
             string path = CreateReportPath();
@@ -210,9 +207,9 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 3, 21, 0, 69);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
-        [DataRow("Firefox")]
+        [Test]
+        [TestCase("Chrome")]
+        [TestCase("Firefox")]
         public void ReportSampleResults(string browser)
         {
             string path = CreateReportPath();
@@ -241,8 +238,8 @@ namespace Selenium.Axe.Test
             Assert.IsTrue(reportContext.Contains($"Using: {results.TestEngineName} ({results.TestEngineVersion}"));
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
+        [Test]
+        [TestCase("Chrome")]
         public void ReportRespectsIframeImplicitTrue(string browser)
         {
             string path = CreateReportPath();
@@ -259,8 +256,8 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 4, 43, 0, 64);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
+        [Test]
+        [TestCase("Chrome")]
         public void ReportRespectsIframeTrue(string browser)
         {
             string path = CreateReportPath();
@@ -282,8 +279,8 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 4, 43, 0, 64);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
+        [Test]
+        [TestCase("Chrome")]
         public void ReportRespectsIframeFalse(string browser)
         {
             string path = CreateReportPath();
@@ -305,8 +302,8 @@ namespace Selenium.Axe.Test
             ValidateReport(path, 1, 24, 1, 65);
         }
 
-        [TestMethod]
-        [DataRow("Chrome")]
+        [Test]
+        [TestCase("Chrome")]
         public void RunSiteThatReturnsMultipleTargets(string browser)
         {
             var filename = new Uri(Path.GetFullPath(IntegrationTestTargetComplexTargetsFile)).AbsoluteUri;
@@ -407,7 +404,7 @@ namespace Selenium.Axe.Test
 
         private void LoadSimpleTestPage()
         {
-            var filename = new Uri(Path.GetFullPath(IntegrationTestTargetSimpleFile)).AbsoluteUri;
+            var filename = new Uri(IntegrationTestTargetSimpleFile).AbsoluteUri;
             WebDriver.Navigate().GoToUrl(filename);
 
             Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
@@ -450,9 +447,9 @@ namespace Selenium.Axe.Test
             WebDriver.Manage().Window.Maximize();
         }
 
-        private string GetFullyQualifiedTestName()
+        private static string GetFullyQualifiedTestName()
         {
-            return $"{this.TestContext.FullyQualifiedTestClassName}{this.TestContext.TestName}";
+            return TestContext.CurrentContext.Test.FullName;
         }
     }
 }

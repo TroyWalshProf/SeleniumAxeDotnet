@@ -1,66 +1,22 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-
-/* Unmerged change from project 'Selenium.Axe.Test (netcoreapp3.1)'
-Before:
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-After:
-using System;
-using Microsoft.IO;
-using System.Linq;
-*/
-
-/* Unmerged change from project 'Selenium.Axe.Test (net45)'
-Before:
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-After:
-using System;
-using Microsoft.IO;
-using System.Linq;
-*/
+﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using System.IO;
 using System.Linq;
 
 namespace Selenium.Axe.Test
 {
-    [TestClass]
+    [TestFixture]
     public class AxeResultTargetConverterTest
     {
-        [TestMethod]
+        [Test]
         public void CanConvertPassedAxeResultTarget()
         {
             var instance = new AxeResultTargetConverter();
             var result = instance.CanConvert(typeof(AxeResultTarget));
             Assert.IsTrue(result);
-
-            /* Unmerged change from project 'Selenium.Axe.Test (netcoreapp3.1)'
-            Before:
-                    }
-
-                    [TestMethod]
-            After:
-                    }
-
-                    [TestMethod]
-            */
-
-            /* Unmerged change from project 'Selenium.Axe.Test (net45)'
-            Before:
-                    }
-
-                    [TestMethod]
-            After:
-                    }
-
-                    [TestMethod]
-            */
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReadSingleSelector()
         {
             var testObject = new AxeResultTarget
@@ -68,47 +24,12 @@ namespace Selenium.Axe.Test
                 Selector = "test"
             };
             var json = $@"{{""target"":[""{testObject.Selector}""]}}";
-
-
-            /* Unmerged change from project 'Selenium.Axe.Test (netcoreapp3.1)'
-            Before:
-                        var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
-
-                        Assert.AreEqual(axeResultTarget?.Selector, testObject.Selector);
-                    }
-
-                    [TestMethod]
-            After:
-                        var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
-
-                        Assert.AreEqual(axeResultTarget?.Selector, testObject.Selector);
-                    }
-
-                    [TestMethod]
-            */
-
-            /* Unmerged change from project 'Selenium.Axe.Test (net45)'
-            Before:
-                        var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
-
-                        Assert.AreEqual(axeResultTarget?.Selector, testObject.Selector);
-                    }
-
-                    [TestMethod]
-            After:
-                        var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
-
-                        Assert.AreEqual(axeResultTarget?.Selector, testObject.Selector);
-                    }
-
-                    [TestMethod]
-            */
             var axeResultTarget = DeserializeJsonAndReturnFirstTarget(json);
 
             Assert.AreEqual(axeResultTarget?.Selector, testObject.Selector);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReadArrayOfSelectors()
         {
             var testObject = new AxeResultTarget
@@ -123,7 +44,7 @@ namespace Selenium.Axe.Test
             Assert.AreEqual(axeResultTarget?.Selectors.Last(), testObject.Selectors.Last());
         }
 
-        [TestMethod]
+        [Test]
         public void Write()
         {
             var expectedResult = "\"test\"";
