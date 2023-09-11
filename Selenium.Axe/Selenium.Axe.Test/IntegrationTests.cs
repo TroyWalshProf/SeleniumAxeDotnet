@@ -122,7 +122,7 @@ namespace Selenium.Axe.Test
 
             WebDriver.CreateAxeHtmlReport(path);
 
-            ValidateReport(path, 4, 26, 0, 69);
+            ValidateReport(path, 4, 27, 0, 69);
         }
 
         [Test]
@@ -154,7 +154,7 @@ namespace Selenium.Axe.Test
             Wait.Until(drv => drv.FindElement(By.TagName(mainElementSelector)));
             WebDriver.CreateAxeHtmlReport(path, ReportTypes.Passes | ReportTypes.Inapplicable | ReportTypes.Violations);
 
-            ValidateReport(path, 4, 26, 0, 69);
+            ValidateReport(path, 4, 27, 0, 69);
             ValidateResultNotWritten(path, ReportTypes.Incomplete);
         }
 
@@ -170,7 +170,7 @@ namespace Selenium.Axe.Test
             var mainElement = Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             WebDriver.CreateAxeHtmlReport(mainElement, path);
 
-            ValidateReport(path, 3, 14, 0, 75);
+            ValidateReport(path, 3, 15, 0, 75);
         }
 
         [Test]
@@ -188,7 +188,7 @@ namespace Selenium.Axe.Test
             var mainElement = Wait.Until(drv => drv.FindElement(By.CssSelector(mainElementSelector)));
             WebDriver.CreateAxeHtmlReport(mainElement, path);
 
-            ValidateReport(path, 3, 14, 0, 75);
+            ValidateReport(path, 3, 15, 0, 75);
         }
 
         [Test]
@@ -204,7 +204,7 @@ namespace Selenium.Axe.Test
             var builder = new AxeBuilder(WebDriver).DisableRules("color-contrast");
             WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
-            ValidateReport(path, 3, 21, 0, 69);
+            ValidateReport(path, 3, 22, 0, 69);
         }
 
         [Test]
@@ -253,7 +253,7 @@ namespace Selenium.Axe.Test
 
             WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
-            ValidateReport(path, 4, 43, 0, 64);
+            ValidateReport(path, 4, 44, 0, 64);
         }
 
         [Test]
@@ -276,7 +276,7 @@ namespace Selenium.Axe.Test
 
             WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
-            ValidateReport(path, 4, 43, 0, 64);
+            ValidateReport(path, 4, 44, 0, 64);
         }
 
         [Test]
@@ -299,7 +299,7 @@ namespace Selenium.Axe.Test
 
             WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
-            ValidateReport(path, 1, 24, 1, 65);
+            ValidateReport(path, 1, 24, 1, 67);
         }
 
         [Test]
