@@ -73,8 +73,8 @@ jobs:
         run: choco upgrade firefox
         
       - name: Update Chrome
-        run: choco install googlechrome --version=116.0.5845.141
-
+        run: choco install googlechrome
+        
       - name: Install SonarCloud scanner
         shell: powershell
         run: |
