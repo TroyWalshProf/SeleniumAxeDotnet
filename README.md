@@ -17,7 +17,6 @@
 - A new project (https://github.com/microsoft/html-reporter-for-axe-core-dotnet) will be used for creating HTML reports.  This should provide a much better user experience than the admittedly primitive reporting currently included in Selenium.Axe
 
 # Selenium.Axe for .NET
-
 [![Selenium.Axe NuGet package](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe) 
 [![NuGet package download counter](https://img.shields.io/nuget/dt/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe/) 
 [![Main pipeline](https://github.com/TroyWalshProf/SeleniumAxeDotnet/actions/workflows/mainPipeline.yml/badge.svg?branch=main)](https://github.com/TroyWalshProf/SeleniumAxeDotnet/actions/workflows/mainPipeline.yml)
