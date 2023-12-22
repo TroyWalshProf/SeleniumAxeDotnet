@@ -80,6 +80,8 @@ jobs:
       #  run: |
       #    New-Item -Path .\.sonar\scanner -ItemType Directory
       #    dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Install sonarscanner
+        run: dotnet tool install --global dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
