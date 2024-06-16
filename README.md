@@ -1,4 +1,22 @@
-# Deprecation Notice
+# :warning: Deprecation Notice :warning:
+The switch from Selenium.Axe to Deque.AxeCore is, by design, really straight forward. This is because Deque.AxeCore is a fork of Selenium.Axe so the interfaces to both are very similar.
+## Update steps
+1. Add Deque and Html packages 
+  - Deque.AxeCore.Commons
+  - Deque.AxeCore.Selenium  
+  - TWP.Selenium.Axe.Html  
+  _*Only if you are using the current HTML report functionality_
+2. Remove Selenium.Axe package
+3. Update usings
+  - Remove
+    - ```using Selenium.Axe;```
+  - Add
+    - ```using Deque.AxeCore.Commons;```
+    - ```using Deque.AxeCore.Selenium;```
+    - ```using TWP.Selenium.Axe.Html;```   
+    _*Only when creating HTML reports_
+
+## Context
 
 ### Why is this project being deprecated?
 -	Deque is officially taking on the .Net bindings  
@@ -8,13 +26,13 @@
 - Yes
   - Selenium.Axe actually uses Deque’s Axe core under the hood
   - This should help keep the .Net bindings at feature parity with the other official supported binding, such as Java and JavaScript
-### What will be happening?
-- Upgrade instructions will be provided early in 2023
-- This project will be archived
-- The NuGet package will be deprecated and https://www.nuget.org/packages/Deque.AxeCore.Selenium/ will be set as the alternate package
 ### Anything special we should know?
 - The new Deque project will support both Selenium and Playwright 
-- A new project (https://github.com/microsoft/html-reporter-for-axe-core-dotnet) will be used for creating HTML reports.  This should provide a much better user experience than the admittedly primitive reporting currently included in Selenium.Axe
+- A [standalone HTML reporter](https://github.com/TroyWalshProf/SeleniumAxeHtmlDotnet) library has been created and will be maintained until the [Microsoft HTML reporter](https://github.com/microsoft/html-reporter-for-axe-core-dotnet) gets released. 
+
+____
+____
+____
 
 # Selenium.Axe for .NET
 [![Selenium.Axe NuGet package](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe) 
