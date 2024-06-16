@@ -1,4 +1,22 @@
-# Deprecation Notice
+# :warning: Deprecation Notice :warning:
+## Update steps
+The switch from Selenium.Axe to Deque.AxeCore is, by design, really straight forward. This is because Deque.AxeCore is a fork of Selenium.Axe so the interfaces to both are very similar.
+1. Add Deque and Html packages 
+    - Deque.AxeCore.Commons
+    - Deque.AxeCore.Selenium  
+    - TWP.Selenium.Axe.Html  
+  _*Only if you are using the current HTML report functionality_
+2. Remove Selenium.Axe package
+3. Update usings
+  - Remove
+    - ```using Selenium.Axe;```
+  - Add
+    - ```using Deque.AxeCore.Commons;```
+    - ```using Deque.AxeCore.Selenium;```
+    - ```using TWP.Selenium.Axe.Html;```   
+    _*Only when creating HTML reports_
+
+## Context
 
 ### Why is this project being deprecated?
 -	Deque is officially taking on the .Net bindings  
