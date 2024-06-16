@@ -72,15 +72,15 @@ jobs:
       - name: Update Firefox
         run: choco upgrade firefox
         
-      #- name: Update Chrome
-      #  run: choco install googlechrome
+      - name: Update Chrome
+        run: choco install googlechrome
         
       - name: Install sonarscanner
         run: dotnet tool install --global dotnet-sonarscanner
           
       - name: Run tests
         shell: powershell
-        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
+        run: dotnet test Selenium.Axe/Selenium.Axe.Test/Selenium.Axe.Test.csproj --settings "./Selenium.Axe/Parallel.RunSettings" --results-directory "${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CoverletOutput="${{ github.workspace }}/artifactTests/coverage/testResults/" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -c Release -v D
       
       - name: Build and analyze
         # Skip when dependabot PR - Dependabot PRs cannot access action secrets

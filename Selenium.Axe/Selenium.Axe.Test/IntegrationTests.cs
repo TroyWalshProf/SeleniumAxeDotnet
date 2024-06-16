@@ -66,8 +66,14 @@ namespace Selenium.Axe.Test
         [TearDown]
         public virtual void TearDown()
         {
-            WebDriver?.Quit();
-            WebDriver?.Dispose();
+            try
+            {
+                WebDriver?.Close();
+            }
+            finally
+            {
+                WebDriver?.Quit();
+            }
         }
 
         [Test]
