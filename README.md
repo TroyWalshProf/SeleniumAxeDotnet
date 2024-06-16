@@ -30,7 +30,9 @@ The switch from Selenium.Axe to Deque.AxeCore is, by design, really straight for
 - The new Deque project will support both Selenium and Playwright 
 - A [standalone HTML reporter](https://github.com/TroyWalshProf/SeleniumAxeHtmlDotnet) library has been created to and will be maintined until the [Microsoft HTML reporter](https://github.com/microsoft/html-reporter-for-axe-core-dotnet) gets released. 
 
-___
+____
+____
+____
 
 # Selenium.Axe for .NET
 [![Selenium.Axe NuGet package](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe) 
