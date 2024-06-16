@@ -2,11 +2,11 @@
 <RunSettings>
   <RunConfiguration>
     <DisableAppDomain>True</DisableAppDomain>
-    <MaxCpuCount>4</MaxCpuCount>
+    <MaxCpuCount>2</MaxCpuCount>
   </RunConfiguration>
   <MSTest>
     <Parallelize>
-      <Workers>4</Workers>
+      <Workers>2</Workers>
       <Scope>MethodLevel</Scope>
     </Parallelize>
   </MSTest>

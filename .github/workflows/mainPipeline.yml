@@ -72,8 +72,8 @@ jobs:
       - name: Update Firefox
         run: choco upgrade firefox
         
-      #- name: Update Chrome
-      #  run: choco install googlechrome
+      - name: Update Chrome
+        run: choco install googlechrome
         
       - name: Install sonarscanner
         run: dotnet tool install --global dotnet-sonarscanner
