@@ -26,13 +26,11 @@ The switch from Selenium.Axe to Deque.AxeCore is, by design, really straight for
 - Yes
   - Selenium.Axe actually uses Deque’s Axe core under the hood
   - This should help keep the .Net bindings at feature parity with the other official supported binding, such as Java and JavaScript
-### What will be happening?
-- Upgrade instructions will be provided early in 2023
-- This project will be archived
-- The NuGet package will be deprecated and https://www.nuget.org/packages/Deque.AxeCore.Selenium/ will be set as the alternate package
 ### Anything special we should know?
 - The new Deque project will support both Selenium and Playwright 
-- A new project (https://github.com/microsoft/html-reporter-for-axe-core-dotnet) will be used for creating HTML reports.  This should provide a much better user experience than the admittedly primitive reporting currently included in Selenium.Axe
+- A [standalone HTML reporter](https://github.com/TroyWalshProf/SeleniumAxeHtmlDotnet) library has been created to and will be maintined until the [Microsoft HTML reporter](https://github.com/microsoft/html-reporter-for-axe-core-dotnet) gets released. 
+
+___
 
 # Selenium.Axe for .NET
 [![Selenium.Axe NuGet package](https://img.shields.io/nuget/v/Selenium.Axe)](https://www.nuget.org/packages/Selenium.Axe) 
