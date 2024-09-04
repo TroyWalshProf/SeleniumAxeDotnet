@@ -305,7 +305,7 @@ namespace Selenium.Axe.Test
 
             WebDriver.CreateAxeHtmlReport(builder.Analyze(), path);
 
-            ValidateReport(path, 1, 24, 1, 67);
+            ValidateReport(path, 1, 24, 1, 68);
         }
 
         [Test]
