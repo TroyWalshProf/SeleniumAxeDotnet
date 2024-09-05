@@ -1,5 +1,5 @@
 # :warning: Deprecation Notice :warning:
-The switch from Selenium.Axe to Deque.AxeCore is, by design, really straight forward. This is because Deque.AxeCore is a fork of Selenium.Axe so the interfaces to both are very similar.
+The switch from Selenium.Axe to Deque.AxeCore is, by design, really straight forward. This is because Deque.AxeCore is a fork of Selenium.Axe so the interfaces to both are very similar.  
 ## Update steps
 1. Add Deque and Html packages 
   - Deque.AxeCore.Commons
