@@ -30,7 +30,7 @@ jobs:
     outputs:
       buildNumber: ${{ steps.ver.outputs.BUILD_NUMBER }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
@@ -94,7 +94,7 @@ jobs:
           dotnet build Selenium.Axe/Selenium.Axe.sln  --configuration Release -p:Version=${{ steps.ver.outputs.BUILD_NUMBER }} -p:BaseOutputPath="${{github.workspace}}/artifactTests/packages/"
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
  
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: always()
         name: "Upload NuGet packages artifact"
         with:
@@ -103,7 +103,7 @@ jobs:
             ${{github.workspace}}/artifactTests/packages/**/*.nupkg
             ${{github.workspace}}/artifactTests/packages/**/*.snupkg
    
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: always()
         name: "Upload test artifact"
         with:
@@ -126,7 +126,7 @@ jobs:
             3.1.x
             6.x.x
 
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v4
         with:
           name: 'packages'
           path: ${{ github.workspace }}/packages
